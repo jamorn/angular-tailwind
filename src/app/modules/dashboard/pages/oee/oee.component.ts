@@ -5,7 +5,7 @@ import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartService } from '@services/chart.service';
 import { DashboardService } from '@services/dashboard.service';
-import { MachineOEEData } from '@models/oee.model';
+import { MachineOEEData, MachineOrder } from '@models/oee.model';
 
 @Component({
   selector: 'app-oee',
@@ -29,6 +29,9 @@ export class OeeComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
+  // Add ordered machines property
+  orderedMachines: string[] = [];
+
   constructor(
     private dashboardService: DashboardService,
     private chartService: ChartService
@@ -39,11 +42,13 @@ export class OeeComponent implements OnInit {
   }
 
   private loadOEEData(): void {
+    console.log('========== START LOADING OEE DATA ==========');
     this.loading = true;
     this.error = null;
 
     this.dashboardService.getOEEDaily().subscribe({
       next: (data: MachineOEEData) => {
+        console.log('Received OEE Data:', Object.keys(data));
         this.processOEEData(data);
         this.chartService.updateMachineData(data);
         this.loading = false;
@@ -57,18 +62,31 @@ export class OeeComponent implements OnInit {
   }
 
   private processOEEData(data: MachineOEEData): void {
-    const machines = Object.keys(data) as (keyof MachineOEEData)[];
+    console.log('========== START PROCESSING OEE DATA ==========');
     
-    machines.forEach(machine => {
-      const machineData = data[machine];
-      if (machineData && machineData.length > 0) {
+    // Create ordered machine keys based on MachineOrder enum
+    this.orderedMachines = Object.entries(MachineOrder)
+      .filter(([key]) => isNaN(Number(key)))
+      .sort(([, a], [, b]) => (a as number) - (b as number))
+      .map(([name]) => `oeeDataList${name}`);
+    
+    console.log('Ordered machine keys:', this.orderedMachines);
+
+    // Process data in enum order
+    this.orderedMachines.forEach(machine => {
+      const typedMachine = machine as keyof MachineOEEData;
+      if (data[typedMachine] && data[typedMachine].length > 0) {
         const machineName = machine.replace('oeeDataList', '');
+        console.log(`Processing machine: ${machineName}`);
         this.chartOptions[machine] = this.chartService.createOEEChartOptions(
           machineName,
-          machineData
+          data[typedMachine]
         );
       }
     });
+    
+    console.log('Final chartOptions keys:', Object.keys(this.chartOptions));
+    console.log('========== END PROCESSING OEE DATA ==========');
   }
 }
 

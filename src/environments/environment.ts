@@ -4,6 +4,14 @@
 
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:5112',  // หรือ https://localhost:7112 ถ้าใช้ HTTPS
+  auth: {
+    testUsers: {
+      admin: 'kittithuch.u - 557',
+      user: 'weerachai.in - 1102',
+      super: 'nirut.p - 2341'
+    }
+  }
 };
 
 /*

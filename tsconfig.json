@@ -23,7 +23,12 @@
       "es2020",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@models/*": ["src/app/modules/dashboard/models/*"],
+      "@services/*": ["src/app/services/*"],
+      "@shared/*": ["src/app/shared/*"]
+    }
   },
 	"angularCompilerOptions": {
 		"enableI18nLegacyMessageIdFormat": false,

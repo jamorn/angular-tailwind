@@ -57,6 +57,24 @@
   padding: 20px;
 }
 
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* แสดง 1 column เต็มความกว้าง */
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1600px; /* กำหนดความกว้างสูงสุด */
+  margin: 0 auto; /* จัดกึ่งกลาง */
+}
+
+.chart-wrapper {
+  width: 100%;
+  background: #1E1E1E; /* สีพื้นหลังของ chart */
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 /* Media Queries */
 @media screen and (max-width: 1200px) {
   .charts-grid {

@@ -10,7 +10,12 @@ export class Menu {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
           label: 'Dashboard',
           route: '/dashboard',
-          children: [{ label: 'Nfts', route: '/dashboard/nfts' }],
+          children: [{ label: 'Nfts', route: '/dashboard/nfts' }
+          /**/  ,{ label: 'Safety', route: '/dashboard/safety' }
+            ,{ label: 'Oee', route: '/dashboard/oee' }
+            ,{ label: 'Giveaway', route: '/dashboard/giveaway' }
+            ,{ label: 'Eii', route: '/dashboard/eii' } 
+            ],
         },
         {
           icon: 'assets/icons/heroicons/outline/lock-closed.svg',

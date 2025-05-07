@@ -1,0 +1,21 @@
+<div class="container">
+    <div *ngIf="loading" class="loading">
+      Loading charts...
+    </div>
+    
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="!loading && !error" class="charts-container">
+      <ng-container *ngFor="let machine of orderedMachines">
+        <div *ngIf="chartOptions[machine]" class="chart-wrapper">
+          <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="chartOptions[machine]"
+            style="width: 100%; display: block; min-height: 500px;">
+          </highcharts-chart>
+        </div>
+      </ng-container>
+    </div>
+  </div>

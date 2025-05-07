@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { MachineOEEData, OEEDataDTO } from '@models/oee.model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { MachineOEEData, OEEDataDTO, MachineOrder } from '@models/oee.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +10,75 @@ export class ChartService {
   private machineDataSubject = new BehaviorSubject<MachineOEEData | null>(null);
   machineData$ = this.machineDataSubject.asObservable();
 
-  updateMachineData(data: MachineOEEData) {
+  updateMachineData(data: MachineOEEData): void {
     this.machineDataSubject.next(data);
   }
 
-  // เปลี่ยน type parameter จาก any[] เป็น OEEDataDTO[]
+  createChartsFromMachineData(machineData: MachineOEEData): { [key: string]: Highcharts.Options } {
+    // Add immediate log to verify method is called
+    console.log('METHOD CALLED: createChartsFromMachineData');
+    if (!machineData) {
+      console.log('WARNING: machineData is null or undefined');
+      return {};
+    }
+
+    const chartOptions: { [key: string]: Highcharts.Options } = {};
+    
+    try {
+      console.log('========== START DEBUG MACHINE ORDER ==========');
+      console.log('Input machineData:', JSON.stringify(Object.keys(machineData)));
+      
+      // 1. Log enum values
+      console.log('MachineOrder Enum Values:');
+      Object.entries(MachineOrder).forEach(([key, value]) => {
+        if (isNaN(Number(key))) {
+          console.log(`${key}: ${value}`);
+        }
+      });
+
+      // 2. Log original data
+      console.log('\nOriginal Machine Data Keys:');
+      const originalKeys = Object.keys(machineData);
+      console.log(originalKeys);
+
+      // 3. Sort and log comparison
+      const orderedKeys = Object.keys(machineData).sort((a, b) => {
+        const machineA = a.replace('oeeDataList', '');
+        const machineB = b.replace('oeeDataList', '');
+        
+        const orderA = MachineOrder[machineA as keyof typeof MachineOrder] || 999;
+        const orderB = MachineOrder[machineB as keyof typeof MachineOrder] || 999;
+        
+        console.log(`\nComparing Machines:
+        A: ${machineA} (${orderA})
+        B: ${machineB} (${orderB})
+        Result: ${orderA - orderB}`);
+        
+        return orderA - orderB;
+      });
+
+      // 4. Log final order
+      console.log('\nFinal Ordered Keys:');
+      console.log(orderedKeys);
+      
+      console.log('========== END DEBUG MACHINE ORDER ==========\n');
+
+      // สร้าง charts ตามลำดับ
+      orderedKeys.forEach(key => {
+        const data = machineData[key as keyof MachineOEEData];
+        if (data && data.length > 0) {
+          const machineName = key.replace('oeeDataList', '');
+          chartOptions[key] = this.createOEEChartOptions(machineName, data);
+        }
+      });
+
+      return chartOptions;
+    } catch (error) {
+      console.error('Error in createChartsFromMachineData:', error);
+      return {};
+    }
+  }
+
   createOEEChartOptions(machine: string, data: OEEDataDTO[]): Highcharts.Options {
     const baseColor = getComputedStyle(document.documentElement).getPropertyValue('--primary');
 
@@ -22,7 +86,9 @@ export class ChartService {
       chart: {
         backgroundColor: '#121212',
         style: { fontFamily: 'inherit' },
-        height: 500
+        height: 500,
+        spacing: [20, 20, 20, 20], // เพิ่ม padding ภายใน chart
+        reflow: true // ให้ chart ปรับขนาดอัตโนมัติ
       },
       colors: [baseColor],
       title: {
@@ -46,12 +112,7 @@ export class ChartService {
           align: 'right'
         },
         gridLineColor: 'rgba(255, 255, 255, 0.1)',
-        lineColor: 'rgba(255, 255, 255, 0.2)',
-        crosshair: {
-          color: baseColor,
-          width: 1,
-          dashStyle: 'Dash'
-        }
+        lineColor: 'rgba(255, 255, 255, 0.2)'
       },
       yAxis: {
         title: {
@@ -68,144 +129,80 @@ export class ChartService {
         gridLineColor: 'rgba(255, 255, 255, 0.1)'
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        style: {
-          color: '#FFFFFF',
-          fontFamily: 'inherit'
-        },
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        style: { color: '#121212' },
         borderWidth: 0,
-        shadow: false,
+        borderRadius: 8,
+        shadow: true,
+        animation: true,
         useHTML: true,
         shared: true,
         formatter: function() {
           if (!this.points) return '';
 
-          const hasRemarks = this.points.some(p => 
-            p.series.name === 'OEE' && ((p as any).options?.remarks?.length > 0)
-          );
+          const dateString = (this.points[0] as any).point.options.dateString || '';
+          const remarks = (this.points[0] as any).point.options.remarks || [];
 
-          let html = `<div style="
-            min-width: ${hasRemarks ? '400px' : '200px'};
-            max-width: ${hasRemarks ? '600px' : '300px'};
-          ">`;
+          // Create HTML string directly instead of calling service methods
+          let html = `
+            <div style="
+              min-width: 350px;
+              max-width: 450px;
+              padding: 12px;
+              line-height: 1.5;
+              font-size: 12px;
+            ">
+              <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 14px; font-weight: 600; color: #121212; margin-bottom: 4px;">
+                  ${dateString}
+                </div>
+                <div style="font-size: 13px; font-weight: 500; color: #666666;">
+                  OEE Performance
+                </div>
+              </div>
+              <div style="height: 1px; background: #E0E0E0; margin: 8px 0;"></div>
+          `;
 
-          // Date header
-          const dateString = (this.points[0] as any).options?.dateString || '';
-          html += `<div style="padding: 4px 0"><b>Date: ${dateString}</b></div>`;
-
-          // Values
+          // Add performance metrics
           this.points.forEach(point => {
+            const value = point.y ?? 0;
             html += `
-              <div style="display: grid; grid-template-columns: 140px auto; align-items: center; margin: 4px 0">
-                <div style="display: flex; align-items: center;">
-                  <span style="color: ${point.color}; margin-right: 5px">●</span>
-                  <span>${point.series.name}:</span>
-                </div>
-                <div style="text-align: left; padding-left: 10px">
-                  <b>${point.y?.toFixed(1)}%</b>
-                </div>
-              </div>`;
-
-            // Add remarks if present
-            if (point.series.name === 'OEE') {
-              const remarks = (point as any).options?.remarks || [];
-              if (remarks.length > 0) {
-                html += `
-                  <div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px">
-                    <b>Remarks:</b>
-                    <div style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px">
-                      ${remarks.map((r: string) => `
-                        <div style="color: #CCCCCC; margin: 4px 0; line-height: 1.4; font-size: 12px">
-                          • ${r}
-                        </div>
-                      `).join('')}
-                    </div>
-                  </div>`;
-              }
-            }
+              <div style="display: flex; justify-content: flex-start; align-items: center; margin: 4px 0; gap: 8px;">
+                <span style="display: flex; align-items: center; min-width: 120px;">
+                  <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${point.color}; margin-right: 6px;"></span>
+                  <span style="color: #444444">${point.series.name}:</span>
+                </span>
+                <span style="font-weight: 600; color: #121212">${value.toFixed(2)}%</span>
+              </div>
+            `;
           });
+
+          // Add remarks if available
+          if (remarks?.length > 0) {
+            html += `
+              <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E0E0E0;">
+                <div style="font-weight: 600; color: #121212; margin-bottom: 8px;">Remarks:</div>
+                <div style="padding-left: 8px;">
+                  ${remarks.map((remark: string) => `
+                    <div style="display: flex; align-items: center; color: #666666; margin-bottom: 6px; font-size: 11px; line-height: 1.4;">
+                      <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px;">•</span>
+                      <span style="flex: 1; word-wrap: break-word;">${remark}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
 
           html += '</div>';
           return html;
         }
       },
-      series: [
-        {
-          name: 'OEE',
-          type: 'column',
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.oee,
-            color: d.color,// ใช้สีจาก data โดยตรง
-            remarks: d.remarks,
-            dateString: d.dateString
-          }))
-        },
-        {
-          name: 'Availability',
-          type: 'line',
-          color: '#4572A7',
-          lineWidth: 2,
-          marker: { symbol: 'circle', radius: 4 },
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.availability
-          }))
-        },
-        {
-          name: 'Performance',
-          type: 'line',
-          color: '#AA4643',
-          lineWidth: 2,
-          marker: { symbol: 'diamond', radius: 4 },
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.performance
-          }))
-        },
-        {
-          name: 'Quality',
-          type: 'line',
-          color: '#89A54E',
-          lineWidth: 2,
-          marker: { symbol: 'triangle', radius: 4 },
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.quality
-          }))
-        },
-        {
-          name: 'Target',
-          type: 'line',
-          color: '#FF0000',
-          dashStyle: 'Solid',
-          lineWidth: 2,
-          marker: { enabled: false },
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.oeeTarget
-          }))
-        }
-      ],
+      series: this.createOEESeries(data),
       credits: { enabled: false }
     };
   }
 
-  // เพิ่ม method สำหรับ process data จาก MachineOEEData
-  createChartsFromMachineData(machineData: MachineOEEData): { [key: string]: Highcharts.Options } {
-    const chartOptions: { [key: string]: Highcharts.Options } = {};
-    
-    Object.entries(machineData).forEach(([key, data]) => {
-      if (data && data.length > 0) {
-        const machineName = key.replace('oeeDataList', '');
-        chartOptions[key] = this.createOEEChartOptions(machineName, data);
-      }
-    });
-
-    return chartOptions;
-  }
-
-  // Change method name from createGiveAwayChartOptions to createGiveawayChartOptions
   createGiveawayChartOptions(machine: string, data: OEEDataDTO[]): Highcharts.Options {
     return {
       chart: {
@@ -235,39 +232,159 @@ export class ChartService {
         },
         labels: { style: { color: '#FFFFFF' } }
       }],
-      series: [
-        {
-          name: 'Giveaway',
-          type: 'spline',
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.giveaway
-          }))
-        },
-        {
-          name: 'Min',
-          type: 'line',
-          dashStyle: 'Dash',
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.giveAwayMin
-          }))
-        },
-        {
-          name: 'Max',
-          type: 'line',
-          dashStyle: 'Dash',
-          data: data.map(d => ({
-            x: new Date(d.dateString).getTime(),
-            y: d.giveAwayMax
-          }))
-        }
-      ],
+      series: this.createGiveawaySeries(data),
       tooltip: {
         shared: true,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        style: { color: '#FFFFFF' }
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        style: { color: '#121212' },
+        borderWidth: 0,
+        borderRadius: 8,
+        shadow: true
       }
     };
+  }
+
+  private createTooltipHeader(dateString: string): string {
+    return `
+      <div style="
+        min-width: 350px;
+        max-width: 450px;
+        padding: 12px;
+        line-height: 1.5;
+        font-size: 12px;
+      ">
+        <div style="text-align: center; margin-bottom: 12px;">
+          <div style="font-size: 14px; font-weight: 600; color: #121212; margin-bottom: 4px;">
+            ${dateString}
+          </div>
+          <div style="font-size: 13px; font-weight: 500; color: #666666;">
+            OEE Performance
+          </div>
+        </div>
+        <div style="height: 1px; background: #E0E0E0; margin: 8px 0;"></div>
+    `;
+  }
+
+  private createPerformanceMetrics(points: any[]): string {
+    return points.map(point => {
+      const value = point.y ?? 0;
+      return `
+        <div style="display: flex; justify-content: flex-start; align-items: center; margin: 4px 0; gap: 8px;">
+          <span style="display: flex; align-items: center; min-width: 120px;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${point.color}; margin-right: 6px;"></span>
+            <span style="color: #444444">${point.series.name}:</span>
+          </span>
+          <span style="font-weight: 600; color: #121212">${value.toFixed(2)}%</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  private createRemarksSection(remarks: string[]): string {
+    return `
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E0E0E0;">
+        <div style="font-weight: 600; color: #121212; margin-bottom: 8px;">Remarks:</div>
+        <div style="padding-left: 8px;">
+          ${remarks.map(remark => `
+            <div style="display: flex; align-items: center; color: #666666; margin-bottom: 6px; font-size: 11px; line-height: 1.4;">
+              <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px;">•</span>
+              <span style="flex: 1; word-wrap: break-word;">${remark}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  private createOEESeries(data: OEEDataDTO[]): Highcharts.SeriesOptionsType[] {
+    return [
+      {
+        name: 'OEE',
+        type: 'column',
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.oee,
+          color: d.color,
+          remarks: d.remarks,
+          dateString: d.dateString
+        }))
+      },
+      {
+        name: 'Availability',
+        type: 'line',
+        color: '#4572A7',
+        lineWidth: 2,
+        marker: { symbol: 'circle', radius: 4 },
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.availability
+        }))
+      },
+      {
+        name: 'Performance',
+        type: 'line',
+        color: '#AA4643',
+        lineWidth: 2,
+        marker: { symbol: 'diamond', radius: 4 },
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.performance
+        }))
+      },
+      {
+        name: 'Quality',
+        type: 'line',
+        color: '#89A54E',
+        lineWidth: 2,
+        marker: { symbol: 'triangle', radius: 4 },
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.quality
+        }))
+      },
+      {
+        name: 'Target',
+        type: 'line',
+        color: '#FF0000',
+        dashStyle: 'Solid',
+        lineWidth: 2,
+        marker: { enabled: false },
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.oeeTarget
+        }))
+      }
+    ];
+  }
+
+  private createGiveawaySeries(data: OEEDataDTO[]): Highcharts.SeriesOptionsType[] {
+    return [
+      {
+        name: 'Giveaway',
+        type: 'spline',
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.giveaway
+        }))
+      },
+      {
+        name: 'Min',
+        type: 'line',
+        dashStyle: 'Dash',
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.giveAwayMin
+        }))
+      },
+      {
+        name: 'Max',
+        type: 'line',
+        dashStyle: 'Dash',
+        data: data.map(d => ({
+          x: new Date(d.dateString).getTime(),
+          y: d.giveAwayMax
+        }))
+      }
+    ];
   }
 }
