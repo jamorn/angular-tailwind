@@ -1,0 +1,14 @@
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 1rem;
+  background-color: #1e1e1e;
+}
+
+#chartDiv1, #chartDiv2{
+  background-color: #121212;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 500px;
+}
