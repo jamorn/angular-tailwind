@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-tailwind": {
+    "plbg-dashboard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -21,7 +21,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist/angular-tailwind"
+              "base": "dist/plbg-dashboard"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -40,7 +40,8 @@
               "node_modules/apexcharts/dist/apexcharts.min.js"
             ],
             "allowedCommonJsDependencies": [
-              "apexcharts"
+              "apexcharts",
+              "highcharts"
             ],
             "browser": "src/main.ts"
           },
@@ -79,18 +80,21 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-tailwind:build:production"
+              "buildTarget": "plbg-dashboard:build:production"
             },
             "development": {
-              "buildTarget": "angular-tailwind:build:development"
+              "buildTarget": "plbg-dashboard:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "hmr": true
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "angular-tailwind:build"
+            "buildTarget": "plbg-dashboard:build"
           }
         },
         "test": {

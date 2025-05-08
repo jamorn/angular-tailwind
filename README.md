@@ -1,97 +1,382 @@
-<p align="center">
-    <img src="src/assets/preview/logo.png" width="150">
-</p>
+```
+Frontend
+├─ .angular
+├─ .editorconfig
+├─ .eslintrc.json
+├─ .postcssrc.json
+├─ .prettierignore
+├─ .prettierrc
+├─ angular.json
+├─ CHANGELOG.md
+├─ CONTRIBUTING.md
+├─ karma.conf.js
+├─ LICENSE
+├─ package-lock.json
+├─ package.json
+├─ playwright.config.ts
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ app-routing.module.ts
+│  │  ├─ app.component.css
+│  │  ├─ app.component.html
+│  │  ├─ app.component.spec.ts
+│  │  ├─ app.component.ts
+│  │  ├─ core
+│  │  │  ├─ constants
+│  │  │  │  └─ menu.ts
+│  │  │  ├─ guards
+│  │  │  ├─ interceptor
+│  │  │  ├─ interceptors
+│  │  │  │  └─ auth
+│  │  │  │     ├─ auth.interceptor.spec.ts
+│  │  │  │     └─ auth.interceptor.ts
+│  │  │  ├─ models
+│  │  │  │  ├─ menu.model.ts
+│  │  │  │  └─ theme.model.ts
+│  │  │  ├─ services
+│  │  │  │  ├─ theme.service.spec.ts
+│  │  │  │  └─ theme.service.ts
+│  │  │  └─ utils
+│  │  ├─ modules
+│  │  │  ├─ auth
+│  │  │  │  ├─ auth-routing.module.ts
+│  │  │  │  ├─ auth.component.css
+│  │  │  │  ├─ auth.component.html
+│  │  │  │  ├─ auth.component.spec.ts
+│  │  │  │  ├─ auth.component.ts
+│  │  │  │  ├─ auth.module.ts
+│  │  │  │  └─ pages
+│  │  │  │     ├─ forgot-password
+│  │  │  │     │  ├─ forgot-password.component.css
+│  │  │  │     │  ├─ forgot-password.component.html
+│  │  │  │     │  ├─ forgot-password.component.spec.ts
+│  │  │  │     │  └─ forgot-password.component.ts
+│  │  │  │     ├─ new-password
+│  │  │  │     │  ├─ new-password.component.css
+│  │  │  │     │  ├─ new-password.component.html
+│  │  │  │     │  ├─ new-password.component.spec.ts
+│  │  │  │     │  └─ new-password.component.ts
+│  │  │  │     ├─ sign-in
+│  │  │  │     │  ├─ sign-in.component.css
+│  │  │  │     │  ├─ sign-in.component.html
+│  │  │  │     │  ├─ sign-in.component.spec.ts
+│  │  │  │     │  └─ sign-in.component.ts
+│  │  │  │     ├─ sign-up
+│  │  │  │     │  ├─ sign-up.component.css
+│  │  │  │     │  ├─ sign-up.component.html
+│  │  │  │     │  ├─ sign-up.component.spec.ts
+│  │  │  │     │  └─ sign-up.component.ts
+│  │  │  │     └─ two-steps
+│  │  │  │        ├─ two-steps.component.css
+│  │  │  │        ├─ two-steps.component.html
+│  │  │  │        ├─ two-steps.component.spec.ts
+│  │  │  │        └─ two-steps.component.ts
+│  │  │  ├─ dashboard
+│  │  │  │  ├─ components
+│  │  │  │  │  └─ nft
+│  │  │  │  │     ├─ nft-auctions-table
+│  │  │  │  │     │  ├─ nft-auctions-table.component.html
+│  │  │  │  │     │  ├─ nft-auctions-table.component.spec.ts
+│  │  │  │  │     │  └─ nft-auctions-table.component.ts
+│  │  │  │  │     ├─ nft-auctions-table-item
+│  │  │  │  │     │  ├─ nft-auctions-table-item.component.html
+│  │  │  │  │     │  ├─ nft-auctions-table-item.component.spec.ts
+│  │  │  │  │     │  └─ nft-auctions-table-item.component.ts
+│  │  │  │  │     ├─ nft-chart-card
+│  │  │  │  │     │  ├─ nft-chart-card.component.html
+│  │  │  │  │     │  ├─ nft-chart-card.component.spec.ts
+│  │  │  │  │     │  └─ nft-chart-card.component.ts
+│  │  │  │  │     ├─ nft-dual-card
+│  │  │  │  │     │  ├─ nft-dual-card.component.html
+│  │  │  │  │     │  ├─ nft-dual-card.component.spec.ts
+│  │  │  │  │     │  └─ nft-dual-card.component.ts
+│  │  │  │  │     ├─ nft-header
+│  │  │  │  │     │  ├─ nft-header.component.html
+│  │  │  │  │     │  ├─ nft-header.component.spec.ts
+│  │  │  │  │     │  └─ nft-header.component.ts
+│  │  │  │  │     └─ nft-single-card
+│  │  │  │  │        ├─ nft-single-card.component.html
+│  │  │  │  │        ├─ nft-single-card.component.spec.ts
+│  │  │  │  │        └─ nft-single-card.component.ts
+│  │  │  │  ├─ dashboard-routing.module.ts
+│  │  │  │  ├─ dashboard.component.html
+│  │  │  │  ├─ dashboard.component.spec.ts
+│  │  │  │  ├─ dashboard.component.ts
+│  │  │  │  ├─ dashboard.module.ts
+│  │  │  │  ├─ models
+│  │  │  │  │  ├─ nft.ts
+│  │  │  │  │  └─ oee.model.ts
+│  │  │  │  ├─ pages
+│  │  │  │  │  ├─ giveaway
+│  │  │  │  │  │  ├─ giveaway.component.css
+│  │  │  │  │  │  ├─ giveaway.component.html
+│  │  │  │  │  │  ├─ giveaway.component.spec.ts
+│  │  │  │  │  │  └─ giveaway.component.ts
+│  │  │  │  │  ├─ mohthyeii
+│  │  │  │  │  │  ├─ monthy-eii.component.css
+│  │  │  │  │  │  ├─ monthy-eii.component.html
+│  │  │  │  │  │  ├─ monthy-eii.component.spec.ts
+│  │  │  │  │  │  └─ monthy-eii.component.ts
+│  │  │  │  │  ├─ nft
+│  │  │  │  │  │  ├─ nft.component.html
+│  │  │  │  │  │  ├─ nft.component.spec.ts
+│  │  │  │  │  │  └─ nft.component.ts
+│  │  │  │  │  ├─ oee
+│  │  │  │  │  │  ├─ oee.component.css
+│  │  │  │  │  │  ├─ oee.component.html
+│  │  │  │  │  │  ├─ oee.component.spec.ts
+│  │  │  │  │  │  └─ oee.component.ts
+│  │  │  │  │  └─ safety
+│  │  │  │  │     ├─ safety.component.css
+│  │  │  │  │     ├─ safety.component.html
+│  │  │  │  │     ├─ safety.component.spec.ts
+│  │  │  │  │     └─ safety.component.ts
+│  │  │  │  └─ services
+│  │  │  ├─ error
+│  │  │  │  ├─ error-routing.module.ts
+│  │  │  │  ├─ error.component.css
+│  │  │  │  ├─ error.component.html
+│  │  │  │  ├─ error.component.spec.ts
+│  │  │  │  ├─ error.component.ts
+│  │  │  │  ├─ error.module.ts
+│  │  │  │  └─ pages
+│  │  │  │     ├─ error404
+│  │  │  │     │  ├─ error404.component.css
+│  │  │  │     │  ├─ error404.component.html
+│  │  │  │     │  ├─ error404.component.spec.ts
+│  │  │  │     │  └─ error404.component.ts
+│  │  │  │     └─ error500
+│  │  │  │        ├─ error500.component.css
+│  │  │  │        ├─ error500.component.html
+│  │  │  │        ├─ error500.component.spec.ts
+│  │  │  │        └─ error500.component.ts
+│  │  │  ├─ layout
+│  │  │  │  ├─ components
+│  │  │  │  │  ├─ bottom-navbar
+│  │  │  │  │  │  ├─ bottom-navbar.component.css
+│  │  │  │  │  │  ├─ bottom-navbar.component.html
+│  │  │  │  │  │  ├─ bottom-navbar.component.spec.ts
+│  │  │  │  │  │  └─ bottom-navbar.component.ts
+│  │  │  │  │  ├─ footer
+│  │  │  │  │  │  ├─ footer.component.css
+│  │  │  │  │  │  ├─ footer.component.html
+│  │  │  │  │  │  ├─ footer.component.spec.ts
+│  │  │  │  │  │  └─ footer.component.ts
+│  │  │  │  │  ├─ navbar
+│  │  │  │  │  │  ├─ navbar-menu
+│  │  │  │  │  │  │  ├─ navbar-menu.component.css
+│  │  │  │  │  │  │  ├─ navbar-menu.component.html
+│  │  │  │  │  │  │  ├─ navbar-menu.component.spec.ts
+│  │  │  │  │  │  │  └─ navbar-menu.component.ts
+│  │  │  │  │  │  ├─ navbar-mobile
+│  │  │  │  │  │  │  ├─ navbar-mobile-menu
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-menu.component.css
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-menu.component.html
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-menu.component.spec.ts
+│  │  │  │  │  │  │  │  └─ navbar-mobile-menu.component.ts
+│  │  │  │  │  │  │  ├─ navbar-mobile-submenu
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-submenu.component.css
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-submenu.component.html
+│  │  │  │  │  │  │  │  ├─ navbar-mobile-submenu.component.spec.ts
+│  │  │  │  │  │  │  │  └─ navbar-mobile-submenu.component.ts
+│  │  │  │  │  │  │  ├─ navbar-mobile.component.css
+│  │  │  │  │  │  │  ├─ navbar-mobile.component.html
+│  │  │  │  │  │  │  ├─ navbar-mobile.component.spec.ts
+│  │  │  │  │  │  │  └─ navbar-mobilecomponent.ts
+│  │  │  │  │  │  ├─ navbar-submenu
+│  │  │  │  │  │  │  ├─ navbar-submenu.component.css
+│  │  │  │  │  │  │  ├─ navbar-submenu.component.html
+│  │  │  │  │  │  │  ├─ navbar-submenu.component.spec.ts
+│  │  │  │  │  │  │  └─ navbar-submenu.component.ts
+│  │  │  │  │  │  ├─ navbar.component.css
+│  │  │  │  │  │  ├─ navbar.component.html
+│  │  │  │  │  │  ├─ navbar.component.spec.ts
+│  │  │  │  │  │  ├─ navbar.component.ts
+│  │  │  │  │  │  └─ profile-menu
+│  │  │  │  │  │     ├─ profile-menu.component.css
+│  │  │  │  │  │     ├─ profile-menu.component.html
+│  │  │  │  │  │     ├─ profile-menu.component.spec.ts
+│  │  │  │  │  │     └─ profile-menu.component.ts
+│  │  │  │  │  └─ sidebar
+│  │  │  │  │     ├─ sidebar-menu
+│  │  │  │  │     │  ├─ sidebar-menu.component.css
+│  │  │  │  │     │  ├─ sidebar-menu.component.html
+│  │  │  │  │     │  ├─ sidebar-menu.component.spec.ts
+│  │  │  │  │     │  └─ sidebar-menu.component.ts
+│  │  │  │  │     ├─ sidebar-submenu
+│  │  │  │  │     │  ├─ sidebar-submenu.component.css
+│  │  │  │  │     │  ├─ sidebar-submenu.component.html
+│  │  │  │  │     │  ├─ sidebar-submenu.component.spec.ts
+│  │  │  │  │     │  └─ sidebar-submenu.component.ts
+│  │  │  │  │     ├─ sidebar.component.css
+│  │  │  │  │     ├─ sidebar.component.html
+│  │  │  │  │     ├─ sidebar.component.spec.ts
+│  │  │  │  │     └─ sidebar.component.ts
+│  │  │  │  ├─ layout-routing.module.ts
+│  │  │  │  ├─ layout.component.css
+│  │  │  │  ├─ layout.component.html
+│  │  │  │  ├─ layout.component.spec.ts
+│  │  │  │  ├─ layout.component.ts
+│  │  │  │  ├─ layout.module.ts
+│  │  │  │  └─ services
+│  │  │  │     ├─ menu.service.spec.ts
+│  │  │  │     └─ menu.service.ts
+│  │  │  └─ uikit
+│  │  │     ├─ pages
+│  │  │     │  └─ table
+│  │  │     │     ├─ components
+│  │  │     │     │  ├─ table-action
+│  │  │     │     │  │  ├─ table-action.component.css
+│  │  │     │     │  │  ├─ table-action.component.html
+│  │  │     │     │  │  ├─ table-action.component.spec.ts
+│  │  │     │     │  │  └─ table-action.component.ts
+│  │  │     │     │  ├─ table-footer
+│  │  │     │     │  │  ├─ table-footer.component.css
+│  │  │     │     │  │  ├─ table-footer.component.html
+│  │  │     │     │  │  ├─ table-footer.component.spec.ts
+│  │  │     │     │  │  └─ table-footer.component.ts
+│  │  │     │     │  ├─ table-header
+│  │  │     │     │  │  ├─ table-header.component.css
+│  │  │     │     │  │  ├─ table-header.component.html
+│  │  │     │     │  │  ├─ table-header.component.spec.ts
+│  │  │     │     │  │  └─ table-header.component.ts
+│  │  │     │     │  └─ table-row
+│  │  │     │     │     ├─ table-row.component.css
+│  │  │     │     │     ├─ table-row.component.html
+│  │  │     │     │     ├─ table-row.component.spec.ts
+│  │  │     │     │     └─ table-row.component.ts
+│  │  │     │     ├─ model
+│  │  │     │     │  └─ user.model.ts
+│  │  │     │     ├─ services
+│  │  │     │     │  └─ table-filter.service.ts
+│  │  │     │     ├─ table.component.css
+│  │  │     │     ├─ table.component.html
+│  │  │     │     ├─ table.component.spec.ts
+│  │  │     │     └─ table.component.ts
+│  │  │     ├─ uikit-routing.module.ts
+│  │  │     ├─ uikit.component.css
+│  │  │     ├─ uikit.component.html
+│  │  │     ├─ uikit.component.spec.ts
+│  │  │     ├─ uikit.component.ts
+│  │  │     └─ uikit.module.ts
+│  │  ├─ services
+│  │  │  ├─ auth.service.spec.ts
+│  │  │  ├─ auth.service.ts
+│  │  │  ├─ dashboard.service.spec.ts
+│  │  │  └─ dashboard.service.ts
+│  │  └─ shared
+│  │     ├─ components
+│  │     │  ├─ button
+│  │     │  │  ├─ button.component.css
+│  │     │  │  ├─ button.component.html
+│  │     │  │  ├─ button.component.spec.ts
+│  │     │  │  └─ button.component.ts
+│  │     │  └─ responsive-helper
+│  │     │     ├─ responsive-helper.component.css
+│  │     │     ├─ responsive-helper.component.html
+│  │     │     ├─ responsive-helper.component.spec.ts
+│  │     │     └─ responsive-helper.component.ts
+│  │     ├─ directives
+│  │     │  └─ click-outside.directive.ts
+│  │     ├─ dummy
+│  │     │  └─ user.dummy.ts
+│  │     ├─ models
+│  │     │  └─ chart-options.ts
+│  │     ├─ pipes
+│  │     ├─ utils
+│  │     │  └─ ckassnames.ts
+│  │     └─ validators
+│  ├─ assets
+│  │  ├─ avatars
+│  │  │  └─ avt-01.jpg
+│  │  ├─ bg
+│  │  │  └─ auth.png
+│  │  ├─ icons
+│  │  │  ├─ google-logo.svg
+│  │  │  ├─ heroicons
+│  │  │  │  ├─ outline
+│  │  │  │  │  ├─ arrow-long-left.svg
+│  │  │  │  │  ├─ arrow-long-right.svg
+│  │  │  │  │  ├─ arrow-sm-right.svg
+│  │  │  │  │  ├─ arrow-sm-up.svg
+│  │  │  │  │  ├─ bell.svg
+│  │  │  │  │  ├─ bookmark.svg
+│  │  │  │  │  ├─ chart-pie.svg
+│  │  │  │  │  ├─ cog-6-tooth.svg
+│  │  │  │  │  ├─ cog.svg
+│  │  │  │  │  ├─ cube.svg
+│  │  │  │  │  ├─ cursor-click.svg
+│  │  │  │  │  ├─ dots-horizontal.svg
+│  │  │  │  │  ├─ download.svg
+│  │  │  │  │  ├─ ellipsis-vertical.svg
+│  │  │  │  │  ├─ exclamation-triangle.svg
+│  │  │  │  │  ├─ eye-off.svg
+│  │  │  │  │  ├─ eye.svg
+│  │  │  │  │  ├─ folder.svg
+│  │  │  │  │  ├─ gift.svg
+│  │  │  │  │  ├─ information-circle.svg
+│  │  │  │  │  ├─ lock-closed.svg
+│  │  │  │  │  ├─ logout.svg
+│  │  │  │  │  ├─ magnifying-glass.svg
+│  │  │  │  │  ├─ menu.svg
+│  │  │  │  │  ├─ minus.svg
+│  │  │  │  │  ├─ moon.svg
+│  │  │  │  │  ├─ plus.svg
+│  │  │  │  │  ├─ refresh.svg
+│  │  │  │  │  ├─ shield-check.svg
+│  │  │  │  │  ├─ shield-exclamation.svg
+│  │  │  │  │  ├─ sun.svg
+│  │  │  │  │  ├─ user-circle.svg
+│  │  │  │  │  ├─ users.svg
+│  │  │  │  │  ├─ view-grid.svg
+│  │  │  │  │  └─ x.svg
+│  │  │  │  └─ solid
+│  │  │  │     ├─ chevron-double-left.svg
+│  │  │  │     ├─ chevron-right.svg
+│  │  │  │     └─ play.svg
+│  │  │  ├─ logo.svg
+│  │  │  └─ tablericons
+│  │  │     ├─ arrows-shuffle-2.svg
+│  │  │     ├─ headphones.svg
+│  │  │     ├─ player-skip-back-filled.svg
+│  │  │     ├─ player-skip-forward-filled.svg
+│  │  │     ├─ repeat.svg
+│  │  │     ├─ text-direction-ltr.svg
+│  │  │     └─ text-direction-rtl.svg
+│  │  ├─ illustrations
+│  │  │  ├─ 404.svg
+│  │  │  └─ 500.svg
+│  │  ├─ images
+│  │  │  ├─ auth-screens.png
+│  │  │  ├─ img-01.jpg
+│  │  │  ├─ img-02.jpg
+│  │  │  ├─ img-03.jpg
+│  │  │  └─ podcast-episode.png
+│  │  ├─ preview
+│  │  │  ├─ logo.png
+│  │  │  └─ preview.gif
+│  │  └─ styles
+│  │     └─ apexchart.css
+│  ├─ environments
+│  │  ├─ environment.prod.ts
+│  │  └─ environment.ts
+│  ├─ favicon.ico
+│  ├─ index.html
+│  ├─ main.ts
+│  ├─ polyfills.ts
+│  ├─ styles.css
+│  └─ test.ts
+├─ Testpages
+│  └─ highcharts-example.html
+├─ tests-e2e
+│  ├─ navbar.e2e.spec.ts
+│  ├─ sidebar.e2e.spec.ts
+│  └─ table.e2e.spec.ts
+├─ tsconfig.app.json
+├─ tsconfig.json
+└─ tsconfig.spec.json
 
-<p align="center">
-    <a href="https://github.com/luciano-work/angular-tailwind/stargazers">
-        <img height= "24" src="https://img.shields.io/github/stars/luciano-work/angular-tailwind?colorA=1e1e28&colorB=c9cbff&style=for-the-badge">
-    </a>
-    <a href="https://github.com/luciano-work/angular-tailwind/issues">
-        <img height= "24" src="https://img.shields.io/github/issues/luciano-work/angular-tailwind?colorA=1e1e28&colorB=f7be95&style=for-the-badge">
-    </a>
-    <a href="https://github.com/luciano-work/angular-tailwind/contributors">
-        <img height= "24" src="https://img.shields.io/github/contributors/luciano-work/angular-tailwind?colorA=1e1e28&colorB=b1e1a6&style=for-the-badge">
-    </a>
-</p>
-
-#### Motivation
-
-For me, the best strategy for learning new skills is to practice. I have created this project to learn more about Tailwind CSS using my favorite framework (Angular). I have to tell you, Tailwind is amazing!
-
-<b><img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" width="14"/> The project is not finished yet!</b>
-
-See [Demo](https://at.lanno.dev) page.
-
-<p>
-  <img alt="Preview" src="src/assets/preview/preview.gif">
-</p>
-
-#### Versions
-
-<a href="https://angular.io"><img height= "24" src= "https://img.shields.io/badge/Angular 19-DD0031?style=for-the-badge&logo=angular&logoColor=white"></a> <a href="https://tailwindcss.com"><img height= "24" src= "https://img.shields.io/badge/Tailwind 4-0ea5e9?style=for-the-badge&logo=tailwind-css&logoColor=white"></a>
-
-#### Features
-
-- [x] Sidebar
-- [x] Dark Theme
-- [x] Navbar
-- [x] Footer
-- [x] Auth Module
-- [x] Dashboard Module
-- [x] Standalone components
-- [x] Angular Signals
-- [x] Multi Theme
-- [x] Tests E2E
-- [x] RTL support
-- [ ] Guards
-- [ ] Animations
-- [ ] Jasmine tests
-
-#### Commands
-
-| command                   | What it does?                                 |
-| ------------------------- | :-------------------------------------------- |
-| `npm start`               | Starts the server in dev mode                 |
-| `npm run lint`            | Runs ESLint on project                        |
-| `npm run prettier`        | Runs prettier on entire src folder            |
-| `npm run prettier:verify` | Runs prettier-check and throws error if fails |
-| `npm run prettier:staged` | Runs prettier on only staged (changed) files  |
-| `npm run test:e2e`        | Runs playwright e2e test with UI              |
-
-#### Dependencies
-
-| Package            | What it does?                                                                               | Link                                                   |
-| ------------------ | :------------------------------------------------------------------------------------------ | :----------------------------------------------------- |
-| `angular-svg-icon` | Provides a means to inline SVG files to allow for them to be easily styled by CSS and code. | [Here](https://www.npmjs.com/package/angular-svg-icon) |
-| `apexcharts`       | Modern & Interactive Open-source Charts                                                     | [Here](https://www.npmjs.com/package/apexcharts)       |
-| `ng-apexcharts`    | Angular wrapper for ApexCharts to build interactive visualizations in Angular.              | [Here](https://www.npmjs.com/package/ng-apexcharts)    |
-
-#### Dev Dependencies
-
-| Package                       | What it does?                                                                                            | Link                                                              |
-| ----------------------------- | :------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `prettier`                    | An opinionated code formatter                                                                            | [Here](https://www.npmjs.com/package/prettier)                    |
-| `prettier-plugin-tailwindcss` | A Prettier plugin for Tailwind CSS that automatically sorts classes based on our recommended class order | [Here](https://www.npmjs.com/package/prettier-plugin-tailwindcss) |
-| `tailwind-scrollbar`          | Tailwind plugin for styling scrollbars.                                                                  | [Here](https://www.npmjs.com/package/tailwind-scrollbar)          |
-| `tailwindcss`                 | A utility-first CSS framework for rapidly building custom user interfaces.                               | [Here](https://www.npmjs.com/package/tailwindcss)                 |
-
-#### Icons and Patterns
-
-This project use [Hero Icons](https://heroicons.com/) , [Hero Patterns](https://heropatterns.com/) and [Popsys illustrations](https://popsy.co/)
-
-#### Sponsors ❤️
-
-Check out our awesome sponsors!
-
-[<img src="https://avatars.githubusercontent.com/u/19482926?v=4" width="60">](https://github.com/jhonnygarcia)
-[<img src="https://avatars.githubusercontent.com/u/44730111?v=4" width="60">](https://github.com/ramses-i)
-[<img src="https://avatars.githubusercontent.com/u/67803716?v=4" width="60">](https://github.com/walteribanez555)
-
-### Repo Activity
-
-![Alt](https://repobeats.axiom.co/api/embed/75671ffcba2d7e21fb5ceb8e32598fb8335cfa20.svg 'Repobeats analytics image')
-
-#### Disclaimer
-
-The Tailwind name and logos are trademarks of Tailwind Labs Inc.
-The Angular name and logos are trademarks of Google.
+## Attribution
+For third-party resources and attributions, please see [ATTRIBUTION.md](./ATTRIBUTION.md)
+```

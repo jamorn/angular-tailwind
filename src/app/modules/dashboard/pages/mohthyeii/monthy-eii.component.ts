@@ -23,30 +23,55 @@ export class MonthyEiiComponent implements OnInit, OnDestroy, AfterViewInit {
   // Add chartOptions1 configuration
   chartOptions1: Highcharts.Options = {
     chart: {
-      type: 'column'
+      type: 'column',
+      backgroundColor: '#121212',
+      style: {
+        fontFamily: 'inherit'
+      },
+      height: 500
     },
     title: {
       text: 'EII Weekly Report',
       style: {
-        fontSize: '20px'
+        color: '#FFFFFF',
+        fontSize: '20px',
+        fontWeight: 'bold'
       }
     },
     xAxis: {
       categories: [],
-      crosshair: true
+      crosshair: true,
+      labels: {
+        style: {
+          color: '#FFFFFF',
+          fontSize: '12px'
+        }
+      },
+      gridLineColor: 'rgba(255, 255, 255, 0.1)',
+      lineColor: 'rgba(255, 255, 255, 0.2)'
     },
     yAxis: {
       title: {
-        text: '%'
-      }
+        text: '%',
+        style: { color: '#FFFFFF' }
+      },
+      labels: {
+        style: {
+          color: '#FFFFFF',
+          fontSize: '12px'
+        }
+      },
+      gridLineColor: 'rgba(255, 255, 255, 0.1)'
     },
     tooltip: {
-      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.2f} %</b></td></tr>',
-      footerFormat: '</table>',
-      shared: true,
-      useHTML: true
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      style: {
+        color: '#FFFFFF'
+      },
+      borderWidth: 0,
+      shadow: false,
+      useHTML: true,
+      shared: true
     },
     plotOptions: {
       column: {
@@ -155,32 +180,114 @@ export class MonthyEiiComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  chartOptions2: Highcharts.Options = {  // แก้ไขจาก Options เป็น Highcharts.Options
+  chartOptions2: Highcharts.Options = {
     chart: {
-      type: 'column'
+      type: 'column',
+      backgroundColor: '#121212',
+      style: {
+        fontFamily: 'inherit'
+      },
+      height: 500
     },
     title: {
-      text: 'EII monitoring report',
+      text: 'EII Monitoring Report',
       style: {
-        fontSize: '20px'
+        color: '#FFFFFF',
+        fontSize: '20px',
+        fontWeight: 'bold'
       }
     },
     xAxis: {
       categories: [],
-      crosshair: true
+      crosshair: true,
+      labels: {
+        style: {
+          color: '#FFFFFF',
+          fontSize: '12px'
+        }
+      },
+      gridLineColor: 'rgba(255, 255, 255, 0.1)',
+      lineColor: 'rgba(255, 255, 255, 0.2)'
     },
     yAxis: {
       title: {
-        text: '%'
-      }
+        text: '%',
+        style: { color: '#FFFFFF' }
+      },
+      labels: {
+        style: {
+          color: '#FFFFFF',
+          fontSize: '12px'
+        }
+      },
+      gridLineColor: 'rgba(255, 255, 255, 0.1)'
     },
     tooltip: {
-      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.2f} %</b></td></tr>',
-      footerFormat: '</table>',
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',  // เปลี่ยนเป็นพื้นขาวโปร่งแสง
+      style: {
+        color: '#121212'  // เปลี่ยนสีตัวอักษรเป็นสีเข้ม
+      },
+      borderWidth: 0,
+      borderRadius: 8,  // เพิ่มความโค้งมนของ tooltip
+      shadow: true,     // เพิ่มเงา
+      animation: true,  // เพิ่มอนิเมชั่น
+      useHTML: true,
       shared: true,
-      useHTML: true
+      formatter: function() {
+        if (!this.points) return '';
+    
+        // แก้ไขการแสดง category
+        const category = this.points[0].key || '';  // ใช้ key แทน this.x
+    
+        let html = `
+          <div style="
+            min-width: 150px;
+            padding: 8px;
+            line-height: 1.5;
+            font-size: 12px;
+          ">
+            <div style="
+              font-weight: bold;
+              margin-bottom: 8px;
+              color: #121212;
+            ">${category}</div>  <!-- ใช้ category แทน (this as any).x -->
+            <div style="color: #666666; margin-bottom: 8px;">EII แยกตามหน่วยงาน</div>
+        `;
+    
+        this.points.forEach(point => {
+          const value = point.y ?? 0; // Add null coalescing operator
+          html += `
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin: 4px 0;
+            ">
+              <span style="
+                display: flex;
+                align-items: center;
+              ">
+                <span style="
+                  display: inline-block;
+                  width: 8px;
+                  height: 8px;
+                  border-radius: 50%;
+                  background-color: ${point.color};
+                  margin-right: 6px;
+                "></span>
+                <span style="color: #444444">${point.series.name}:</span>
+              </span>
+              <span style="
+                font-weight: bold;
+                color: #121212;
+              ">${value.toFixed(2)}%</span>
+            </div>
+          `;
+        });
+    
+        html += '</div>';
+        return html;
+      }
     },
     plotOptions: {
       column: {
@@ -197,29 +304,35 @@ export class MonthyEiiComponent implements OnInit, OnDestroy, AfterViewInit {
     series: [
       {
         name: 'HDPE',
-        type: 'column',  // Add series type
-        data: []
+        type: 'column',
+        data: [],
+        color: '#2E86C1'  // สีฟ้าเข้ม
       },
       {
         name: 'PP12',
-        type: 'column',  // Add series type
-        data: []
+        type: 'column',
+        data: [],
+        color: '#27AE60'  // สีเขียวสด
       },
       {
         name: 'PP3',
-        type: 'column',  // Add series type
-        data: []
+        type: 'column',
+        data: [],
+        color: '#8E44AD'  // สีม่วง
       },
       {
         name: 'Target',
         type: 'line',
         data: [],
         marker: {
-          symbol: 'circle'
+          symbol: 'circle',
+          radius: 4
         },
-        color: '#FF0000'
+        color: '#E74C3C',  // สีแดงอิฐ
+        dashStyle: 'ShortDash',
+        lineWidth: 2
       }
-    ] as Highcharts.SeriesOptionsType[]  // Add type assertion
+    ] as Highcharts.SeriesOptionsType[]
   };
   dataProvider2 = [
     {

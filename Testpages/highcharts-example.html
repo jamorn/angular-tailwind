@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OEE & GiveAway Highcharts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .page-title {
+            text-align: center;
+            color: #2F4F4F;
+            padding: 30px 0;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .chart-style { 
+            height: 600px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">Chart With Highcharts</h1>
+    <div id="oeeChart" class="chart-style"></div>
+    <div id="giveawayChart" class="chart-style"></div>
+
+    <script>
+       const Mockdata = {
+            "OEEDataListPP12A": [
+                {
+                    "Item": 1,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 90.98,
+                    "Quality": 100.00,
+                    "OEE": 90.98,
+                    "Giveaway": 25.113,
+                    "Remarks": [],
+                    "DateString": "2025-03-03",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 2,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.41,
+                    "Quality": 100.00,
+                    "OEE": 93.41,
+                    "Giveaway": 25.113,
+                    "Remarks": [],
+                    "DateString": "2025-03-04",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 3,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-05",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 4,
+                    "MachineName": "PP12/A",
+                    "Availability": 55.96,
+                    "Performance": 92.62,
+                    "Quality": 100.00,
+                    "OEE": 51.83,
+                    "Giveaway": 25.117,
+                    "Remarks": [
+                        "8.05-12:30 เครื่องจักร Alarm bottom welding unit บ่อยมากตั้งแต่เริ่ม Start แก้ใขทำการถอดชุด Bottom Seal ออกมาเปลี่ยน Teflon ใหม่และทำความสะอาดทุกซอกทุกมุมแต่ก็ยังไม่หาย",
+                        "ทำการ Carlibate ใหม่แล้วก็ยังไม่หาย ไฟสถานะขึ้นเป็น 0 เมื่อชุด Bottom ทำงานBag ไปปรับไป",
+                        "รอกะบ่ายมาแก้ใขต่อ wo 10875187  MI Check & Repair Bottom seal Line A Temp swing 14.30 - 16.30  MI เปลื่ยน Sealing Bar ใหม่ทั้งชุด"
+                    ],
+                    "DateString": "2025-03-06",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 5,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-07",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 6,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-08",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 7,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 91.00,
+                    "Quality": 100.00,
+                    "OEE": 91.00,
+                    "Giveaway": 25.115,
+                    "Remarks": [],
+                    "DateString": "2025-03-09",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 8,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 92.00,
+                    "Quality": 100.00,
+                    "OEE": 92.00,
+                    "Giveaway": 25.116,
+                    "Remarks": [],
+                    "DateString": "2025-03-10",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 9,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.00,
+                    "Quality": 100.00,
+                    "OEE": 93.00,
+                    "Giveaway": 25.117,
+                    "Remarks": [],
+                    "DateString": "2025-03-11",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 10,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 94.00,
+                    "Quality": 100.00,
+                    "OEE": 94.00,
+                    "Giveaway": 25.118,
+                    "Remarks": [],
+                    "DateString": "2025-03-12",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 11,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 95.00,
+                    "Quality": 100.00,
+                    "OEE": 95.00,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-13",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 12,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 96.00,
+                    "Quality": 100.00,
+                    "OEE": 96.00,
+                    "Giveaway": 25.120,
+                    "Remarks": [],
+                    "DateString": "2025-03-14",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 13,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 97.00,
+                    "Quality": 100.00,
+                    "OEE": 97.00,
+                    "Giveaway": 25.121,
+                    "Remarks": [],
+                    "DateString": "2025-03-15",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 14,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 98.00,
+                    "Quality": 100.00,
+                    "OEE": 98.00,
+                    "Giveaway": 25.122,
+                    "Remarks": [],
+                    "DateString": "2025-03-16",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 15,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 90.71,
+                    "Quality": 100.00,
+                    "OEE": 90.71,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-17",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 16,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 91.00,
+                    "Quality": 100.00,
+                    "OEE": 91.00,
+                    "Giveaway": 25.115,
+                    "Remarks": [],
+                    "DateString": "2025-03-18",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 17,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 92.00,
+                    "Quality": 100.00,
+                    "OEE": 92.00,
+                    "Giveaway": 25.116,
+                    "Remarks": [],
+                    "DateString": "2025-03-19",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 18,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.00,
+                    "Quality": 100.00,
+                    "OEE": 93.00,
+                    "Giveaway": 25.117,
+                    "Remarks": [],
+                    "DateString": "2025-03-20",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 19,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 94.00,
+                    "Quality": 100.00,
+                    "OEE": 94.00,
+                    "Giveaway": 25.118,
+                    "Remarks": [],
+                    "DateString": "2025-03-21",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 20,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 95.00,
+                    "Quality": 100.00,
+                    "OEE": 95.00,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-22",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 21,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 96.00,
+                    "Quality": 100.00,
+                    "OEE": 96.00,
+                    "Giveaway": 25.120,
+                    "Remarks": [],
+                    "DateString": "2025-03-23",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 22,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-24",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                }
+            ]
+        }
+
+        function makechart_oee(data) {
+            Highcharts.chart('oeeChart', {
+                title: { text: data.OEEDataListPP12A[0].TitleOEE },
+                xAxis: {
+                    type: 'datetime',
+                    categories: data.OEEDataListPP12A.map(d => d.DateString),
+                    labels: {
+                        rotation: 35,  // หมุน 65 องศาทวนเข็มนาฬิกา ค่าเดิมคือ -45
+                        style: {
+                            fontSize: '11px'
+                        }
+                    },
+                    crosshair: {
+                        color: '#FF0000',     // สีแดง
+                        width: 1,             // ความหนา 1px
+                        zIndex: 5             // แสดงทับด้านบนของกราฟ
+                    }
+                },
+                yAxis: {
+                    title: { text: '%' },
+                    gridLineWidth: 0        // ซ่อนเส้นกริดแนวนอน
+                },
+                plotOptions: {
+                    series: {
+                        stickyTracking: true,  // ติดตามเมาส์อย่างต่อเนื่อง
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',  // พื้นหลังสีขาวแบบโปร่งใส
+                    borderWidth: 1,
+                    borderColor: '#E0E0E0',  // ขอบสีเทาอ่อน
+                    borderRadius: 8,         // มุมโค้ง
+                    shadow: true,           // เพิ่มเงา
+                    style: {
+                        color: '#333333',    // สีตัวอักษร
+                        fontSize: '12px',
+                        fontFamily: 'Arial, sans-serif'
+                    },
+                    useHTML: true,
+                    crosshairs: [{
+                        color: '#FF0000',
+                        width: 1,
+                        dashStyle: 'Solid'
+                    }],
+                    formatter: function() {
+                        let remarks = this.points[0].point.remarks || [];
+                        let remarkHtml = remarks.length > 0 
+                            ? '<div style="margin-top:8px;padding:8px;background:#F8F9FA;border-radius:4px;">' +
+                              remarks.map(r => '<div style="color:#666;margin:4px 0;">\u2022 ' + r + '</div>').join('') +
+                              '</div>'
+                            : '<div style="color:#666;margin-top:4px;">No Remarks</div>';
+                        
+                        let date = this.points[0].key || this.x;
+                        let tooltipHtml = `<div style="padding:4px 0"><b>Date: ${date}</b></div>`;
+                        
+                        // ปรับแต่งการจัดวางข้อมูล
+                        this.points.forEach(point => {
+                            tooltipHtml += `
+                                <div style="display:grid;grid-template-columns:140px auto;align-items:center;margin:4px 0">
+                                    <div style="display:flex;align-items:center;">
+                                        <span style="color:${point.color};margin-right:5px">\u25CF</span>
+                                        <span>${point.series.name}:</span>
+                                    </div>
+                                    <div style="text-align:left;padding-left:10px">
+                                        <b>${point.y}%</b>
+                                    </div>
+                                </div>`;
+                        });
+                        
+                        tooltipHtml += `<div style="margin-top:8px;border-top:1px solid #E0E0E0;padding-top:8px">
+                            <b>Remarks:</b>${remarkHtml}
+                        </div>`;
+                        
+                        return tooltipHtml;
+                    }
+                },
+                series: [{
+                    name: 'OEE',
+                    type: 'column',
+                    data: data.OEEDataListPP12A.map(d => ({
+                        y: d.OEE,
+                        color: d.Color,  // สีถูกกำหนดจาก backend
+                        remarks: d.Remarks
+                    }))
+                }, {
+                    name: 'Availability',
+                    type: 'line',
+                    color: '#4572A7',  // สีฟ้าเข้ม - ดูเป็นมืออาชีพ
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'circle',
+                        radius: 4
+                    },
+                    data: data.OEEDataListPP12A.map(d => d.Availability)
+                }, {
+                    name: 'Performance',
+                    type: 'line',
+                    color: '#AA4643',  // สีส้มแดง - ดูมีพลัง
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'diamond',
+                        radius: 4
+                    },
+                    data: data.OEEDataListPP12A.map(d => d.Performance)
+                }, {
+                    name: 'Quality',
+                    type: 'line',
+                    color: '#89A54E',  // สีเขียวอ่อน - ดูสบายตา
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'triangle',
+                        radius: 4
+                    },
+                    data: data.OEEDataListPP12A.map(d => d.Quality)
+                }, {
+                    name: 'Target',
+                    type: 'line',
+                    color: '#FF0000',  // คงสีแดงไว้ตามเดิม
+                    dashStyle: 'Solid',
+                    lineWidth: 2,
+                    data: data.OEEDataListPP12A.map(d => d.OeeTarget),
+                    marker: {
+                        enabled: false
+                    }
+                }]
+            });
+        }
+
+        function makechart_give_away(data) {
+            const filteredData = data.filter(r => r.OEE > 0);
+            Highcharts.chart('giveawayChart', {
+                title: { text: data[0].TitleGiveAway },
+                xAxis: {
+                    type: 'datetime',
+                    categories: filteredData.map(d => d.DateString),
+                    crosshair: {
+                        color: '#FF0000',
+                        width: 1,
+                        zIndex: 5
+                    }
+                },
+                yAxis: {
+                    title: { text: 'kg' },
+                    gridLineWidth: 0
+                },
+                tooltip: {
+                    shared: true,
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderWidth: 1,
+                    borderColor: '#E0E0E0',
+                    borderRadius: 8,
+                    shadow: true,
+                    style: {
+                        color: '#333333',
+                        fontSize: '12px',
+                        fontFamily: 'Arial, sans-serif'
+                    },
+                    useHTML: true,
+                    crosshairs: [{
+                        color: '#FF0000',
+                        width: 1,
+                        dashStyle: 'Solid'
+                    }],
+                    formatter: function() {
+                        let date = this.points[0].key || this.x;
+                        let tooltipHtml = `<div style="padding:4px 0"><b>Date: ${date}</b></div>`;
+                        
+                        this.points.forEach(point => {
+                            tooltipHtml += `
+                                <div style="display:grid;grid-template-columns:140px auto;align-items:center;margin:4px 0">
+                                    <div style="display:flex;align-items:center;">
+                                        <span style="color:${point.color};margin-right:5px">\u25CF</span>
+                                        <span>${point.series.name}:</span>
+                                    </div>
+                                    <div style="text-align:left;padding-left:10px">
+                                        <b>${point.y}</b>
+                                    </div>
+                                </div>`;
+                        });
+                        
+                        return tooltipHtml;
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        stickyTracking: true,
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'MAX',
+                    data: filteredData.map(d => d.GiveAwayMax),
+                    color: '#CC0000',
+                    dashStyle: 'ShortDash',
+                    lineWidth: 2
+                }, {
+                    name: 'MIN',
+                    data: filteredData.map(d => d.GiveAwayMin),
+                    color: '#CC0000',
+                    dashStyle: 'ShortDash',
+                    lineWidth: 2
+                }, {
+                    name: 'Give Away',
+                    data: filteredData.map(d => d.Giveaway),
+                    color: '#008000',
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'square',
+                        radius: 4
+                    }
+                }]
+            });
+        }
+
+        makechart_oee(Mockdata);
+        makechart_give_away(Mockdata.OEEDataListPP12A);
+    </script>
+</body>
+</html>

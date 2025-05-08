@@ -9,6 +9,7 @@ import { Nft } from '../../models/nft';
 @Component({
   selector: 'app-nft',
   templateUrl: './nft.component.html',
+  standalone: true, // เพิ่ม standalone: true
   imports: [
     NftHeaderComponent,
     NftDualCardComponent,

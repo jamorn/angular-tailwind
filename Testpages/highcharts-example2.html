@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>oee & giveaway Highcharts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .page-title {
+            text-align: center;
+            color: #2F4F4F;
+            padding: 30px 0;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .chart-style { 
+            height: 600px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">Chart With Highcharts</h1>
+    <div id="oeeChart" class="chart-style"></div>
+    <div id="giveawayChart" class="chart-style"></div>
+
+    <script>
+       const Mockdata = {
+            "oeeDataListPP12A": [
+                {
+                    "item": 1,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 90.98,
+                    "quality": 100.00,
+                    "oee": 90.98,
+                    "giveaway": 25.113,
+                    "remarks": [],
+                    "dateString": "2025-03-03",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "มีการผลิต"
+                },
+                {
+                    "item": 2,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 93.41,
+                    "quality": 100.00,
+                    "oee": 93.41,
+                    "giveaway": 25.113,
+                    "remarks": [],
+                    "dateString": "2025-03-04",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "มีการผลิต"
+                },
+                {
+                    "item": 3,
+                    "machineName": "PP12/A",
+                    "availability": 0.00,
+                    "performance": 0.00,
+                    "quality": 0.00,
+                    "oee": 0.00,
+                    "giveaway": 25.110,
+                    "remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "dateString": "2025-03-05",
+                    "color": "#ff0000",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "มีการผลิต"
+                },
+                {
+                    "item": 4,
+                    "machineName": "PP12/A",
+                    "availability": 55.96,
+                    "performance": 92.62,
+                    "quality": 100.00,
+                    "oee": 51.83,
+                    "giveaway": 25.117,
+                    "remarks": [
+                        "8.05-12:30 เครื่องจักร Alarm bottom welding unit บ่อยมากตั้งแต่เริ่ม Start แก้ใขทำการถอดชุด Bottom Seal ออกมาเปลี่ยน Teflon ใหม่และทำความสะอาดทุกซอกทุกมุมแต่ก็ยังไม่หาย",
+                        "ทำการ Carlibate ใหม่แล้วก็ยังไม่หาย ไฟสถานะขึ้นเป็น 0 เมื่อชุด Bottom ทำงานBag ไปปรับไป",
+                        "รอกะบ่ายมาแก้ใขต่อ wo 10875187  MI Check & Repair Bottom seal Line A Temp swing 14.30 - 16.30  MI เปลื่ยน Sealing Bar ใหม่ทั้งชุด"
+                    ],
+                    "dateString": "2025-03-06",
+                    "color": "#ff0000",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "มีการผลิต"
+                },
+                {
+                    "item": 5,
+                    "machineName": "PP12/A",
+                    "availability": 0.00,
+                    "performance": 0.00,
+                    "quality": 0.00,
+                    "oee": 0.00,
+                    "giveaway": 25.110,
+                    "remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "dateString": "2025-03-07",
+                    "color": "#ff0000",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                },
+                {
+                    "item": 6,
+                    "machineName": "PP12/A",
+                    "availability": 0.00,
+                    "performance": 0.00,
+                    "quality": 0.00,
+                    "oee": 0.00,
+                    "giveaway": 25.110,
+                    "remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "dateString": "2025-03-08",
+                    "color": "#ff0000",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                },
+                {
+                    "item": 7,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 91.00,
+                    "quality": 100.00,
+                    "oee": 91.00,
+                    "giveaway": 25.115,
+                    "remarks": [],
+                    "dateString": "2025-03-09",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                },
+                {
+                    "item": 8,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 92.00,
+                    "quality": 100.00,
+                    "oee": 92.00,
+                    "giveaway": 25.116,
+                    "remarks": [],
+                    "dateString": "2025-03-10",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                },
+                {
+                    "item": 9,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 93.00,
+                    "quality": 100.00,
+                    "oee": 93.00,
+                    "giveaway": 25.117,
+                    "remarks": [],
+                    "dateString": "2025-03-11",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                },
+                {
+                    "item": 10,
+                    "machineName": "PP12/A",
+                    "availability": 100.00,
+                    "performance": 94.00,
+                    "quality": 100.00,
+                    "oee": 94.00,
+                    "giveaway": 25.118,
+                    "remarks": [],
+                    "dateString": "2025-03-12",
+                    "color": "#059918",
+                    "oeeTarget": 85.0,
+                    "giveAwayMin": 25.100,
+                    "giveAwayMax": 25.115,
+                    "titleOEE": "OEE Machine PP12/A",
+                    "titleGiveAway": "giveaway Machine PP12/A",
+                    "hasProduction":true,
+                    "productionStatusMessage": "ไม่มีการผลิต"
+                }
+            ]
+        }
+
+        function makechart_oee(data) {
+            Highcharts.chart('oeeChart', {
+                title: { text: data.oeeDataListPP12A[0].titleOEE },
+                xAxis: {
+                    type: 'category',
+                    categories: data.oeeDataListPP12A.map(d => d.dateString),
+                    labels: {
+                        rotation: 35,  // หมุน 65 องศาทวนเข็มนาฬิกา ค่าเดิมคือ -45
+                        style: {
+                            fontSize: '11px'
+                        }
+                    },
+                    crosshair: {
+                        color: '#FF0000',     // สีแดง
+                        width: 1,             // ความหนา 1px
+                        zIndex: 5             // แสดงทับด้านบนของกราฟ
+                    }
+                },
+                yAxis: {
+                    title: { text: '%' },
+                    gridLineWidth: 0        // ซ่อนเส้นกริดแนวนอน
+                },
+                plotOptions: {
+                    series: {
+                        stickyTracking: true,  // ติดตามเมาส์อย่างต่อเนื่อง
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    backgroundcolor: 'rgba(255, 255, 255, 0.95)',  // พื้นหลังสีขาวแบบโปร่งใส
+                    borderWidth: 1,
+                    bordercolor: '#E0E0E0',  // ขอบสีเทาอ่อน
+                    borderRadius: 8,         // มุมโค้ง
+                    shadow: true,           // เพิ่มเงา
+                    style: {
+                        color: '#333333',    // สีตัวอักษร
+                        fontSize: '12px',
+                        fontFamily: 'Arial, sans-serif'
+                    },
+                    useHTML: true,
+                    crosshairs: [{
+                        color: '#FF0000',
+                        width: 1,
+                        dashStyle: 'Solid'
+                    }],
+                    formatter: function() {
+                        let remarks = this.points[0].point.remarks || [];
+                        let remarkHtml = remarks.length > 0 
+                            ? '<div style="margin-top:8px;padding:8px;background:#F8F9FA;border-radius:4px;">' +
+                              remarks.map(r => '<div style="color:#666;margin:4px 0;">\u2022 ' + r + '</div>').join('') +
+                              '</div>'
+                            : '<div style="color:#666;margin-top:4px;">No remarks</div>';
+                        
+                        let date = this.points[0].key || this.x;
+                        let tooltipHtml = `<div style="padding:4px 0"><b>Date: ${date}</b></div>`;
+                        
+                        // ปรับแต่งการจัดวางข้อมูล
+                        this.points.forEach(point => {
+                            tooltipHtml += `
+                                <div style="display:grid;grid-template-columns:140px auto;align-items:center;margin:4px 0">
+                                    <div style="display:flex;align-items:center;">
+                                        <span style="color:${point.color};margin-right:5px">\u25CF</span>
+                                        <span>${point.series.name}:</span>
+                                    </div>
+                                    <div style="text-align:left;padding-left:10px">
+                                        <b>${point.y}%</b>
+                                    </div>
+                                </div>`;
+                        });
+                        
+                        tooltipHtml += `<div style="margin-top:8px;border-top:1px solid #E0E0E0;padding-top:8px">
+                            <b>remarks:</b>${remarkHtml}
+                        </div>`;
+                        
+                        return tooltipHtml;
+                    }
+                },
+                series: [{
+                    name: 'oee',
+                    type: 'column',
+                    data: data.oeeDataListPP12A.map(d => ({
+                        x: d.dateString,  // เพิ่ม x property เพื่อใช้ dateString เป็น index
+                        y: d.oee,
+                        color: d.color,  // สีถูกกำหนดจาก backend
+                        remarks: d.remarks
+                    }))
+                }, {
+                    name: 'availability',
+                    type: 'line',
+                    color: '#4572A7',  // สีฟ้าเข้ม - ดูเป็นมืออาชีพ
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'circle',
+                        radius: 4
+                    },
+                    data: data.oeeDataListPP12A.map(d => d.availability)
+                }, {
+                    name: 'performance',
+                    type: 'line',
+                    color: '#AA4643',  // สีส้มแดง - ดูมีพลัง
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'diamond',
+                        radius: 4
+                    },
+                    data: data.oeeDataListPP12A.map(d => d.performance)
+                }, {
+                    name: 'quality',
+                    type: 'line',
+                    color: '#89A54E',  // สีเขียวอ่อน - ดูสบายตา
+                    lineWidth: 2,
+                    marker: {
+                        symbol: 'triangle',
+                        radius: 4
+                    },
+                    data: data.oeeDataListPP12A.map(d => d.quality)
+                }, {
+                    name: 'Target',
+                    type: 'line',
+                    color: '#FF0000',  // คงสีแดงไว้ตามเดิม
+                    dashStyle: 'Solid',
+                    lineWidth: 2,
+                    data: data.oeeDataListPP12A.map(d => d.oeeTarget),
+                    marker: {
+                        enabled: false
+                    }
+                }]
+            });
+        }     
+
+        makechart_oee(Mockdata);
+       
+    </script>
+</body>
+</html>

@@ -1,51 +1,23 @@
+
+# ข้อมูลเดิม 
 import { MenuItem } from '../models/menu.model';
 
 export class Menu {
   public static pages: MenuItem[] = [
     {
-      group: 'Production',
+      group: 'Base',
       separator: false,
       items: [
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'OEE System',
-          route: '/dashboard/oee',  // เปลี่ยนจาก '/dashboard' เป็น '/dashboard/oee'
-          children: [
-            { label: 'OEE Dashboard', route: '/dashboard/oee' },
-            { label: 'OEE Entry', route: '/dashboard/oee-entry' },
-          ],
-        }
-      ],
-    },
-    {
-      group: 'Reports',  // เปลี่ยนจาก Base เป็น Reports
-      separator: false,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/chart-bar.svg',
-          label: 'Reports',
+          label: 'Dashboard',
           route: '/dashboard',
-          children: [
-            { label: 'Safety', route: '/dashboard/safety' },
-            { label: 'Giveaway', route: '/dashboard/giveaway' },
-            { label: 'EII', route: '/dashboard/eii' }
-          ],
-        }
-      ]
-    },
-    {
-      group: 'Administration',
-      separator: true,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/cog.svg',
-          label: 'Admin Dashboard',
-          route: '/admin',
-          children: [
-            { label: 'User Management', route: '/admin/users' },
-            { label: 'Settings', route: '/admin/settings' },
-            { label: 'System Config', route: '/admin/config' },
-          ],
+          children: [{ label: 'Nfts', route: '/dashboard/nfts' }
+          /**/  ,{ label: 'Safety', route: '/dashboard/safety' }
+            ,{ label: 'Oee', route: '/dashboard/oee' }
+            ,{ label: 'Giveaway', route: '/dashboard/giveaway' }
+            ,{ label: 'Eii', route: '/dashboard/eii' } 
+            ],
         },
         {
           icon: 'assets/icons/heroicons/outline/lock-closed.svg',
@@ -58,7 +30,22 @@ export class Menu {
             { label: 'New Password', route: '/auth/new-password' },
             { label: 'Two Steps', route: '/auth/two-steps' },
           ],
-        }
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/exclamation-triangle.svg',
+          label: 'Errors',
+          route: '/errors',
+          children: [
+            { label: '404', route: '/errors/404' },
+            { label: '500', route: '/errors/500' },
+          ],
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/cube.svg',
+          label: 'Components',
+          route: '/components',
+          children: [{ label: 'Table', route: '/components/table' }],
+        },
       ],
     },
     {
