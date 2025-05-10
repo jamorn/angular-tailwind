@@ -1,0 +1,107 @@
+@layer utilities {
+    /* Variables */
+    :root {
+        --animate-wiggle: wiggle 1s ease-in-out infinite;
+        --animate-fade-in-down: fade-in-down 0.3s ease-out;
+        --animate-fade-out-down: fade-out-down 0.3s ease-out;
+        --animate-fade-in-up: fade-in-up 0.3s ease-out;
+        --animate-fade-out-up: fade-out-up 0.3s ease-out;
+    }
+
+    /* Animation keyframes */
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+  
+    @keyframes fade-in-down {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  
+    @keyframes fade-out-down {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+    }
+
+    @keyframes fade-in-up {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fade-out-up {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Animation utility classes */
+    .animate-wiggle {
+        animation: var(--animate-wiggle);
+    }
+
+    .animate-fade-in-down {
+        animation: var(--animate-fade-in-down);
+    }
+
+    .animate-fade-out-down {
+        animation: var(--animate-fade-out-down);
+    }
+
+    .animate-fade-in-up {
+        animation: var(--animate-fade-in-up);
+    }
+
+    .animate-fade-out-up {
+        animation: var(--animate-fade-out-up);
+    }
+
+    /* Animation modifiers */
+    .animate-once {
+        animation-iteration-count: 1;
+    }
+
+    .animate-twice {
+        animation-iteration-count: 2;
+    }
+
+    .animate-thrice {
+        animation-iteration-count: 3;
+    }
+
+    .animate-infinite {
+        animation-iteration-count: infinite;
+    }
+
+    /* Animation timing */
+    .animate-fast {
+        animation-duration: 0.15s;
+    }
+
+    .animate-slow {
+        animation-duration: 0.45s;
+    }
+}

@@ -1,0 +1,81 @@
+@layer base {
+  :root {
+    /* Font variables */
+    --font-poppins: Poppins, system-ui, sans-serif;
+    --font-nunito: Nunito Sans, sans-serif;
+
+    /* Theme colors */
+    --background: #FFFFFF;
+    --foreground: #0C1420;
+    --card: #F1F5F9;
+    --card-foreground: #000000;
+    --primary: #E11D48;
+    --primary-foreground: #FFFFFF;
+    --muted: #CFD9E5;
+    --muted-foreground: #64748B;
+    --destructive: #CC0033;
+    --destructive-foreground: #FAFAFA;
+    --border: #E2E8F0;
+
+    /* Shadow variable */
+    --shadow-custom: 0px 0px 50px 0px rgb(82 63 105 / 15%);
+  }
+
+  /* Dark theme */
+  .dark {
+    --background: #0A0A0A;
+    --foreground: #F2F2F2;
+    --card: #121212;
+    --card-foreground: #262626;
+    --muted: #262626;
+    --muted-foreground: #A3A3A3;
+    --border: #262626;
+    --primary: #60A5FA;
+    --primary-foreground: #F8FAFC;
+    --destructive: #FF1A1A;
+    --destructive-foreground: #FAFAFA;
+  }
+
+  /* Theme variations */
+  :root[data-theme='violet'] {
+    --primary: #8B5CF6;
+    --primary-foreground: #F8FAFC;
+    --muted: #DDD6FE;
+    --muted-foreground: #6B7280;
+  }
+
+  .dark[data-theme='violet'] {
+    --primary: #A78BFA;
+    --primary-foreground: #F8FAFC;
+    --muted: #4C1D95;
+    --muted-foreground: #9CA3AF;
+  }
+
+  :root[data-theme='blue'] {
+    --primary: #3B82F6;
+    --primary-foreground: #F8FAFC;
+    --muted: #BFDBFE;
+    --muted-foreground: #6B7280;
+  }
+
+  .dark[data-theme='blue'] {
+    --primary: #60A5FA;
+    --primary-foreground: #F8FAFC;
+    --muted: #1E40AF;
+    --muted-foreground: #9CA3AF;
+  }
+
+  :root[data-theme='red'] {
+    --primary: #EF4444;
+    --primary-foreground: #F8FAFC;
+    --muted: #FECACA;
+    --muted-foreground: #6B7280;
+  }
+
+  .dark[data-theme='red'] {
+    --primary: #F87171;
+    --primary-foreground: #F8FAFC;
+    --muted: #991B1B;
+    --muted-foreground: #9CA3AF;
+  }
+}

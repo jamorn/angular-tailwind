@@ -1,0 +1,57 @@
+@use '@angular/material' as mat;
+@use '@angular/material/typography' as typography;
+@use 'sass:map';
+
+// Define custom typography config
+$custom-typography: mat.define-typography-config(
+  $font-family: '"Kanit", sans-serif"',
+  $headline-1: mat.define-typography-level(96px, 96px, 300),
+  $headline-2: mat.define-typography-level(60px, 60px, 300),
+  $headline-3: mat.define-typography-level(48px, 48px, 400),
+  $headline-4: mat.define-typography-level(34px, 40px, 400),
+  $headline-5: mat.define-typography-level(24px, 32px, 400),
+  $headline-6: mat.define-typography-level(20px, 32px, 500),
+  $body-1: mat.define-typography-level(16px, 24px, 400),
+  $body-2: mat.define-typography-level(14px, 20px, 400),
+  $subtitle-1: mat.define-typography-level(16px, 28px, 400),
+  $subtitle-2: mat.define-typography-level(14px, 22px, 500),
+  $caption: mat.define-typography-level(12px, 20px, 400),
+  $button: mat.define-typography-level(14px, 14px, 500)
+);
+
+// Define palettes
+$light-primary: mat.define-palette(mat.$indigo-palette);
+$light-accent: mat.define-palette(mat.$purple-palette);
+$light-warn: mat.define-palette(mat.$red-palette);
+
+// Create themes
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $light-primary,
+    accent: $light-accent,
+    warn: $light-warn,
+  ),
+  typography: $custom-typography,
+  density: 0
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $light-primary,
+    accent: $light-accent,
+    warn: $light-warn,
+  ),
+  typography: $custom-typography,
+  density: 0
+));
+
+// Include base styles
+@include mat.core();
+
+// Apply default theme
+@include mat.all-component-themes($light-theme);
+
+// Apply dark theme to .dark class
+.dark {
+  @include mat.all-component-colors($dark-theme);
+}

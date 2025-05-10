@@ -3,22 +3,7 @@ import { MenuItem } from '../models/menu.model';
 export class Menu {
   public static pages: MenuItem[] = [
     {
-      group: 'Production',
-      separator: false,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'OEE System',
-          route: '/dashboard/oee',  // เปลี่ยนจาก '/dashboard' เป็น '/dashboard/oee'
-          children: [
-            { label: 'OEE Dashboard', route: '/dashboard/oee' },
-            { label: 'OEE Entry', route: '/dashboard/oee-entry' },
-          ],
-        }
-      ],
-    },
-    {
-      group: 'Reports',  // เปลี่ยนจาก Base เป็น Reports
+      group: 'Reports',
       separator: false,
       items: [
         {
@@ -27,6 +12,7 @@ export class Menu {
           route: '/dashboard',
           children: [
             { label: 'Safety', route: '/dashboard/safety' },
+            { label: 'OEE', route: '/dashboard/oee' },
             { label: 'Giveaway', route: '/dashboard/giveaway' },
             { label: 'EII', route: '/dashboard/eii' }
           ],
@@ -39,74 +25,25 @@ export class Menu {
       items: [
         {
           icon: 'assets/icons/heroicons/outline/cog.svg',
-          label: 'Admin Dashboard',
+          label: 'Settings',
           route: '/admin',
           children: [
-            { label: 'User Management', route: '/admin/users' },
-            { label: 'Settings', route: '/admin/settings' },
-            { label: 'System Config', route: '/admin/config' },
-          ],
+            { label: 'Users', route: '/admin/users' },
+            { label: 'Roles', route: '/admin/roles' },
+            { label: 'Permissions', route: '/admin/permissions' }
+          ]
         },
         {
-          icon: 'assets/icons/heroicons/outline/lock-closed.svg',
-          label: 'Auth',
-          route: '/auth',
+          icon: 'assets/icons/heroicons/outline/pencil-square.svg',
+          label: 'Data Entry',
+          route: '/admin/entry',
           children: [
-            { label: 'Sign up', route: '/auth/sign-up' },
-            { label: 'Sign in', route: '/auth/sign-in' },
-            { label: 'Forgot Password', route: '/auth/forgot-password' },
-            { label: 'New Password', route: '/auth/new-password' },
-            { label: 'Two Steps', route: '/auth/two-steps' },
-          ],
+            { label: 'OEE Entry', route: '/admin/entry/oee' },
+            { label: 'Safety Entry', route: '/admin/entry/safety' },
+            { label: 'Giveaway Entry', route: '/admin/entry/giveaway' }
+          ]
         }
-      ],
-    },
-    {
-      group: 'Collaboration',
-      separator: true,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/download.svg',
-          label: 'Download',
-          route: '/download',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/gift.svg',
-          label: 'Gift Card',
-          route: '/gift',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/users.svg',
-          label: 'Users',
-          route: '/users',
-        },
-      ],
-    },
-    {
-      group: 'Config',
-      separator: false,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/cog.svg',
-          label: 'Settings',
-          route: '/settings',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/bell.svg',
-          label: 'Notifications',
-          route: '/gift',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/folder.svg',
-          label: 'Folders',
-          route: '/folders',
-          children: [
-            { label: 'Current Files', route: '/folders/current-files' },
-            { label: 'Downloads', route: '/folders/download' },
-            { label: 'Trash', route: '/folders/trash' },
-          ],
-        },
-      ],
-    },
+      ]
+    }
   ];
 }

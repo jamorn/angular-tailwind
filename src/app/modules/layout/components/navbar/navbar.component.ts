@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { MenuService } from '../../services/menu.service';
+import { MenuService } from '@layout-services/menu.service';
 import { NavbarMenuComponent } from './navbar-menu/navbar-menu.component';
 import { NavbarMobileComponent } from './navbar-mobile/navbar-mobilecomponent';
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
@@ -9,12 +10,17 @@ import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
-  imports: [AngularSvgIconModule, NavbarMenuComponent, ProfileMenuComponent, NavbarMobileComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    AngularSvgIconModule, 
+    NavbarMenuComponent, 
+    ProfileMenuComponent, 
+    NavbarMobileComponent
+  ],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   constructor(private menuService: MenuService) {}
-
-  ngOnInit(): void {}
 
   public toggleMobileMenu(): void {
     this.menuService.showMobileMenu = true;

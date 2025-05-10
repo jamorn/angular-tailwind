@@ -1,3 +1,4 @@
+
 ```
 Frontend
 ├─ .angular
@@ -9,49 +10,103 @@ Frontend
 ├─ angular.json
 ├─ CHANGELOG.md
 ├─ CONTRIBUTING.md
+├─ docs
+│  ├─ 20250508T1715.md
+│  ├─ Admin-Panel.md
+│  ├─ AngularStandaloneProject.md
+│  ├─ ark.md
+│  ├─ arkAIeveryTimes.md
+│  ├─ authbeforedit.md
+│  ├─ Authentication-AngularDevelopment-Mode.md
+│  ├─ BarrelFile.md
+│  ├─ Cache-Restart-Angular-Server.md
+│  ├─ CommonModule-Angular.md
+│  ├─ delete the Angular cache.md
+│  ├─ Environment-Angular-Frontend.md
+│  ├─ ESM.md
+│  ├─ findComponentNotStandAlone.md
+│  ├─ findComponentStillStandAlone.md
+│  ├─ Get-ChildItem.md
+│  ├─ git.md
+│  ├─ HMR.md
+│  ├─ menu.md
+│  ├─ ng-serve.md
+│  ├─ Path.md
+│  ├─ Remove-Item.md
+│  ├─ search.md
+│  ├─ ServiceData.md
+│  ├─ stanalone.md
+│  ├─ Standalone-vs-NgModule.md
+│  ├─ svg.md
+│  ├─ Template.md
+│  ├─ tsconfigmod.md
+│  ├─ UIKit Module.md
+│  └─ ่Json-sortorder.md
 ├─ karma.conf.js
 ├─ LICENSE
 ├─ package-lock.json
 ├─ package.json
 ├─ playwright.config.ts
+├─ postcss.config.js
 ├─ README.md
 ├─ src
 │  ├─ app
-│  │  ├─ app-routing.module.ts
 │  │  ├─ app.component.css
 │  │  ├─ app.component.html
 │  │  ├─ app.component.spec.ts
 │  │  ├─ app.component.ts
+│  │  ├─ app.routes.ts
 │  │  ├─ core
 │  │  │  ├─ constants
 │  │  │  │  └─ menu.ts
 │  │  │  ├─ guards
+│  │  │  │  └─ auth.guard.ts
 │  │  │  ├─ interceptor
 │  │  │  ├─ interceptors
 │  │  │  │  └─ auth
 │  │  │  │     ├─ auth.interceptor.spec.ts
 │  │  │  │     └─ auth.interceptor.ts
 │  │  │  ├─ models
+│  │  │  │  ├─ auth
+│  │  │  │  │  └─ auth.model.ts
+│  │  │  │  ├─ index.ts
 │  │  │  │  ├─ menu.model.ts
+│  │  │  │  ├─ oee
+│  │  │  │  │  └─ oee.model.ts
 │  │  │  │  └─ theme.model.ts
 │  │  │  ├─ services
+│  │  │  │  ├─ auth
+│  │  │  │  │  └─ auth.service.ts
 │  │  │  │  ├─ theme.service.spec.ts
 │  │  │  │  └─ theme.service.ts
 │  │  │  └─ utils
 │  │  ├─ modules
+│  │  │  ├─ admin
+│  │  │  │  ├─ admin.component.ts
+│  │  │  │  ├─ admin.routes.ts
+│  │  │  │  └─ entry
+│  │  │  │     └─ oee
+│  │  │  │        ├─ oee-entry.component.css
+│  │  │  │        ├─ oee-entry.component.html
+│  │  │  │        ├─ oee-entry.component.spec.ts
+│  │  │  │        └─ oee-entry.component.ts
 │  │  │  ├─ auth
-│  │  │  │  ├─ auth-routing.module.ts
 │  │  │  │  ├─ auth.component.css
 │  │  │  │  ├─ auth.component.html
 │  │  │  │  ├─ auth.component.spec.ts
 │  │  │  │  ├─ auth.component.ts
-│  │  │  │  ├─ auth.module.ts
+│  │  │  │  ├─ auth.routes.ts
 │  │  │  │  └─ pages
 │  │  │  │     ├─ forgot-password
 │  │  │  │     │  ├─ forgot-password.component.css
 │  │  │  │     │  ├─ forgot-password.component.html
 │  │  │  │     │  ├─ forgot-password.component.spec.ts
 │  │  │  │     │  └─ forgot-password.component.ts
+│  │  │  │     ├─ login
+│  │  │  │     │  ├─ login.component.css
+│  │  │  │     │  ├─ login.component.html
+│  │  │  │     │  ├─ login.component.spec.ts
+│  │  │  │     │  └─ login.component.ts
 │  │  │  │     ├─ new-password
 │  │  │  │     │  ├─ new-password.component.css
 │  │  │  │     │  ├─ new-password.component.html
@@ -99,47 +154,45 @@ Frontend
 │  │  │  │  │        ├─ nft-single-card.component.html
 │  │  │  │  │        ├─ nft-single-card.component.spec.ts
 │  │  │  │  │        └─ nft-single-card.component.ts
-│  │  │  │  ├─ dashboard-routing.module.ts
 │  │  │  │  ├─ dashboard.component.html
 │  │  │  │  ├─ dashboard.component.spec.ts
 │  │  │  │  ├─ dashboard.component.ts
-│  │  │  │  ├─ dashboard.module.ts
+│  │  │  │  ├─ dashboard.routes.ts
 │  │  │  │  ├─ models
-│  │  │  │  │  ├─ nft.ts
-│  │  │  │  │  └─ oee.model.ts
+│  │  │  │  │  └─ nft.ts
 │  │  │  │  ├─ pages
 │  │  │  │  │  ├─ giveaway
 │  │  │  │  │  │  ├─ giveaway.component.css
 │  │  │  │  │  │  ├─ giveaway.component.html
 │  │  │  │  │  │  ├─ giveaway.component.spec.ts
 │  │  │  │  │  │  └─ giveaway.component.ts
-│  │  │  │  │  ├─ mohthyeii
-│  │  │  │  │  │  ├─ monthy-eii.component.css
-│  │  │  │  │  │  ├─ monthy-eii.component.html
-│  │  │  │  │  │  ├─ monthy-eii.component.spec.ts
-│  │  │  │  │  │  └─ monthy-eii.component.ts
-│  │  │  │  │  ├─ nft
-│  │  │  │  │  │  ├─ nft.component.html
-│  │  │  │  │  │  ├─ nft.component.spec.ts
-│  │  │  │  │  │  └─ nft.component.ts
+│  │  │  │  │  ├─ monthlyeii
+│  │  │  │  │  │  ├─ monthly-eii.component.css
+│  │  │  │  │  │  ├─ monthly-eii.component.html
+│  │  │  │  │  │  ├─ monthly-eii.component.spec.ts
+│  │  │  │  │  │  └─ monthly-eii.component.ts
 │  │  │  │  │  ├─ oee
 │  │  │  │  │  │  ├─ oee.component.css
 │  │  │  │  │  │  ├─ oee.component.html
 │  │  │  │  │  │  ├─ oee.component.spec.ts
 │  │  │  │  │  │  └─ oee.component.ts
+│  │  │  │  │  ├─ oee-entry
 │  │  │  │  │  └─ safety
 │  │  │  │  │     ├─ safety.component.css
 │  │  │  │  │     ├─ safety.component.html
 │  │  │  │  │     ├─ safety.component.spec.ts
 │  │  │  │  │     └─ safety.component.ts
 │  │  │  │  └─ services
+│  │  │  │     ├─ chart.service.spec.ts
+│  │  │  │     ├─ chart.service.ts
+│  │  │  │     ├─ dashboard.service.spec.ts
+│  │  │  │     └─ dashboard.service.ts
 │  │  │  ├─ error
-│  │  │  │  ├─ error-routing.module.ts
 │  │  │  │  ├─ error.component.css
 │  │  │  │  ├─ error.component.html
 │  │  │  │  ├─ error.component.spec.ts
 │  │  │  │  ├─ error.component.ts
-│  │  │  │  ├─ error.module.ts
+│  │  │  │  ├─ error.routes.ts
 │  │  │  │  └─ pages
 │  │  │  │     ├─ error404
 │  │  │  │     │  ├─ error404.component.css
@@ -213,12 +266,11 @@ Frontend
 │  │  │  │  │     ├─ sidebar.component.html
 │  │  │  │  │     ├─ sidebar.component.spec.ts
 │  │  │  │  │     └─ sidebar.component.ts
-│  │  │  │  ├─ layout-routing.module.ts
 │  │  │  │  ├─ layout.component.css
 │  │  │  │  ├─ layout.component.html
 │  │  │  │  ├─ layout.component.spec.ts
 │  │  │  │  ├─ layout.component.ts
-│  │  │  │  ├─ layout.module.ts
+│  │  │  │  ├─ layout.routes.ts
 │  │  │  │  └─ services
 │  │  │  │     ├─ menu.service.spec.ts
 │  │  │  │     └─ menu.service.ts
@@ -254,17 +306,14 @@ Frontend
 │  │  │     │     ├─ table.component.html
 │  │  │     │     ├─ table.component.spec.ts
 │  │  │     │     └─ table.component.ts
-│  │  │     ├─ uikit-routing.module.ts
 │  │  │     ├─ uikit.component.css
 │  │  │     ├─ uikit.component.html
 │  │  │     ├─ uikit.component.spec.ts
 │  │  │     ├─ uikit.component.ts
-│  │  │     └─ uikit.module.ts
+│  │  │     └─ uikit.routes.ts
 │  │  ├─ services
-│  │  │  ├─ auth.service.spec.ts
-│  │  │  ├─ auth.service.ts
-│  │  │  ├─ dashboard.service.spec.ts
-│  │  │  └─ dashboard.service.ts
+│  │  │  ├─ auth
+│  │  │  └─ auth.service.spec.ts
 │  │  └─ shared
 │  │     ├─ components
 │  │     │  ├─ button
@@ -272,11 +321,16 @@ Frontend
 │  │     │  │  ├─ button.component.html
 │  │     │  │  ├─ button.component.spec.ts
 │  │     │  │  └─ button.component.ts
-│  │     │  └─ responsive-helper
-│  │     │     ├─ responsive-helper.component.css
-│  │     │     ├─ responsive-helper.component.html
-│  │     │     ├─ responsive-helper.component.spec.ts
-│  │     │     └─ responsive-helper.component.ts
+│  │     │  ├─ responsive-helper
+│  │     │  │  ├─ responsive-helper.component.css
+│  │     │  │  ├─ responsive-helper.component.html
+│  │     │  │  ├─ responsive-helper.component.spec.ts
+│  │     │  │  └─ responsive-helper.component.ts
+│  │     │  └─ user-profile
+│  │     │     ├─ user-profile.component.css
+│  │     │     ├─ user-profile.component.html
+│  │     │     ├─ user-profile.component.spec.ts
+│  │     │     └─ user-profile.component.ts
 │  │     ├─ directives
 │  │     │  └─ click-outside.directive.ts
 │  │     ├─ dummy
@@ -336,6 +390,8 @@ Frontend
 │  │  │  │     ├─ chevron-right.svg
 │  │  │  │     └─ play.svg
 │  │  │  ├─ logo.svg
+│  │  │  ├─ logonew.svg
+│  │  │  ├─ logo_master.svg
 │  │  │  └─ tablericons
 │  │  │     ├─ arrows-shuffle-2.svg
 │  │  │     ├─ headphones.svg
@@ -358,17 +414,27 @@ Frontend
 │  │  │  └─ preview.gif
 │  │  └─ styles
 │  │     └─ apexchart.css
+│  ├─ custom-theme.scss
+│  ├─ custom-theme.scss.bak
 │  ├─ environments
 │  │  ├─ environment.prod.ts
 │  │  └─ environment.ts
 │  ├─ favicon.ico
+│  ├─ hmr.ts
 │  ├─ index.html
 │  ├─ main.ts
 │  ├─ polyfills.ts
+│  ├─ styles
+│  │  ├─ animations.css
+│  │  └─ variables.css
 │  ├─ styles.css
 │  └─ test.ts
+├─ tailwind.config.full.js
+├─ tailwind.config.js
 ├─ Testpages
-│  └─ highcharts-example.html
+│  ├─ highcharts-example.html
+│  ├─ highcharts-example2.html
+│  └─ response.json
 ├─ tests-e2e
 │  ├─ navbar.e2e.spec.ts
 │  ├─ sidebar.e2e.spec.ts
@@ -377,6 +443,4 @@ Frontend
 ├─ tsconfig.json
 └─ tsconfig.spec.json
 
-## Attribution
-For third-party resources and attributions, please see [ATTRIBUTION.md](./ATTRIBUTION.md)
 ```

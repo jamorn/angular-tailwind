@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { ChartService } from '@services/chart.service';
-import { DashboardService } from '@services/dashboard.service';
-import { MachineOEEData, MachineOrder } from '@models/oee.model';
+/* import { ChartService } from '../../services/chart.service';
+import { DashboardService } from '../../services/dashboard.service';
+import { MachineOEEData, MachineOrder } from '@core/models/oee/oee.model'; */
+import { ChartService } from '@dashboard-services/chart.service';
+import { DashboardService } from '@dashboard-services/dashboard.service';
+import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 
 @Component({
   selector: 'app-oee',

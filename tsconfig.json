@@ -25,9 +25,42 @@
     ],
     "useDefineForClassFields": false,
     "paths": {
-      "@models/*": ["src/app/modules/dashboard/models/*"],
-      "@services/*": ["src/app/services/*"],
-      "@shared/*": ["src/app/shared/*"]
+    
+// Core paths
+"@core/*": ["src/app/core/*"],
+"@models": ["src/app/core/models"],
+"@models/*": ["src/app/core/models/*"],
+"@services": ["src/app/core/services"],
+"@services/*": ["src/app/core/services/*"],
+"@guards": ["src/app/core/guards"],
+"@guards/*": ["src/app/core/guards/*"],
+"@interceptors": ["src/app/core/interceptors"],
+"@interceptors/*": ["src/app/core/interceptors/*"],
+"@constants": ["src/app/core/constants"],
+"@constants/*": ["src/app/core/constants/*"],
+"@utils": ["src/app/core/utils"],
+"@utils/*": ["src/app/core/utils/*"],
+// layout
+"@layout-services/*": ["src/app/modules/layout/services/*"],
+// Shared
+"@shared": ["src/app/shared"],
+"@shared/*": ["src/app/shared/*"],
+
+// Feature modules
+"@modules": ["src/app/modules"],
+"@modules/*": ["src/app/modules/*"],
+"@dashboard": ["src/app/modules/dashboard"],
+"@dashboard/*": ["src/app/modules/dashboard/*"],
+"@dashboard-services": ["src/app/modules/dashboard/services"],
+"@dashboard-services/*": ["src/app/modules/dashboard/services/*"],
+
+// Assets and environments
+"@assets/*": ["src/assets/*"],
+"@environments/*": ["src/environments/*"],
+// Third-party libraries
+// npm install angular-svg-icon@latest
+// npm list angular-svg-icon
+"@icons/*": ["src/assets/icons/*"] // Icons
     }
   },
 	"angularCompilerOptions": {

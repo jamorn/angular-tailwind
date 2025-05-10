@@ -1,0 +1,25 @@
+import { Routes } from '@angular/router';
+
+
+export const ERROR_ROUTES: Routes = [
+  {
+    path: '',
+    children: [
+      {
+        path: '404',
+        loadComponent: () => import('./pages/error404/error404.component')
+          .then(m => m.Error404Component)
+      },
+      {
+        path: '500',
+        loadComponent: () => import('./pages/error500/error500.component')
+          .then(m => m.Error500Component)
+      },
+      { 
+        path: '', 
+        redirectTo: '404', 
+        pathMatch: 'full' 
+      }
+    ]
+  }
+];

@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { ChartService } from '@services/chart.service';
-import { MachineOEEData } from '@models/oee.model';
+import { ChartService } from '@dashboard-services/chart.service';
+import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription } from 'rxjs';
 
 @Component({
