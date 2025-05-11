@@ -291,3 +291,65 @@ select {
 [type='radio'] {
   @apply h-4 w-4 rounded-sm border-border bg-background checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary focus:ring-2 focus:ring-primary;
 }
+
+/* Material Theme Base Configuration */
+:root {
+  --background: #ffffff;
+  --card: #f1f5f9;
+  --card-foreground: #0f172a;
+  --primary: #3f51b5;
+  --primary-foreground: #ffffff;
+}
+
+/* Dark Mode Variables */
+.dark {
+  --background: #0f172a;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+}
+
+/* Material Component Overrides */
+.mat-mdc-form-field {
+  width: 100%;
+  background-color: var(--card);
+}
+
+.mat-mdc-card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--card) !important;
+}
+
+/* Material Theme Overrides */
+.mat-mdc-form-field {
+  width: 100%;
+  background-color: var(--background);
+}
+
+.mat-mdc-card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+.input-large {
+  background-color: var(--background);
+}
+
+/* Dark theme adjustments */
+.dark {
+  .mat-mdc-form-field {
+    --mdc-filled-text-field-container-color: var(--card);
+    --mdc-filled-text-field-focus-active-indicator-color: var(--primary);
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--card);
+  }
+
+  .mat-mdc-form-field-label {
+    color: var(--muted-foreground);
+  }
+}

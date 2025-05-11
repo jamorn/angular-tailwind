@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { AdminComponent } from './admin.component';
 import { AuthGuard } from '@guards/auth.guard';
 
+
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',

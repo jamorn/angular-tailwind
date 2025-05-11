@@ -1,0 +1,86 @@
+[1mdiff --git a/src/app/modules/admin/entry/oee/oee-entry.component.ts b/src/app/modules/admin/entry/oee/oee-entry.component.ts[m
+[1mindex 397cc5a..9c6f813 100644[m
+[1m--- a/src/app/modules/admin/entry/oee/oee-entry.component.ts[m
+[1m+++ b/src/app/modules/admin/entry/oee/oee-entry.component.ts[m
+[36m@@ -1,4 +1,4 @@[m
+[31m-import { Component , OnInit} from '@angular/core';[m
+[32m+[m[32mimport { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit } from '@angular/core';[m
+ import { CommonModule } from '@angular/common';[m
+ import { RouterModule } from '@angular/router';[m
+ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';[m
+[36m@@ -11,8 +11,8 @@[m [mimport { MatCardModule } from '@angular/material/card';[m
+ import { MatButtonModule } from '@angular/material/button';[m
+ import { MatIconModule } from '@angular/material/icon';[m
+ import { MatDialog, MatDialogModule } from '@angular/material/dialog';[m
+[31m-import { MACHINES }  from '@models/oee/oee.model'; [m
+[31m-[m
+[32m+[m[32mimport { MACHINES, Machine } from '@core/models/oee/oee.model';[m[41m [m
+[32m+[m[32mimport flatpickr from 'flatpickr';[m
+ [m
+ @Component({[m
+   selector: 'app-oee-entry',[m
+[36m@@ -33,19 +33,21 @@[m [mimport { MACHINES }  from '@models/oee/oee.model';[m
+     MatDialogModule[m
+   ],[m
+   templateUrl: './oee-entry.component.html',[m
+[31m-  styleUrls: ['./oee-entry.component.css'][m
+[32m+[m[32m  styleUrls: ['./oee-entry.component.css'],[m
+[32m+[m[32m  encapsulation: ViewEncapsulation.None[m
+ })[m
+[31m-export class OeeEntryComponent implements OnInit {[m
+[32m+[m[32mexport class OeeEntryComponent implements OnInit, AfterViewInit {[m
+   title = 'OEE Entry Form';[m
+   form: FormGroup;[m
+   machines = MACHINES;[m
+[32m+[m[32m  @ViewChild('datepicker') datepickerEl!: ElementRef;[m
+ [m
+   constructor(private fb: FormBuilder, private dialog: MatDialog) {[m
+     const yesterday = new Date();[m
+     yesterday.setDate(yesterday.getDate() - 1);[m
+     [m
+     this.form = this.fb.group({[m
+[31m-      machineId: ['', Validators.required],[m
+[32m+[m[32m      machineId: [null, Validators.required],  // Changed from '' to null[m
+       recordDateString: [yesterday.toISOString().split('T')[0]],[m
+       availability: ['', [Validators.required, Validators.min(0), Validators.max(100)]],[m
+       performance: ['', [Validators.required, Validators.min(0), Validators.max(100)]],[m
+[36m@@ -105,7 +107,7 @@[m [mexport class OeeEntryComponent implements OnInit {[m
+     const factor = Math.cbrt(oee / 100);[m
+     [m
+     const mockValues = {[m
+[31m-      machineId: MACHINES[0].machineId, // Use first machine PP12/A[m
+[32m+[m[32m      machineId: MACHINES[0].machineId,  // Now uses number type[m
+       recordDateString: new Date().toISOString().split('T')[0],[m
+       availability: +(factor * 100).toFixed(2),[m
+       performance: +(factor * 100).toFixed(2),[m
+[36m@@ -129,5 +131,30 @@[m [mexport class OeeEntryComponent implements OnInit {[m
+     this.mockData();[m
+   }[m
+ [m
+[32m+[m[32m  ngAfterViewInit() {[m
+[32m+[m[32m    flatpickr(this.datepickerEl.nativeElement, {[m
+[32m+[m[32m      dateFormat: 'Y-m-d',[m
+[32m+[m[32m      altInput: true,[m
+[32m+[m[32m      altFormat: 'd-m-Y',[m
+[32m+[m[32m      defaultDate: this.form.get('recordDateString')?.value,[m
+[32m+[m[32m      onChange: (selectedDates) => {[m
+[32m+[m[32m        const isoDate = selectedDates[0]?.toISOString().split('T')[0];[m
+[32m+[m[32m        this.form.patchValue({ recordDateString: isoDate });[m
+[32m+[m[32m      }[m
+[32m+[m[32m    });[m
+ [m
+[32m+[m[32m    // Set initial value[m
+[32m+[m[32m    const initialDate = this.form.get('recordDateString')?.value;[m
+[32m+[m[32m    if (initialDate) {[m
+[32m+[m[32m      this.datepickerEl.nativeElement.value = this.formatDate(new Date(initialDate));[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  // Helper function to format date as dd-mm-yyyy[m
+[32m+[m[32m  private formatDate(date: Date): string {[m
+[32m+[m[32m    const day = String(date.getDate()).padStart(2, '0');[m
+[32m+[m[32m    const month = String(date.getMonth() + 1).padStart(2, '0');[m
+[32m+[m[32m    const year = date.getFullYear();[m
+[32m+[m[32m    return `${day}-${month}-${year}`;[m
+[32m+[m[32m  }[m
+ }[m

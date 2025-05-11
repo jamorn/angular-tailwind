@@ -1,18 +1,9 @@
-import { Component , OnInit} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MACHINES }  from '@models/oee/oee.model'; 
-
+import { MACHINES, Machine } from '@core/models/oee/oee.model';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-oee-entry',
@@ -21,31 +12,24 @@ import { MACHINES }  from '@models/oee/oee.model';
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule
+    ReactiveFormsModule
   ],
   templateUrl: './oee-entry.component.html',
-  styleUrls: ['./oee-entry.component.css']
+  styleUrls: ['./oee-entry.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class OeeEntryComponent implements OnInit {
+export class OeeEntryComponent implements OnInit, AfterViewInit {
   title = 'OEE Entry Form';
   form: FormGroup;
   machines = MACHINES;
+  @ViewChild('datepicker') datepickerEl!: ElementRef;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {
+  constructor(private fb: FormBuilder) {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     
     this.form = this.fb.group({
-      machineId: ['', Validators.required],
+      machineId: [null, Validators.required],  // Changed from '' to null
       recordDateString: [yesterday.toISOString().split('T')[0]],
       availability: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
       performance: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
@@ -105,13 +89,15 @@ export class OeeEntryComponent implements OnInit {
     const factor = Math.cbrt(oee / 100);
     
     const mockValues = {
-      machineId: MACHINES[0].machineId, // Use first machine PP12/A
+      machineId: MACHINES[0].machineId,  // Now uses number type
       recordDateString: new Date().toISOString().split('T')[0],
       availability: +(factor * 100).toFixed(2),
       performance: +(factor * 100).toFixed(2),
       quality: +(factor * 100).toFixed(2),
       giveaway: 25.112,
-      oee: oee
+      oee: oee,
+      responsiblePerson: 'Test User',
+      status: 1
     };
 
     // Set form values
@@ -127,7 +113,48 @@ export class OeeEntryComponent implements OnInit {
   ngOnInit() {
     // Call mockData for testing
     this.mockData();
+    
+    // Initialize datepicker after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      if (this.datepickerEl?.nativeElement) {
+        flatpickr(this.datepickerEl.nativeElement, {
+          dateFormat: 'Y-m-d',
+          altInput: true,
+          altFormat: 'd-m-Y',
+          defaultDate: this.form.get('recordDateString')?.value
+        });
+      }
+    }, 0);
   }
 
+  ngAfterViewInit() {
+    flatpickr(this.datepickerEl.nativeElement, {
+      dateFormat: 'Y-m-d',
+      altInput: true,
+      altFormat: 'd-m-Y',
+      defaultDate: this.form.get('recordDateString')?.value,
+      // เพิ่ม options สำหรับควบคุมการแสดง
+      clickOpens: true,      // เปิดเมื่อคลิกเท่านั้น
+      static: true,         // ป้องกันการเลื่อนของ calendar
+      wrap: true,           // ห่อหุ้ม input
+      onChange: (selectedDates) => {
+        const isoDate = selectedDates[0]?.toISOString().split('T')[0];
+        this.form.patchValue({ recordDateString: isoDate });
+      }
+    });
 
+    // Set initial value
+    const initialDate = this.form.get('recordDateString')?.value;
+    if (initialDate) {
+      this.datepickerEl.nativeElement.value = this.formatDate(new Date(initialDate));
+    }
+  }
+
+  // Helper function to format date as dd-mm-yyyy
+  private formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
 }

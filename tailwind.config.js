@@ -8,26 +8,25 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'system-ui', 'sans-serif'],
-        nunito: ['Nunito Sans', 'sans-serif'],
         kanit: ['Kanit', 'sans-serif'],
       },
-      animation: {
-        'wiggle': 'wiggle 1s ease-in-out infinite',
-        'fade-in-down': 'fade-in-down 0.3s ease-out',
-        'fade-out-down': 'fade-out-down 0.3s ease-out',
-        'fade-in-up': 'fade-in-up 0.3s ease-out',
-        'fade-out-up': 'fade-out-up 0.3s ease-out',
+      colors: {
+        dark: {
+          100: '#374151',
+          200: '#1f2937',
+          300: '#111827',
+        }
       },
-      boxShadow: {
-        'custom': '0px 0px 50px 0px rgb(82 63 105 / 15%)',
+      outline: {
+        none: 'none',
       }
     },
   },
   plugins: [
     require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
-    require('tailwind-scrollbar')
   ],
+  corePlugins: {
+    preflight: false,
+    outline: true
+  }
 }
