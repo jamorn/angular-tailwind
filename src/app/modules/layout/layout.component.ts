@@ -1,29 +1,73 @@
 import { Component, OnInit } from '@angular/core';
-import { Event, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { FooterComponent } from './components/footer/footer.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MenuService } from './services/menu.service';
+import { AuthService } from '@core/services/auth/auth.service';
+import { LoggerService } from '@core/services/logger/logger.service';
+import { NavbarMenuComponent } from './components/navbar/navbar-menu/navbar-menu.component';
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css'],
-  imports: [SidebarComponent, NavbarComponent, RouterOutlet, FooterComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    NavbarMenuComponent
+  ],
+  template: `
+    <div class="layout">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <app-navbar-menu></app-navbar-menu>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  `,
+  styles: [`
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 280px;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow: auto;
+      padding: 1.5rem;
+    }
+  `]
 })
 export class LayoutComponent implements OnInit {
-  private mainContent: HTMLElement | null = null;
-
-  constructor(private router: Router) {
-    this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationEnd) {
-        if (this.mainContent) {
-          this.mainContent!.scrollTop = 0;
-        }
-      }
-    });
-  }
+  constructor(
+    public menuService: MenuService,
+    private authService: AuthService,
+    private logger: LoggerService
+  ) {}
 
   ngOnInit(): void {
-    this.mainContent = document.getElementById('main-content');
+    this.initializeMenu();
+  }
+
+  private initializeMenu(): void {
+    this.logger.log('init', 'Initializing layout menu...');
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.logger.log('auth', 'User authenticated, updating menu');
+        this.menuService.setMenu(user);
+      },
+      error: () => {
+        this.logger.log('auth', 'Using public menu');
+        this.menuService.setMenu(null);
+      }
+    });
   }
 }

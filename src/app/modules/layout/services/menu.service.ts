@@ -1,90 +1,85 @@
-import { Injectable, OnDestroy, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Menu } from 'src/app/core/constants/menu';
-import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { Menu } from '@core/constants/menu';
+import { MenuGroup, MenuItem, SubMenuItem } from '@models/menu.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class MenuService implements OnDestroy {
-  private _showSidebar = signal(true);
-  private _showMobileMenu = signal(false);
-  private _pagesMenu = signal<MenuItem[]>([]);
-  private _subscription = new Subscription();
+  // State Management
+  private readonly _subscription = new Subscription();
+  private readonly _pagesMenu = new BehaviorSubject<MenuGroup[]>([]);
+  public readonly pagesMenu$ = this._pagesMenu.asObservable();
+  
+  // UI State
+  public showSideBar = true;
+  public showMobileMenu = false;
 
-  constructor(private router: Router) {
-    /** Set dynamic menu */
-    this._pagesMenu.set(Menu.pages);
-
-    let sub = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        /** Expand menu base on active route */
-        this._pagesMenu().forEach((menu) => {
-          let activeGroup = false;
-          menu.items.forEach((subMenu) => {
-            const active = this.isActive(subMenu.route);
-            subMenu.expanded = active;
-            subMenu.active = active;
-            if (active) activeGroup = true;
-            if (subMenu.children) {
-              this.expand(subMenu.children);
-            }
-          });
-          menu.active = activeGroup;
-        });
-      }
-    });
-    this._subscription.add(sub);
+  constructor() {
+    this.initializeMenu();
   }
 
-  get showSideBar() {
-    return this._showSidebar();
-  }
-  get showMobileMenu() {
-    return this._showMobileMenu();
-  }
-  get pagesMenu() {
-    return this._pagesMenu();
+  // Menu State Getters
+  public get pagesMenu(): MenuGroup[] {
+    return this._pagesMenu.value;
   }
 
-  set showSideBar(value: boolean) {
-    this._showSidebar.set(value);
-  }
-  set showMobileMenu(value: boolean) {
-    this._showMobileMenu.set(value);
+  public getMenu(): MenuGroup[] {
+    return this._pagesMenu.value;
   }
 
-  public toggleSidebar() {
-    this._showSidebar.set(!this._showSidebar());
+  // Menu State Management
+  private initializeMenu(): void {
+    this._pagesMenu.next(Menu.publicMenu);
   }
 
-  public toggleMenu(menu: any) {
-    this.showSideBar = true;
-    menu.expanded = !menu.expanded;
+  public setMenu(user: { roles?: string[] } | null): void {
+    const menuGroups = Menu.getMenuByAuth(user);
+    this._pagesMenu.next(menuGroups);
   }
 
-  public toggleSubMenu(submenu: SubMenuItem) {
-    submenu.expanded = !submenu.expanded;
+  // Menu Item Actions
+  public toggleMenu(group: MenuGroup): void {
+    group.expanded = !group.expanded;
   }
 
-  private expand(items: Array<any>) {
-    items.forEach((item) => {
-      item.expanded = this.isActive(item.route);
-      if (item.children) this.expand(item.children);
-    });
+  public toggleSubMenu(item: SubMenuItem): void {
+    item.expanded = !item.expanded;
   }
 
-  public isActive(instruction: any): boolean {
-    return this.router.isActive(this.router.createUrlTree([instruction]), {
-      paths: 'subset',
-      queryParams: 'subset',
-      fragment: 'ignored',
-      matrixParams: 'ignored',
-    });
+  public toggleSidebar(): void {
+    this.showSideBar = !this.showSideBar;
   }
 
+  // Menu Item Helpers
+  public isActive(route: string): boolean {
+    return window.location.pathname.startsWith(route);
+  }
+
+  public filterMenuItems(items: MenuItem[]): MenuItem[] {
+    return items.filter((item: MenuItem) => !item.route?.startsWith('/admin'));
+  }
+
+  // Type Conversion Helpers
+  protected convertToSubMenuItem(item: MenuItem): SubMenuItem {
+    if (!item.route) throw new Error('MenuItem must have a route');
+    
+    return {
+      ...item,
+      route: item.route,
+      children: item.children?.map(child => this.convertToSubMenuItem(child))
+    };
+  }
+
+  protected convertToSubMenuItems(items: MenuItem[]): SubMenuItem[] {
+    return items.map(item => this.convertToSubMenuItem(item));
+  }
+
+  // Cleanup
   ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
   }
 }
