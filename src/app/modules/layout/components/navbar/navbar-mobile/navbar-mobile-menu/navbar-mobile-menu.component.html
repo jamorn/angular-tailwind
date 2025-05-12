@@ -59,7 +59,10 @@
       </div>
 
       <!-- Submenu items -->
-      <app-navbar-mobile-submenu [submenu]="item"></app-navbar-mobile-submenu>
+      <app-navbar-mobile-submenu 
+        *ngIf="item.children"
+        [submenu]="convertToSubMenuItem(item)">
+      </app-navbar-mobile-submenu>
     </li>
   </ul>
 </div>

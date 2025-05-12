@@ -71,12 +71,16 @@ export class AuthService {
 
   // Development mode test login
   testLogin(testUser: 'admin' | 'user' | 'super'): Observable<AuthTestResponse> {
+    console.log('🔐 Login attempt:', { testUser });
+    
     return this.http.get<AuthTestResponse>(
       `${this.apiBase}/test-login`,  // ใช้ apiBase
       { headers: { 'X-Test-User': testUser } }
     ).pipe(
       tap(response => {
+        console.log('📥 Backend response:', response);
         if (response.success) {
+          console.log('✅ Login successful:', response.user);
           localStorage.setItem(this.TEST_USER_KEY, testUser);
           localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
           this.isAuthenticatedSubject.next(true);
@@ -84,10 +88,10 @@ export class AuthService {
         }
       }),
       catchError(error => {
-        console.error('Login failed:', error);
+        console.error('❌ Login error:', error);
         this.isAuthenticatedSubject.next(false);
         this.currentUserSubject.next(null);
-        throw error;
+        return throwError(() => error);
       })
     );
   }
@@ -167,27 +171,36 @@ export class AuthService {
   }
 
   private checkAuthStatus(): void {
+    console.log('🔍 Checking auth status...');
+    
     if (!this.checkSessionTimeout()) {
+      console.log('⚠️ Session timeout detected');
       return;
     }
-    // For development testing
+
     const testUser = this.getTestUser();
+    console.log('👤 Current test user:', testUser);
+
     if (testUser) {
+      console.log('✅ Using test user authentication');
       this.isAuthenticatedSubject.next(true);
       return;
     }
 
-    // For production Windows Auth
-    this.http.get<AuthTestResponse>(`${this.apiBase}/status`)  // ใช้ apiBase
+    console.log('🌐 Checking backend status...');
+    this.http.get<AuthTestResponse>(`${this.apiBase}/status`)
       .subscribe({
         next: (response) => {
+          console.log('📥 Status response:', response);
           if (response.success) {
+            console.log('✅ User authenticated:', response.user);
             localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
             this.isAuthenticatedSubject.next(true);
             this.currentUserSubject.next(response.user);
           }
         },
-        error: () => {
+        error: (error) => {
+          console.error('❌ Status check failed:', error);
           this.isAuthenticatedSubject.next(false);
           this.currentUserSubject.next(null);
         }

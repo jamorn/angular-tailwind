@@ -1,31 +1,30 @@
-import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule, NgClass, NgTemplateOutlet } from '@angular/common';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SubMenuItem } from 'src/app/core/models/menu.model';
-import { MenuService } from '../../../services/menu.service';
+import { SubMenuItem } from '@core/models/menu.model';
+import { MenuService } from '@layout-services/menu.service'; 
 
 @Component({
   selector: 'app-sidebar-submenu',
+  standalone: true,
   templateUrl: './sidebar-submenu.component.html',
-  styleUrls: ['./sidebar-submenu.component.css'],
-  imports: [NgClass, NgFor, NgTemplateOutlet, RouterLinkActive, RouterLink, AngularSvgIconModule],
+  imports: [
+    CommonModule,
+    NgClass,
+    NgTemplateOutlet,
+    RouterLink,
+    RouterLinkActive,
+    AngularSvgIconModule
+  ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
-export class SidebarSubmenuComponent implements OnInit {
-  @Input() public submenu = <SubMenuItem>{};
+export class SidebarSubmenuComponent {
+  @Input() submenu!: SubMenuItem;
 
   constructor(public menuService: MenuService) {}
 
-  ngOnInit(): void {}
-
-  public toggleMenu(menu: any) {
-    this.menuService.toggleSubMenu(menu);
-  }
-
-  private collapse(items: Array<any>) {
-    items.forEach((item) => {
-      item.expanded = false;
-      if (item.children) this.collapse(item.children);
-    });
+  public toggleMenu(subMenu: SubMenuItem): void {
+    this.menuService.toggleMenu(subMenu);
   }
 }

@@ -2,7 +2,7 @@ import { NgClass, NgFor, NgIf, NgTemplateOutlet, CommonModule } from '@angular/c
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SubMenuItem } from '@models/menu.model';
+import { MenuItem, SubMenuItem } from '@models/menu.model';
 import { MenuService } from '@layout-services/menu.service'; 
 import { NavbarMobileSubmenuComponent } from '../navbar-mobile-submenu/navbar-mobile-submenu.component';
 
@@ -26,11 +26,19 @@ import { NavbarMobileSubmenuComponent } from '../navbar-mobile-submenu/navbar-mo
 export class NavbarMobileMenuComponent {
   constructor(public menuService: MenuService) {}
 
-  public toggleMenu(subMenu: SubMenuItem): void {
-    this.menuService.toggleMenu(subMenu);
+  public toggleMenu(item: MenuItem | SubMenuItem): void {
+    this.menuService.toggleMenu(item);
   }
 
   public closeMenu(): void {
     this.menuService.showMobileMenu = false;
+  }
+
+  protected convertToSubMenuItem(item: MenuItem): SubMenuItem {
+    return {
+      ...item,
+      route: item.route || '/',
+      label: item.label
+    };
   }
 }

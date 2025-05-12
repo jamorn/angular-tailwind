@@ -18,7 +18,7 @@ export const LAYOUT_ROUTES: Routes = [
       {
         path: 'dashboard',
         loadChildren: () => import('../dashboard/dashboard.routes')
-          .then(m => m.DASHBOARD_ROUTES)
+          .then(m => m.DASHBOARD_ROUTES)  // เปลี่ยนจาก routes เป็น DASHBOARD_ROUTES
       },
       {
         path: 'admin',

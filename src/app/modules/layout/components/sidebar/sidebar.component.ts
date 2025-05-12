@@ -1,9 +1,10 @@
 import { NgClass, NgIf, CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import packageJson from '../../../../../../package.json';
 import { MenuService } from '@layout-services/menu.service';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
+import { MenuGroup } from '@models/menu.model';
 
 interface PackageInfo {
   name: string;
@@ -27,6 +28,7 @@ interface PackageInfo {
 })
 export class SidebarComponent {
   public appJson: PackageInfo = packageJson;
+  @Input() menuItems!: MenuGroup[];
 
   constructor(public menuService: MenuService) {}
 
