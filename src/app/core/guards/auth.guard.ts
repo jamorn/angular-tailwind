@@ -8,11 +8,21 @@ export class AuthGuard {
   private router = inject(Router);
 
   canActivate(): boolean {
-    if (this.authService.isAuthenticated()) {
-      return true;
+    try {
+      if (this.authService.isAuthenticated()) {
+        return true;
+      }
+      
+      // Add logging for debugging
+      console.log('Authentication failed, redirecting to login');
+      this.router.navigate(['/auth/login']);
+      return false;
+      
+    } catch (error) {
+      console.error('Auth Guard Error:', error);
+      this.router.navigate(['/auth/login']);
+      return false;
     }
-    this.router.navigate(['/auth/login']);
-    return false;
   }
 }
 

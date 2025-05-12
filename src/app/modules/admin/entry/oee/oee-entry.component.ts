@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MACHINES, Machine } from '@core/models/oee/oee.model';
 import flatpickr from 'flatpickr';
+import 'flatpickr/dist/themes/dark.css'; // Add this import
 
 @Component({
   selector: 'app-oee-entry',
@@ -113,48 +114,39 @@ export class OeeEntryComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // Call mockData for testing
     this.mockData();
-    
-    // Initialize datepicker after a short delay to ensure DOM is ready
-    setTimeout(() => {
-      if (this.datepickerEl?.nativeElement) {
-        flatpickr(this.datepickerEl.nativeElement, {
-          dateFormat: 'Y-m-d',
-          altInput: true,
-          altFormat: 'd-m-Y',
-          defaultDate: this.form.get('recordDateString')?.value
-        });
-      }
-    }, 0);
   }
 
-  ngAfterViewInit() {
-    flatpickr(this.datepickerEl.nativeElement, {
-      dateFormat: 'Y-m-d',
-      altInput: true,
-      altFormat: 'd-m-Y',
-      defaultDate: this.form.get('recordDateString')?.value,
-      // เพิ่ม options สำหรับควบคุมการแสดง
-      clickOpens: true,      // เปิดเมื่อคลิกเท่านั้น
-      static: true,         // ป้องกันการเลื่อนของ calendar
-      wrap: true,           // ห่อหุ้ม input
-      onChange: (selectedDates) => {
-        const isoDate = selectedDates[0]?.toISOString().split('T')[0];
-        this.form.patchValue({ recordDateString: isoDate });
-      }
-    });
-
-    // Set initial value
-    const initialDate = this.form.get('recordDateString')?.value;
-    if (initialDate) {
-      this.datepickerEl.nativeElement.value = this.formatDate(new Date(initialDate));
-    }
-  }
-
-  // Helper function to format date as dd-mm-yyyy
   private formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  }
+
+  ngAfterViewInit() {
+    if (this.datepickerEl?.nativeElement) {
+      flatpickr(this.datepickerEl.nativeElement, {
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd-m-Y',
+        defaultDate: this.form.get('recordDateString')?.value,
+        clickOpens: true,
+        static: true,
+        // Remove theme property and use CSS instead
+        onChange: (selectedDates) => {
+          const isoDate = selectedDates[0]?.toISOString().split('T')[0];
+          this.form.patchValue({ recordDateString: isoDate });
+        }
+      });
+
+      // Add dark theme class to the element
+      this.datepickerEl.nativeElement.classList.add('dark');
+
+      // Set initial value
+      const initialDate = this.form.get('recordDateString')?.value;
+      if (initialDate) {
+        this.datepickerEl.nativeElement.value = this.formatDate(new Date(initialDate));
+      }
+    }
   }
 }

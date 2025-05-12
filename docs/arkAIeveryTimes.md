@@ -17,4 +17,5 @@ Environment: Visual Studio Code on Windows"
 ใช้ providers ที่ถูกต้องสำหรับ standalone architecture
 แนะนำการ import ที่ถูกต้อง
 ใช้ path aliases ที่เหมาะสมกับโปรเจค
+
 คุณสามารถ copy ข้อความด้านบนไปวางก่อนถามคำถามทุกครั้ง เพื่อให้ได้คำตอบที่ถูกต้องตามบริบทของโปรเจค

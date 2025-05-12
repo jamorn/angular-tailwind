@@ -29,6 +29,7 @@ export class AuthService {
   private readonly LAST_ACTIVITY_KEY = 'last_activity';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<UserInfo | null>(this.getUserFromStorage());
+  private readonly apiBase = `${environment.apiUrl}/api/auth`;  // เพิ่ม base URL
 
   private readonly testUsers: Record<string, { password: string; user: UserInfo }> = {
     'kittithuch.u': {
@@ -36,7 +37,7 @@ export class AuthService {
       user: {
         empId: '557',
         name: 'Kittithuch U.',
-        email: 'kittithuch.u@plbg.co.th',
+        email: 'kittithuch.u@irpc.co.th',
         roles: ['admin']
       }
     },
@@ -45,7 +46,7 @@ export class AuthService {
       user: {
         empId: '1102',
         name: 'Weerachai In.',
-        email: 'weerachai.in@plbg.co.th',
+        email: 'weerachai.in@irpc.co.th',
         roles: ['user']
       }
     },
@@ -54,7 +55,7 @@ export class AuthService {
       user: {
         empId: '2341',
         name: 'Nirut P.',
-        email: 'nirut.p@plbg.co.th',
+        email: 'nirut.p@irpc.co.th',
         roles: ['super']
       }
     }
@@ -71,7 +72,7 @@ export class AuthService {
   // Development mode test login
   testLogin(testUser: 'admin' | 'user' | 'super'): Observable<AuthTestResponse> {
     return this.http.get<AuthTestResponse>(
-      `${environment.apiUrl}/api/auth/test-login`,
+      `${this.apiBase}/test-login`,  // ใช้ apiBase
       { headers: { 'X-Test-User': testUser } }
     ).pipe(
       tap(response => {
@@ -177,7 +178,7 @@ export class AuthService {
     }
 
     // For production Windows Auth
-    this.http.get<AuthTestResponse>(`${environment.apiUrl}/api/auth/status`)
+    this.http.get<AuthTestResponse>(`${this.apiBase}/status`)  // ใช้ apiBase
       .subscribe({
         next: (response) => {
           if (response.success) {
