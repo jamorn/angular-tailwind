@@ -40,12 +40,48 @@ export class MenuService implements OnDestroy {
   }
 
   // Menu Item Actions
-  public toggleMenu(group: MenuGroup): void {
-    group.expanded = !group.expanded;
+  public toggleMenu(item: MenuGroup | MenuItem): void {
+    if (this.isMenuGroup(item)) {
+      // Handle MenuGroup toggle
+      if (!item.expanded) {
+        this._pagesMenu.value.forEach(g => {
+          if (g !== item) g.expanded = false;
+        });
+      }
+      item.expanded = !item.expanded;
+    } else {
+      // Handle MenuItem toggle
+      if (item.children?.length) {
+        item.expanded = !item.expanded;
+      }
+    }
+  }
+
+  private isMenuGroup(item: MenuGroup | MenuItem): item is MenuGroup {
+    return 'group' in item && 'items' in item;
   }
 
   public toggleSubMenu(item: SubMenuItem): void {
-    item.expanded = !item.expanded;
+    // Close other items at same level when opening one
+    if (item.children?.length) {
+      const siblings = this.findSiblings(item);
+      siblings.forEach(sibling => {
+        if (sibling !== item) sibling.expanded = false;
+      });
+      item.expanded = !item.expanded;
+    }
+  }
+
+  private findSiblings(item: SubMenuItem): SubMenuItem[] {
+    let siblings: SubMenuItem[] = [];
+    this._pagesMenu.value.forEach(group => {
+      group.items.forEach(menuItem => {
+        if (menuItem.children?.includes(item)) {
+          siblings = menuItem.children;
+        }
+      });
+    });
+    return siblings;
   }
 
   public toggleSidebar(): void {

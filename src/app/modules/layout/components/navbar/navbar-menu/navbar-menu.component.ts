@@ -12,15 +12,11 @@ import { MenuItem } from '@models/menu.model';
     <nav class="navbar-menu">
       <div *ngFor="let group of menuService.pagesMenu" 
            class="menu-group">
-        <!-- Group Header -->
-        <div class="group-header">
+        <div class="group-header" (click)="menuService.toggleMenu(group)">
           <span class="group-title">{{ group.group }}</span>
-          <button class="expand-btn" (click)="menuService.toggleMenu(group)">
-            <span [class.expanded]="group.expanded">+</span>
-          </button>
+          <span class="expand-icon" [class.expanded]="group.expanded">+</span>
         </div>
         
-        <!-- Menu Items -->
         <div class="menu-items" [class.expanded]="group.expanded">
           <a *ngFor="let item of group.items"
              [routerLink]="item.route"
