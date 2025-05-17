@@ -1,18 +1,13 @@
-/* module.exports = {
-    plugins: [
-      require('postcss-import'),
-      require('tailwindcss/nesting'),
-      require('tailwindcss'),
-      require('autoprefixer')
-    ]
-  } */
-    module.exports = {
-      plugins: [
-        require('postcss-import'),
-        require('tailwindcss/nesting'),
-        require('tailwindcss')({
-          config: './tailwind.config.js'
-        }),
-        require('autoprefixer')
-      ]
-    }
+const postcssImport = require('postcss-import');
+const tailwindcss = require('tailwindcss');
+const autoprefixer = require('autoprefixer');
+
+module.exports = {
+  plugins: [
+    postcssImport,
+    tailwindcss('./tailwind.config.js'),
+    autoprefixer({
+      overrideBrowserslist: ['last 2 versions', '> 1%']
+    })
+  ]
+}
