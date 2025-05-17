@@ -37,11 +37,6 @@ export const LAYOUT_ROUTES: Routes = [
                 title: 'OEE Entry'
               }
             ]
-          },
-          {
-            path: 'components',
-            loadChildren: () => import('../uikit/uikit.routes')
-              .then(m => m.UIKIT_ROUTES)
           }
         ]
       },

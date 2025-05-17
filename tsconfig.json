@@ -40,6 +40,7 @@
 "@constants/*": ["src/app/core/constants/*"],
 "@utils": ["src/app/core/utils"],
 "@utils/*": ["src/app/core/utils/*"],
+"@models/user/*": ["src/app/core/models/user/*"],
 // layout
 "@layout-services/*": ["src/app/modules/layout/services/*"],
 // Shared

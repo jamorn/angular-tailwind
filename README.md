@@ -23,27 +23,34 @@ Frontend
 │  ├─ CommonModule-Angular.md
 │  ├─ delete the Angular cache.md
 │  ├─ Environment-Angular-Frontend.md
+│  ├─ error.md
 │  ├─ ESM.md
 │  ├─ findComponentNotStandAlone.md
 │  ├─ findComponentStillStandAlone.md
 │  ├─ Get-ChildItem.md
 │  ├─ git.md
 │  ├─ HMR.md
+│  ├─ improve.md
 │  ├─ menu.md
+│  ├─ menuflow.md
 │  ├─ ng-serve.md
 │  ├─ Path.md
 │  ├─ Remove-Item.md
+│  ├─ rolemenu.md
 │  ├─ search.md
 │  ├─ ServiceData.md
 │  ├─ stanalone.md
 │  ├─ Standalone-vs-NgModule.md
 │  ├─ svg.md
+│  ├─ tailwindconfig.md
 │  ├─ Template.md
 │  ├─ tsconfigmod.md
 │  ├─ UIKit Module.md
+│  ├─ WindowsAuthen.md
 │  └─ ่Json-sortorder.md
 ├─ karma.conf.js
 ├─ LICENSE
+├─ on package.json
 ├─ package-lock.json
 ├─ package.json
 ├─ playwright.config.ts
@@ -60,6 +67,7 @@ Frontend
 │  │  │  ├─ constants
 │  │  │  │  └─ menu.ts
 │  │  │  ├─ guards
+│  │  │  │  ├─ admin.guard.ts
 │  │  │  │  └─ auth.guard.ts
 │  │  │  ├─ interceptor
 │  │  │  ├─ interceptors
@@ -73,7 +81,9 @@ Frontend
 │  │  │  │  ├─ menu.model.ts
 │  │  │  │  ├─ oee
 │  │  │  │  │  └─ oee.model.ts
-│  │  │  │  └─ theme.model.ts
+│  │  │  │  ├─ theme.model.ts
+│  │  │  │  └─ user
+│  │  │  │     └─ user.model.ts
 │  │  │  ├─ services
 │  │  │  │  ├─ auth
 │  │  │  │  │  └─ auth.service.ts
@@ -299,7 +309,6 @@ Frontend
 │  │  │     │     │     ├─ table-row.component.spec.ts
 │  │  │     │     │     └─ table-row.component.ts
 │  │  │     │     ├─ model
-│  │  │     │     │  └─ user.model.ts
 │  │  │     │     ├─ services
 │  │  │     │     │  └─ table-filter.service.ts
 │  │  │     │     ├─ table.component.css
@@ -314,33 +323,34 @@ Frontend
 │  │  ├─ services
 │  │  │  ├─ auth
 │  │  │  └─ auth.service.spec.ts
-│  │  └─ shared
-│  │     ├─ components
-│  │     │  ├─ button
-│  │     │  │  ├─ button.component.css
-│  │     │  │  ├─ button.component.html
-│  │     │  │  ├─ button.component.spec.ts
-│  │     │  │  └─ button.component.ts
-│  │     │  ├─ responsive-helper
-│  │     │  │  ├─ responsive-helper.component.css
-│  │     │  │  ├─ responsive-helper.component.html
-│  │     │  │  ├─ responsive-helper.component.spec.ts
-│  │     │  │  └─ responsive-helper.component.ts
-│  │     │  └─ user-profile
-│  │     │     ├─ user-profile.component.css
-│  │     │     ├─ user-profile.component.html
-│  │     │     ├─ user-profile.component.spec.ts
-│  │     │     └─ user-profile.component.ts
-│  │     ├─ directives
-│  │     │  └─ click-outside.directive.ts
-│  │     ├─ dummy
-│  │     │  └─ user.dummy.ts
-│  │     ├─ models
-│  │     │  └─ chart-options.ts
-│  │     ├─ pipes
-│  │     ├─ utils
-│  │     │  └─ ckassnames.ts
-│  │     └─ validators
+│  │  ├─ shared
+│  │  │  ├─ components
+│  │  │  │  ├─ button
+│  │  │  │  │  ├─ button.component.css
+│  │  │  │  │  ├─ button.component.html
+│  │  │  │  │  ├─ button.component.spec.ts
+│  │  │  │  │  └─ button.component.ts
+│  │  │  │  ├─ responsive-helper
+│  │  │  │  │  ├─ responsive-helper.component.css
+│  │  │  │  │  ├─ responsive-helper.component.html
+│  │  │  │  │  ├─ responsive-helper.component.spec.ts
+│  │  │  │  │  └─ responsive-helper.component.ts
+│  │  │  │  └─ user-profile
+│  │  │  │     ├─ user-profile.component.css
+│  │  │  │     ├─ user-profile.component.html
+│  │  │  │     ├─ user-profile.component.spec.ts
+│  │  │  │     └─ user-profile.component.ts
+│  │  │  ├─ directives
+│  │  │  │  └─ click-outside.directive.ts
+│  │  │  ├─ dummy
+│  │  │  │  └─ user.dummy.ts
+│  │  │  ├─ models
+│  │  │  │  └─ chart-options.ts
+│  │  │  ├─ pipes
+│  │  │  ├─ utils
+│  │  │  │  └─ ckassnames.ts
+│  │  │  └─ validators
+│  │  └─ _backup
 │  ├─ assets
 │  │  ├─ avatars
 │  │  │  └─ avt-01.jpg
@@ -414,7 +424,6 @@ Frontend
 │  │  │  └─ preview.gif
 │  │  └─ styles
 │  │     └─ apexchart.css
-│  ├─ custom-theme.scss
 │  ├─ custom-theme.scss.bak
 │  ├─ environments
 │  │  ├─ environment.prod.ts

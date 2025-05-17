@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap, catchError, throwError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { UserResponse } from '@models/user/user.model';
 
 // Extract role type from UserInfo interface
 type UserRole = UserInfo['roles'][number];
@@ -30,6 +31,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<UserInfo | null>(this.getUserFromStorage());
   private readonly apiBase = `${environment.apiUrl}/api/auth`;  // เพิ่ม base URL
+  private currentUser$ = new BehaviorSubject<UserInfo | null>(null);
 
   private readonly testUsers: Record<string, { password: string; user: UserInfo }> = {
     'kittithuch.u': {
@@ -67,6 +69,8 @@ export class AuthService {
   ) {
     // Check authentication status on service init
     this.checkAuthStatus();
+    // Initialize user on service creation
+    this.getCurrentUser().subscribe();
   }
 
   // Development mode test login
@@ -143,8 +147,30 @@ export class AuthService {
     return true;
   }
 
-  getCurrentUser(): Observable<UserInfo | null> {
-    return this.currentUserSubject.asObservable();
+  getCurrentUser(): Observable<UserResponse> {
+    // Create headers with proper type
+    const headers = new HttpHeaders(environment.production ? {} : {
+      'X-Mock-Windows-Identity': 'weerachai.in'
+    });
+
+    return this.http.get<UserResponse>(`${this.apiBase}/GetCurrentUser`, {
+      withCredentials: true,
+      headers
+    }).pipe(
+      tap(response => {
+        if (response.success && response.user) {
+          this.currentUser$.next(response.user);
+        }
+      }),
+      catchError(() => {
+        this.currentUser$.next(null);
+        // Return proper UserResponse type
+        return of({
+          success: false,
+          user: null
+        } as UserResponse);
+      })
+    );
   }
 
   getTestUser(): string | null {
@@ -152,18 +178,15 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    const user = this.getUserFromStorage();
-    return user?.roles?.includes('admin') ?? false;
+    return this.currentUser$.value?.roles.includes('admin') ?? false;
   }
 
   hasRole(role: UserRole): boolean {
-    const user = this.getUserFromStorage();
-    return user?.roles?.includes(role) ?? false;
+    return this.currentUser$.value?.roles.includes(role) ?? false;
   }
 
   hasAnyRole(roles: UserRole[]): boolean {
-    const user = this.getUserFromStorage();
-    return user?.roles?.some(role => roles.includes(role)) ?? false;
+    return this.currentUser$.value?.roles.some(role => roles.includes(role)) ?? false;
   }
 
   private checkAuthStatus(): void {
@@ -213,5 +236,9 @@ export class AuthService {
   private getUserFromStorage(): UserInfo | null {
     const userStr = localStorage.getItem(this.USER_KEY);
     return userStr ? JSON.parse(userStr) : null;
+  }
+
+  private initializeUser(): void {
+    this.getCurrentUser().subscribe();
   }
 }
