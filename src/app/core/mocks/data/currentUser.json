@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "user": {
+    "empId": "804",
+    "name": "Mr. Thakol Limpakdee",
+    "email": "thakol.li@irpc.co.th",
+    "role": "super user",
+    "unit": "PL"
+  },
+  "windowsUser": {
+    "name": "Thakol Limpakdee",
+    "domain": "IRPC",
+    "username": "thakol_l"
+  }
+}

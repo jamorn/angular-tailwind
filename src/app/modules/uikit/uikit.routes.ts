@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { UikitComponent } from './uikit.component';
 import { TableComponent } from './pages/table/table.component';
 
@@ -13,9 +12,3 @@ export const UIKIT_ROUTES: Routes = [
     ]
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(UIKIT_ROUTES)],
-  exports: [RouterModule],
-})
-export class UikitRoutingModule {}

@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { LayoutComponent } from './layout.component';
 import { AuthGuard } from '@guards/auth.guard';
-import { OeeEntryComponent } from '../admin/entry/oee/oee-entry.component'; 
+import { OeeEntryComponent } from '@admin-entry/oee/oee-entry.component';
+
 export const LAYOUT_ROUTES: Routes = [
   {
     path: '',
@@ -50,9 +50,3 @@ export const LAYOUT_ROUTES: Routes = [
     ]
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(LAYOUT_ROUTES)],
-  exports: [RouterModule],
-})
-export class LayoutRoutingModule {}

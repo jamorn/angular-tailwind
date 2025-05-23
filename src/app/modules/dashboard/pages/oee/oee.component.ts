@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 /* import { ChartService } from '../../services/chart.service';
@@ -18,7 +18,7 @@ import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
     HighchartsChartModule
   ],
   providers: [
-    DashboardService
+    //DashboardService
   ],  // Remove ChartService from providers since it's provided in root
   templateUrl: './oee.component.html',
   styleUrls: ['./oee.component.css']
@@ -49,19 +49,25 @@ export class OeeComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.dashboardService.getOEEDaily().subscribe({
-      next: (data: MachineOEEData) => {
-        console.log('Received OEE Data:', Object.keys(data));
-        this.processOEEData(data);
-        this.chartService.updateMachineData(data);
+    // Subscribe to shared observable instead of calling getOEEDaily
+    this.dashboardService.oeeData$.subscribe({
+      next: (data: MachineOEEData | null) => {
+        if (data) {
+          console.log('Received OEE Data:', Object.keys(data));
+          this.processOEEData(data);
+          this.chartService.updateMachineData(data);
+        }
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Error loading OEE data:', err);
         this.error = 'Failed to load OEE data';
         this.loading = false;
       }
     });
+
+    // Trigger initial load if needed
+    this.dashboardService.loadOEEDaily();
   }
 
   private processOEEData(data: MachineOEEData): void {

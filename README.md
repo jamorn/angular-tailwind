@@ -20,30 +20,41 @@ Frontend
 │  ├─ Authentication-AngularDevelopment-Mode.md
 │  ├─ BarrelFile.md
 │  ├─ Cache-Restart-Angular-Server.md
+│  ├─ canceled-changes.md
 │  ├─ CommonModule-Angular.md
+│  ├─ datepicker.md
 │  ├─ delete the Angular cache.md
 │  ├─ Environment-Angular-Frontend.md
 │  ├─ ESM.md
+│  ├─ fakegetapi.md
 │  ├─ findComponentNotStandAlone.md
 │  ├─ findComponentStillStandAlone.md
 │  ├─ Get-ChildItem.md
+│  ├─ git-history.md
 │  ├─ git.md
 │  ├─ HMR.md
+│  ├─ improve.md
 │  ├─ menu.md
+│  ├─ menuflow.md
 │  ├─ ng-serve.md
+│  ├─ non-standalone-components.md
 │  ├─ Path.md
+│  ├─ remain.md
 │  ├─ Remove-Item.md
+│  ├─ rolemenu.md
 │  ├─ search.md
 │  ├─ ServiceData.md
 │  ├─ stanalone.md
 │  ├─ Standalone-vs-NgModule.md
 │  ├─ svg.md
+│  ├─ tailwindconfig.md
 │  ├─ Template.md
 │  ├─ tsconfigmod.md
 │  ├─ UIKit Module.md
 │  └─ ่Json-sortorder.md
 ├─ karma.conf.js
 ├─ LICENSE
+├─ on package.json
 ├─ package-lock.json
 ├─ package.json
 ├─ playwright.config.ts
@@ -58,6 +69,7 @@ Frontend
 │  │  ├─ app.routes.ts
 │  │  ├─ core
 │  │  │  ├─ constants
+│  │  │  │  ├─ api.endpoints.ts
 │  │  │  │  └─ menu.ts
 │  │  │  ├─ guards
 │  │  │  │  └─ auth.guard.ts
@@ -66,6 +78,14 @@ Frontend
 │  │  │  │  └─ auth
 │  │  │  │     ├─ auth.interceptor.spec.ts
 │  │  │  │     └─ auth.interceptor.ts
+│  │  │  ├─ mocks
+│  │  │  │  ├─ data
+│  │  │  │  │  ├─ currentUser.json
+│  │  │  │  │  └─ response_1748006778314.json
+│  │  │  │  ├─ interceptors
+│  │  │  │  │  └─ fake-api.interceptor.ts
+│  │  │  │  └─ services
+│  │  │  │     └─ auth-mock.service.ts
 │  │  │  ├─ models
 │  │  │  │  ├─ auth
 │  │  │  │  │  └─ auth.model.ts
@@ -176,7 +196,6 @@ Frontend
 │  │  │  │  │  │  ├─ oee.component.html
 │  │  │  │  │  │  ├─ oee.component.spec.ts
 │  │  │  │  │  │  └─ oee.component.ts
-│  │  │  │  │  ├─ oee-entry
 │  │  │  │  │  └─ safety
 │  │  │  │  │     ├─ safety.component.css
 │  │  │  │  │     ├─ safety.component.html
@@ -312,7 +331,6 @@ Frontend
 │  │  │     ├─ uikit.component.ts
 │  │  │     └─ uikit.routes.ts
 │  │  ├─ services
-│  │  │  ├─ auth
 │  │  │  └─ auth.service.spec.ts
 │  │  └─ shared
 │  │     ├─ components
@@ -321,6 +339,8 @@ Frontend
 │  │     │  │  ├─ button.component.html
 │  │     │  │  ├─ button.component.spec.ts
 │  │     │  │  └─ button.component.ts
+│  │     │  ├─ datepicker
+│  │     │  │  └─ datepicker.component.ts
 │  │     │  ├─ responsive-helper
 │  │     │  │  ├─ responsive-helper.component.css
 │  │     │  │  ├─ responsive-helper.component.html
@@ -332,7 +352,8 @@ Frontend
 │  │     │     ├─ user-profile.component.spec.ts
 │  │     │     └─ user-profile.component.ts
 │  │     ├─ directives
-│  │     │  └─ click-outside.directive.ts
+│  │     │  ├─ click-outside.directive.ts
+│  │     │  └─ flatpickr.directive.ts
 │  │     ├─ dummy
 │  │     │  └─ user.dummy.ts
 │  │     ├─ models
@@ -414,7 +435,6 @@ Frontend
 │  │  │  └─ preview.gif
 │  │  └─ styles
 │  │     └─ apexchart.css
-│  ├─ custom-theme.scss
 │  ├─ custom-theme.scss.bak
 │  ├─ environments
 │  │  ├─ environment.prod.ts
@@ -441,6 +461,7 @@ Frontend
 │  └─ table.e2e.spec.ts
 ├─ tsconfig.app.json
 ├─ tsconfig.json
-└─ tsconfig.spec.json
+├─ tsconfig.spec.json
+└─ webpack.config.js
 
 ```

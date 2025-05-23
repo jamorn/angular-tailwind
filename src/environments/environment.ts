@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:5112',  // หรือ https://localhost:7112 ถ้าใช้ HTTPS
+  useMockData: true, // true เมื่อต้องการใช้ Mock Data และเมื่อต้องการใช้ เมื่อต้องการใช้ Real API ให้เปลี่ยนเป็น false
   auth: {
     testUsers: {
       admin: 'kittithuch.u - 557',

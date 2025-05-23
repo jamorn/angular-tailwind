@@ -1,5 +1,3 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { Routes } from '@angular/router';
 import { authGuardFn } from './core/guards/auth.guard';
 
@@ -27,9 +25,3 @@ export const routes: Routes = [
   },
   { path: '**', redirectTo: 'errors/404' }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}

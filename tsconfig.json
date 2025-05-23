@@ -7,6 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -54,14 +55,28 @@
 "@dashboard-services": ["src/app/modules/dashboard/services"],
 "@dashboard-services/*": ["src/app/modules/dashboard/services/*"],
 
+// Admin module
+"@admin": ["src/app/modules/admin"],
+"@admin/*": ["src/app/modules/admin/*"],
+"@admin-components": ["src/app/modules/admin/components"],
+"@admin-components/*": ["src/app/modules/admin/components/*"],
+"@admin-entry": ["src/app/modules/admin/entry"],
+"@admin-entry/*": ["src/app/modules/admin/entry/*"],
+
 // Assets and environments
 "@assets/*": ["src/assets/*"],
 "@environments/*": ["src/environments/*"],
 // Third-party libraries
 // npm install angular-svg-icon@latest
 // npm list angular-svg-icon
-"@icons/*": ["src/assets/icons/*"] // Icons
-    }
+"@icons/*": ["src/assets/icons/*"], // Icons
+"@mocks/*": ["src/app/core/mocks/*"],
+"@mock-data/*": ["src/app/core/mocks/data/*"]
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types"
+    ]
   },
 	"angularCompilerOptions": {
 		"enableI18nLegacyMessageIdFormat": false,
