@@ -1,21 +1,29 @@
 import { Injectable, OnDestroy, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Menu } from 'src/app/core/constants/menu';
-import { MenuItem, SubMenuItem } from 'src/app/core/models/menu.model';
+import { Menu } from '@constants/menu';
+import { MenuItem, SubMenuItem } from '@models/menu.model';
+import { WindowsAuthService } from '@services/windows-auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MenuService implements OnDestroy {
+  // เปลี่ยนจาก [] เป็น Menu.pages
+  private _pagesMenu = signal<MenuItem[]>(Menu.pages);
   private _showSidebar = signal(true);
   private _showMobileMenu = signal(false);
-  private _pagesMenu = signal<MenuItem[]>([]);
   private _subscription = new Subscription();
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private windowsAuthService: WindowsAuthService
+  ) {
+    // เพิ่ม debug log
+    console.log('Initial Menu:', this._pagesMenu());
+
     /** Set dynamic menu */
-    this._pagesMenu.set(Menu.pages);
+    this.initializeMenu();
 
     let sub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -33,6 +41,23 @@ export class MenuService implements OnDestroy {
           });
           menu.active = activeGroup;
         });
+      }
+    });
+    this._subscription.add(sub);
+  }
+
+  private initializeMenu(): void {
+    const sub = this.windowsAuthService.currentUser$.subscribe((user) => {
+      if (user) {
+        console.log('User auth status:', user.success); // Debug log
+
+        // กรองเมนูตามสิทธิ์
+        const filteredMenu = user.success
+          ? Menu.pages
+          : Menu.pages.filter((menu) => menu.group === 'Reports');
+
+        console.log('Filtered menu:', filteredMenu); // Debug log
+        this._pagesMenu.set(filteredMenu);
       }
     });
     this._subscription.add(sub);

@@ -297,7 +297,7 @@ select {
   --background: #ffffff;
   --card: #f1f5f9;
   --card-foreground: #0f172a;
-  --primary: #3f51b5;
+  --primary:rgb(240, 40, 157);
   --primary-foreground: #ffffff;
 }
 

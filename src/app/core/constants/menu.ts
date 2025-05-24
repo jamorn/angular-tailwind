@@ -8,7 +8,7 @@ export class Menu {
       items: [
         {
           icon: 'assets/icons/heroicons/outline/chart-bar.svg',
-          label: 'Reports',
+          label: 'Chart',
           route: '/dashboard',
           children: [
             { label: 'Safety', route: '/dashboard/safety' },

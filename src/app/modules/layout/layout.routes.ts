@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { LayoutComponent } from './layout.component';
-import { AuthGuard } from '@guards/auth.guard';
 import { OeeEntryComponent } from '@admin-entry/oee/oee-entry.component';
 
 export const LAYOUT_ROUTES: Routes = [
@@ -22,7 +21,7 @@ export const LAYOUT_ROUTES: Routes = [
       },
       {
         path: 'admin',
-        canActivate: [() => inject(AuthGuard).canActivate()],
+        // ลบ AuthGuard ออก เพราะจะควบคุมผ่าน menu แทน
         children: [
           {
             path: '',

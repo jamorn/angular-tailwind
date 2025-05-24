@@ -12,6 +12,7 @@ Frontend
 ├─ CONTRIBUTING.md
 ├─ docs
 │  ├─ 20250508T1715.md
+│  ├─ 20250523Summary.md
 │  ├─ Admin-Panel.md
 │  ├─ AngularStandaloneProject.md
 │  ├─ ark.md
@@ -25,6 +26,7 @@ Frontend
 │  ├─ datepicker.md
 │  ├─ delete the Angular cache.md
 │  ├─ Environment-Angular-Frontend.md
+│  ├─ error.md
 │  ├─ ESM.md
 │  ├─ fakegetapi.md
 │  ├─ findComponentNotStandAlone.md
@@ -48,6 +50,7 @@ Frontend
 │  ├─ Standalone-vs-NgModule.md
 │  ├─ svg.md
 │  ├─ tailwindconfig.md
+│  ├─ temp.md
 │  ├─ Template.md
 │  ├─ tsconfigmod.md
 │  ├─ UIKit Module.md
@@ -98,7 +101,8 @@ Frontend
 │  │  │  │  ├─ auth
 │  │  │  │  │  └─ auth.service.ts
 │  │  │  │  ├─ theme.service.spec.ts
-│  │  │  │  └─ theme.service.ts
+│  │  │  │  ├─ theme.service.ts
+│  │  │  │  └─ windows-auth.service.ts
 │  │  │  └─ utils
 │  │  ├─ modules
 │  │  │  ├─ admin
@@ -377,6 +381,7 @@ Frontend
 │  │  │  │  │  ├─ arrow-sm-up.svg
 │  │  │  │  │  ├─ bell.svg
 │  │  │  │  │  ├─ bookmark.svg
+│  │  │  │  │  ├─ chart-bar.svg
 │  │  │  │  │  ├─ chart-pie.svg
 │  │  │  │  │  ├─ cog-6-tooth.svg
 │  │  │  │  │  ├─ cog.svg
@@ -397,6 +402,8 @@ Frontend
 │  │  │  │  │  ├─ menu.svg
 │  │  │  │  │  ├─ minus.svg
 │  │  │  │  │  ├─ moon.svg
+│  │  │  │  │  ├─ pencil-square.svg
+│  │  │  │  │  ├─ pencil.svg
 │  │  │  │  │  ├─ plus.svg
 │  │  │  │  │  ├─ refresh.svg
 │  │  │  │  │  ├─ shield-check.svg
@@ -448,7 +455,9 @@ Frontend
 │  │  ├─ animations.css
 │  │  └─ variables.css
 │  ├─ styles.css
-│  └─ test.ts
+│  ├─ test.ts
+│  └─ types
+│     └─ json.d.ts
 ├─ tailwind.config.full.js
 ├─ tailwind.config.js
 ├─ Testpages
