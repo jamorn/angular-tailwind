@@ -1,0 +1,230 @@
+{
+  "success": true,
+  "count": 16,
+  "data": [
+    {
+      "item": 1,
+      "description": "test งานที่เป็น Hotwork - แก้ไขแล้ว",
+      "actionBy": "jamorn",
+      "issueDate": "2025-04-28",
+      "dueDate": "2025-04-28",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 2,
+      "description": "ตรวจสอบ Oil Seal",
+      "actionBy": "weerachai.in",
+      "issueDate": "2025-04-29",
+      "dueDate": "2025-04-29",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 3,
+      "description": "ตรวจสอบ Bearing",
+      "actionBy": "kittithuch.u",
+      "issueDate": "2025-04-30",
+      "dueDate": "2025-04-30",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 4,
+      "description": "เปลี่ยน Belt สายพาน",
+      "actionBy": "somchai.s",
+      "issueDate": "2025-04-30",
+      "dueDate": "2025-04-30",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 5,
+      "description": "งานเชื่อมซ่อมท่อ",
+      "actionBy": "weerachai.in",
+      "issueDate": "2025-05-01",
+      "dueDate": "2025-05-01",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 6,
+      "description": "เชื่อมซ่อมถัง",
+      "actionBy": "jamorn",
+      "issueDate": "2025-05-02",
+      "dueDate": "2025-05-02",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 7,
+      "description": "hr xxปป",
+      "actionBy": "พพพ",
+      "issueDate": "2025-05-03",
+      "dueDate": "2025-05-03",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 8,
+      "description": "เปลี่ยนซีล",
+      "actionBy": "kittithuch.u",
+      "issueDate": "2025-05-04",
+      "dueDate": "2025-05-04",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 9,
+      "description": "ซ่อมมอเตอร์",
+      "actionBy": "somchai.s",
+      "issueDate": "2025-05-05",
+      "dueDate": "2025-05-05",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 10,
+      "description": "เชื่อมซ่อมถังน้ำ",
+      "actionBy": "weerachai.in",
+      "issueDate": "2025-05-06",
+      "dueDate": "2025-05-06",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 11,
+      "description": "ซ่อมท่อน้ำหล่อเย็น",
+      "actionBy": "jamorn",
+      "issueDate": "2025-05-07",
+      "dueDate": "2025-05-07",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 12,
+      "description": "เปลี่ยน Filter",
+      "actionBy": "kittithuch.u",
+      "issueDate": "2025-05-08",
+      "dueDate": "2025-05-08",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 13,
+      "description": "ตรวจสอบระบบไฟฟ้า",
+      "actionBy": "somchai.s",
+      "issueDate": "2025-05-09",
+      "dueDate": "2025-05-09",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 14,
+      "description": "เชื่อมซ่อมราวกันตก",
+      "actionBy": "weerachai.in",
+      "issueDate": "2025-05-10",
+      "dueDate": "2025-05-10",
+      "baggingCode": "BG",
+      "baggingName": "PP3 - BAGGING UNIT",
+      "workTypeDetail": {
+        "id": 2,
+        "name": "Hotwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 15,
+      "description": "ตรวจสอบระบบลม",
+      "actionBy": "jamorn",
+      "issueDate": "2025-05-11",
+      "dueDate": "2025-05-11",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Coldwork",
+        "description": ""
+      }
+    },
+    {
+      "item": 16,
+      "description": "ตรวจสอบระบบหล่อลื่น",
+      "actionBy": "somchai.s",
+      "issueDate": "2025-05-15",
+      "dueDate": "2025-05-15",
+      "baggingCode": "PL",
+      "baggingName": "PP3 - PELLETIZING UNIT",
+      "workTypeDetail": {
+        "id": 1,
+        "name": "Action",
+        "description": ""
+      }
+    }
+  ]
+}

@@ -16,6 +16,10 @@ export class Menu {
             { label: 'Giveaway', route: '/dashboard/giveaway' },
             { label: 'EII', route: '/dashboard/eii' }
           ],
+        },{
+          icon: 'assets/icons/heroicons/outline/megaphone.svg',
+          label: 'Status Plant',
+          route: '/admin/pl-status-plant'
         }
       ]
     },
