@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { OeeEntryComponent } from './oee-entry.component';
+import { OeeMockService } from './services/oee-mock.service';
 
 describe('OeeEntryComponent', () => {
   let component: OeeEntryComponent;
@@ -8,9 +8,9 @@ describe('OeeEntryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OeeEntryComponent]
-    })
-    .compileComponents();
+      imports: [OeeEntryComponent],
+      providers: [OeeMockService]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(OeeEntryComponent);
     component = fixture.componentInstance;

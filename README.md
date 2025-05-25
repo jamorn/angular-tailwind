@@ -32,6 +32,7 @@ Frontend
 │  ├─ findComponentNotStandAlone.md
 │  ├─ findComponentStillStandAlone.md
 │  ├─ Get-ChildItem.md
+│  ├─ GetRecent.md
 │  ├─ git-history.md
 │  ├─ git.md
 │  ├─ HMR.md
@@ -110,10 +111,21 @@ Frontend
 │  │  │  │  ├─ admin.routes.ts
 │  │  │  │  └─ entry
 │  │  │  │     └─ oee
+│  │  │  │        ├─ components
+│  │  │  │        │  └─ oee-form
+│  │  │  │        │     ├─ oee-form.component.css
+│  │  │  │        │     ├─ oee-form.component.html
+│  │  │  │        │     ├─ oee-form.component.spec.ts
+│  │  │  │        │     └─ oee-form.component.ts
+│  │  │  │        ├─ models
+│  │  │  │        │  └─ oee-entry.model.ts
 │  │  │  │        ├─ oee-entry.component.css
 │  │  │  │        ├─ oee-entry.component.html
 │  │  │  │        ├─ oee-entry.component.spec.ts
-│  │  │  │        └─ oee-entry.component.ts
+│  │  │  │        ├─ oee-entry.component.ts
+│  │  │  │        └─ services
+│  │  │  │           ├─ oee-entry.service.ts
+│  │  │  │           └─ oee-mock.service.ts
 │  │  │  ├─ auth
 │  │  │  │  ├─ auth.component.css
 │  │  │  │  ├─ auth.component.html

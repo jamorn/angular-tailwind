@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuardFn } from './core/guards/auth.guard';
+//import { authGuardFn } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -11,13 +11,13 @@ export const routes: Routes = [
     path: '',
     loadChildren: () => import('./modules/layout/layout.routes')
       .then(m => m.LAYOUT_ROUTES),
-    canActivate: [authGuardFn]
+    //canActivate: [authGuardFn]
   },
-  {
+/*   {
     path: 'auth',
     loadChildren: () => import('./modules/auth/auth.routes')
       .then(m => m.AUTH_ROUTES)
-  },
+  }, */
   {
     path: 'errors',
     loadChildren: () => import('./modules/error/error.routes')

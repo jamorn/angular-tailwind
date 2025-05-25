@@ -1,152 +1,68 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { MACHINES, Machine } from '@core/models/oee/oee.model';
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/themes/dark.css'; // Add this import
+import { signal } from '@angular/core';
+import { OeeFormComponent } from './components/oee-form/oee-form.component';
+import { OeeMockService } from './services/oee-mock.service';
+import { OeeEntryResponse } from './models/oee-entry.model';
 
 @Component({
   selector: 'app-oee-entry',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule
+    OeeFormComponent  // Make sure this is imported
   ],
   templateUrl: './oee-entry.component.html',
-  styleUrls: ['./oee-entry.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./oee-entry.component.css']
 })
-export class OeeEntryComponent implements OnInit, AfterViewInit {
-  title = 'OEE Entry Form';
-  form: FormGroup;
-  machines = MACHINES;
-  @ViewChild('datepicker') datepickerEl!: ElementRef;
+export class OeeEntryComponent implements OnInit {
+  showForm = signal<boolean>(false);
+  recentEntries = signal<OeeEntryResponse['dashboards']>([]);
+  selectedEntry = signal<any>(null);
+  expandedRows: boolean[] = [];
 
-  constructor(private fb: FormBuilder) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    this.form = this.fb.group({
-      machineId: [null, Validators.required],  // Changed from '' to null
-      recordDateString: [yesterday.toISOString().split('T')[0]],
-      availability: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
-      performance: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
-      quality: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
-      giveaway: ['', [Validators.required, Validators.min(25), Validators.max(25.3)]],
-      oee: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
-      remarks: this.fb.array([]),
-      responsiblePerson: ['default auto-generate'],
-      status: [1]
+  constructor(private mockService: OeeMockService) {}
+
+  ngOnInit() {
+    this.loadRecentEntries();
+  }
+
+  private loadRecentEntries() {
+    this.mockService.getRecent().subscribe({
+      next: (response: OeeEntryResponse) => {
+        if (response.success) {
+          this.recentEntries.set(response.dashboards);
+          // Initialize expanded state array
+          this.expandedRows = new Array(response.dashboards.length).fill(false);
+        }
+      },
+      error: (error: Error) => {
+        console.error('Error loading entries:', error);
+      }
     });
   }
 
-  get remarksArray() {
-    return this.form.get('remarks') as FormArray;
+  onEdit(entry: any) {
+    console.log('Selected entry for edit:', entry);
+    this.selectedEntry.set(entry);
+    this.showForm.set(true);
   }
 
-  addRemark() {
-    this.remarksArray.push(this.fb.control(''));
+  onCancelForm() {
+    // Reset form state without refreshing data
+    this.showForm.set(false);
+    this.selectedEntry.set(null);
   }
 
-  removeRemark(index: number) {
-    this.remarksArray.removeAt(index);
+  onCloseForm() {
+    // Reset form state and refresh data after successful submit
+    this.showForm.set(false);
+    this.selectedEntry.set(null);
+    this.loadRecentEntries();
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      try {
-        const formData = {
-          ...this.form.value,
-          lastUpdated: new Date().toISOString(),
-          remarks: this.form.value.remarks.filter((remark: string) => remark.trim() !== '')
-        };
-  
-        console.group('Form Data Preview:');
-        console.log('Machine:', this.machines.find(m => m.machineId === formData.machineId)?.machineName);
-        console.log('Date:', formData.recordDateString);
-        console.log('OEE Factors:');
-        console.table({
-          Availability: formData.availability + '%',
-          Performance: formData.performance + '%',
-          Quality: formData.quality + '%',
-          Giveaway: formData.giveaway + '%',
-          OEE: formData.oee + '%'
-        });
-        console.log('Remarks:', formData.remarks);
-        console.log('JSON Data:', JSON.stringify(formData, null, 2));
-        console.groupEnd();
-      } catch (error) {
-        console.error('Form submission error:', error);
-        // TODO: Show error dialog/notification
-      }
-    }
-  }
-
-  mockData() {
-    const oee = 60;
-    const factor = Math.cbrt(oee / 100);
-    
-    const mockValues = {
-      machineId: MACHINES[0].machineId,  // Now uses number type
-      recordDateString: new Date().toISOString().split('T')[0],
-      availability: +(factor * 100).toFixed(2),
-      performance: +(factor * 100).toFixed(2),
-      quality: +(factor * 100).toFixed(2),
-      giveaway: 25.112,
-      oee: oee,
-      responsiblePerson: 'Test User',
-      status: 1
-    };
-
-    // Set form values
-    this.form.patchValue(mockValues);
-
-    // Add two remarks
-    this.addRemark();
-    this.addRemark();
-    this.remarksArray.at(0)?.setValue('เครื่องจักรมีปัญหา Bearing เสีย');
-    this.remarksArray.at(1)?.setValue('รอ Spare Part จากต่างประเทศ');
-  }
-
-  ngOnInit() {
-    // Call mockData for testing
-    this.mockData();
-  }
-
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  }
-
-  ngAfterViewInit() {
-    if (this.datepickerEl?.nativeElement) {
-      flatpickr(this.datepickerEl.nativeElement, {
-        dateFormat: 'Y-m-d',
-        altInput: true,
-        altFormat: 'd-m-Y',
-        defaultDate: this.form.get('recordDateString')?.value,
-        clickOpens: true,
-        static: true,
-        // Remove theme property and use CSS instead
-        onChange: (selectedDates) => {
-          const isoDate = selectedDates[0]?.toISOString().split('T')[0];
-          this.form.patchValue({ recordDateString: isoDate });
-        }
-      });
-
-      // Add dark theme class to the element
-      this.datepickerEl.nativeElement.classList.add('dark');
-
-      // Set initial value
-      const initialDate = this.form.get('recordDateString')?.value;
-      if (initialDate) {
-        this.datepickerEl.nativeElement.value = this.formatDate(new Date(initialDate));
-      }
-    }
+  toggleRow(index: number) {
+    this.expandedRows[index] = !this.expandedRows[index];
   }
 }
+

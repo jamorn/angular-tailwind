@@ -1,110 +1,107 @@
-<div class="form-container">
-  <div class="form-card">
-    <h1 class="form-title">ลงข้อมูล OEE ประจำวัน</h1>
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <!-- Machine & Date Selection -->
-      <div class="tw-grid tw-grid-cols-2 tw-gap-6 tw-mb-8">
-        <div class="form-group">
-          <label class="form-label">Select Machine</label>
-          <select formControlName="machineId" class="form-input">
-            <option value="">Select a machine</option>
-            <option *ngFor="let machine of machines" [value]="machine.machineId">
-              {{machine.machineName}}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <div class="datepicker-container">
-            <input #datepicker
-                   type="text"
-                   class="form-input"
-                   formControlName="recordDateString"
-                   placeholder="Select date"
-                   readonly>
-            <div class="datepicker-icon">
-              <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-            </div>
-          </div>
+<div class="container mx-auto px-4 py-8">
+  <!-- Table View -->
+  <div *ngIf="!showForm()">
+    <div class="mb-4 flex justify-between">
+      <div class="inline-block">
+        <h3 class="text-foreground font-semibold">OEE Entries</h3>
+        <div class="text-muted-foreground space-x-1 text-xs font-medium">
+          <span class="text-foreground">Recent Data</span>
         </div>
       </div>
-
-      <!-- OEE Data & Remarks Grid -->
-      <div class="tw-grid tw-grid-cols-5 tw-gap-6">
-        <!-- OEE Input Fields -->
-        <div class="tw-col-span-2">
-          <h2 class="oee-title">OEE Input Data</h2>
-        
-          <div class="input-group">
-            <label class="form-label">Availability (%)</label>
-            <input type="number" formControlName="availability" class="form-input">
-          </div>
-          
-          <div class="input-group">
-            <label class="form-label">Performance (%)</label>
-            <input type="number" formControlName="performance" class="form-input">
-          </div>
-          
-          <div class="input-group">
-            <label class="form-label">Quality (%)</label>
-            <input type="number" formControlName="quality" class="form-input">
-          </div>
-          
-          <div class="input-group">
-            <label class="form-label">Giveaway (kg)</label>
-            <input type="number" formControlName="giveaway" class="form-input">
-          </div>
-          
-          <div class="input-group">
-            <label class="form-label">OEE (%)</label>
-            <input type="number" formControlName="oee" class="form-input">
-          </div>
-        </div>
-
-        <!-- Remarks Section -->
-        <div class="tw-col-span-3">
-          <div class="remarks-section">
-            <!-- Remarks Header with Add Button -->
-            <div class="remarks-header">
-              <h2 class="remarks-title">Remarks</h2>
-              <button type="button" 
-                      (click)="addRemark()"
-                      class="add-remark-btn">
-                &#43;
-              </button>
-            </div>
-
-            <!-- Remarks List -->
-            <div formArrayName="remarks">
-              <div *ngFor="let remark of remarksArray.controls; let i=index" 
-                   class="remark-input-group">
-                <input [formControlName]="i" 
-                       class="form-input" 
-                       [placeholder]="'Remark ' + (i + 1)">
-                <button type="button" 
-                        (click)="removeRemark(i)"
-                        class="remove-remark-btn">
-                  &#45;
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add at the end of the form -->
-      <div class="submit-container">
-        <button type="submit" 
-                [disabled]="!form.valid"
-                class="submit-btn">
-          Submit
+      <div class="inline-block space-x-4">
+        <button 
+          (click)="showForm.set(true)"
+          class="bg-primary text-primary-foreground flex-none rounded-md px-4 py-2.5 text-xs font-semibold">
+          Add New Entry
         </button>
       </div>
-    </form>
+    </div>
+
+    <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
+      <div class="scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted grow overflow-x-auto px-5">
+        <table class="text-muted-foreground table w-full table-auto border-collapse border-0 text-left align-middle leading-5">
+          <thead class="border-muted/20 text-muted-foreground border text-xs">
+            <tr>
+              <th class="px-6 py-3">Machine</th>
+              <th class="px-6 py-3">Date</th>
+              <th class="px-6 py-3">OEE</th>
+              <th class="px-6 py-3">A%</th>
+              <th class="px-6 py-3">P%</th>
+              <th class="px-6 py-3">Q%</th>
+              <th class="px-6 py-3">Giveaway</th>
+              <th class="px-6 py-3">Actions</th>  <!-- เพิ่ม column -->
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let entry of recentEntries(); let i = index">
+              <!-- Main Row -->
+              <tr class="hover:bg-card/50">
+                <td class="px-6 py-4 text-sm">
+                  <!-- Expand Button -->
+                  <button *ngIf="entry.remarks?.length" 
+                          (click)="toggleRow(i)"
+                          class="mr-2 inline-flex items-center">
+                    <svg [class.rotate-90]="expandedRows[i]" 
+                         class="h-4 w-4 transition-transform duration-200" 
+                         xmlns="http://www.w3.org/2000/svg" 
+                         viewBox="0 0 20 20" 
+                         fill="currentColor">
+                      <path d="M6 6L14 10L6 14V6Z"/>
+                    </svg>
+                  </button>
+                  <!-- Show red dot if has remarks -->
+                  <span *ngIf="entry.remarks?.length" 
+                        class="mr-2 inline-block h-2 w-2 rounded-full bg-red-500">
+                  </span>
+                  {{entry.machineName}}
+                </td>
+                <td class="px-6 py-4 text-sm">{{entry.recordDateString | date:'dd/MM/yyyy'}}</td>
+                <td class="px-6 py-4 text-sm">{{entry.oee | number:'1.2-2'}}%</td>
+                <td class="px-6 py-4 text-sm">{{entry.availability | number:'1.2-2'}}%</td>
+                <td class="px-6 py-4 text-sm">{{entry.performance | number:'1.2-2'}}%</td>
+                <td class="px-6 py-4 text-sm">{{entry.quality | number:'1.2-2'}}%</td>
+                <td class="px-6 py-4 text-sm">{{entry.giveaway | number:'1.3-3'}}</td>
+                <td class="px-6 py-4 text-sm">
+                  <button 
+                    (click)="onEdit(entry)"
+                    class="text-primary hover:text-primary-dark"
+                    title="Edit Entry">
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                         class="h-5 w-5" 
+                         viewBox="0 0 20 20" 
+                         fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              
+              <!-- Expandable Remarks Row -->
+              <tr *ngIf="expandedRows[i] && entry.remarks?.length" 
+                  class="bg-muted/5 text-sm">
+                <td colspan="8" class="px-6 py-4">
+                  <div class="ml-8">
+                    <h4 class="font-semibold mb-2">Remarks:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                      <li *ngFor="let remark of entry.remarks" class="text-muted-foreground">
+                        {{remark}}
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
+
+  <!-- Form Component -->
+  <app-oee-form
+    *ngIf="showForm()"
+    [entryData]="selectedEntry()"
+    (closeForm)="onCloseForm()"
+    (cancelForm)="onCancelForm()">
+  </app-oee-form>
 </div>

@@ -1,0 +1,118 @@
+<div class="form-container">
+  <div class="form-card">
+    <h1 class="form-title">ลงข้อมูล OEE ประจำวัน</h1>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Machine & Date Selection -->
+      <div class="tw-grid tw-grid-cols-2 tw-gap-6 tw-mb-8">
+        <div class="form-group">
+          <label class="form-label">Select Machine</label>
+          <select formControlName="machineId" class="form-input">
+            <option value="">Select a machine</option>
+            <option *ngFor="let machine of machines" [value]="machine.machineId">
+              {{machine.machineName}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <div class="datepicker-container">
+            <input #datepicker
+                   type="text"
+                   class="form-input"
+                   formControlName="recordDateString"
+                   placeholder="Select date"
+                   readonly>
+            <div class="datepicker-icon">
+              <svg class="tw-w-5 tw-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OEE Data & Remarks Grid -->
+      <div class="tw-grid tw-grid-cols-5 tw-gap-6">
+        <!-- OEE Input Fields -->
+        <div class="tw-col-span-2">
+          <h2 class="oee-title">OEE Input Data</h2>
+        
+          <div class="input-group">
+            <label class="form-label">Availability (%)</label>
+            <input type="number" formControlName="availability" class="form-input">
+          </div>
+          
+          <div class="input-group">
+            <label class="form-label">Performance (%)</label>
+            <input type="number" formControlName="performance" class="form-input">
+          </div>
+          
+          <div class="input-group">
+            <label class="form-label">Quality (%)</label>
+            <input type="number" formControlName="quality" class="form-input">
+          </div>
+          
+          <div class="input-group">
+            <label class="form-label">Giveaway (kg)</label>
+            <input type="number" formControlName="giveaway" class="form-input">
+          </div>
+          
+          <div class="input-group">
+            <label class="form-label">OEE (%)</label>
+            <input type="number" formControlName="oee" class="form-input">
+          </div>
+        </div>
+
+        <!-- Remarks Section -->
+        <div class="tw-col-span-3">
+          <div class="remarks-section">
+            <!-- Remarks Header with Add Button -->
+            <div class="remarks-header">
+              <h2 class="remarks-title">Remarks</h2>
+              <button type="button" 
+                      (click)="addRemark()"
+                      class="add-remark-btn">
+                &#43;
+              </button>
+            </div>
+
+            <!-- Remarks List -->
+            <div formArrayName="remarks">
+              <div *ngFor="let remark of remarksArray.controls; let i=index" 
+                   class="remark-input-group">
+                <input [formControlName]="i" 
+                       class="form-input" 
+                       [placeholder]="'Remark ' + (i + 1)">
+                <button type="button" 
+                        (click)="removeRemark(i)"
+                        class="remove-remark-btn">
+                  &#45;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add at the end of the form -->
+      <div class="flex justify-end space-x-4 mt-6">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="bg-muted text-muted-foreground hover:bg-muted/80 px-4 py-2 rounded-md text-xs font-semibold">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="!form.valid"
+          class="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-xs font-semibold">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
