@@ -1,19 +1,30 @@
 <div class="container">
-    <div *ngIf="loading" class="loading">
-      Loading charts...
-    </div>
-    
-    <div *ngIf="error" class="error">
-      {{ error }}
-    </div>
+  <!-- Debug info -->
+  <pre *ngIf="true" style="font-size: 10px;">
+    Loading: {{ loading }}
+    Data Processed: {{ dataProcessed }}
+    Has Chart Options: {{ !!chartOptions }}
+    Machine Count: {{ orderedMachines.length }}
+  </pre>
+
+  <div *ngIf="loading" class="loading">
+    Loading charts...
+  </div>
   
-    <div *ngIf="!loading && !error" class="charts-grid">
-      <div class="chart-container" *ngFor="let machine of chartOptions | keyvalue">
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && !!chartOptions" class="charts-container">
+    <ng-container *ngFor="let machine of orderedMachines">
+      <div *ngIf="chartOptions[machine]" class="chart-wrapper">
         <highcharts-chart
           [Highcharts]="Highcharts"
-          [options]="machine.value"
-          class="chart">
+          [options]="chartOptions[machine]"
+          [update]="true"
+          style="width: 100%; height: 400px; display: block;">
         </highcharts-chart>
       </div>
-    </div>
+    </ng-container>
   </div>
+</div>

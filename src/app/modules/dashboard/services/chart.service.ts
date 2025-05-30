@@ -10,73 +10,55 @@ export class ChartService {
   private machineDataSubject = new BehaviorSubject<MachineOEEData | null>(null);
   machineData$ = this.machineDataSubject.asObservable();
 
-  updateMachineData(data: MachineOEEData): void {
+  updateMachineData(data: MachineOEEData | null): void {
+    console.log('[ChartService] updateMachineData called');
+    console.log('[ChartService] Data received:', data ? 'Has Data' : 'No Data');
+    
+    if (!data) {
+      console.warn('[ChartService] Received null data');
+      return;
+    }
     this.machineDataSubject.next(data);
   }
 
+  // แก้ไข createChartsFromMachineData
   createChartsFromMachineData(machineData: MachineOEEData): { [key: string]: Highcharts.Options } {
-    // Add immediate log to verify method is called
-    console.log('METHOD CALLED: createChartsFromMachineData');
     if (!machineData) {
-      console.log('WARNING: machineData is null or undefined');
+      console.warn('No machine data provided');
       return {};
     }
 
-    const chartOptions: { [key: string]: Highcharts.Options } = {};
-    
     try {
-      console.log('========== START DEBUG MACHINE ORDER ==========');
-      console.log('Input machineData:', JSON.stringify(Object.keys(machineData)));
-      
-      // 1. Log enum values
-      console.log('MachineOrder Enum Values:');
-      Object.entries(MachineOrder).forEach(([key, value]) => {
-        if (isNaN(Number(key))) {
-          console.log(`${key}: ${value}`);
-        }
-      });
+      const chartOptions: { [key: string]: Highcharts.Options } = {};
+      const orderedKeys = this.getOrderedMachineKeys(machineData);
 
-      // 2. Log original data
-      console.log('\nOriginal Machine Data Keys:');
-      const originalKeys = Object.keys(machineData);
-      console.log(originalKeys);
-
-      // 3. Sort and log comparison
-      const orderedKeys = Object.keys(machineData).sort((a, b) => {
-        const machineA = a.replace('oeeDataList', '');
-        const machineB = b.replace('oeeDataList', '');
-        
-        const orderA = MachineOrder[machineA as keyof typeof MachineOrder] || 999;
-        const orderB = MachineOrder[machineB as keyof typeof MachineOrder] || 999;
-        
-        console.log(`\nComparing Machines:
-        A: ${machineA} (${orderA})
-        B: ${machineB} (${orderB})
-        Result: ${orderA - orderB}`);
-        
-        return orderA - orderB;
-      });
-
-      // 4. Log final order
-      console.log('\nFinal Ordered Keys:');
-      console.log(orderedKeys);
-      
-      console.log('========== END DEBUG MACHINE ORDER ==========\n');
-
-      // สร้าง charts ตามลำดับ
       orderedKeys.forEach(key => {
         const data = machineData[key as keyof MachineOEEData];
-        if (data && data.length > 0) {
+        if (data?.length > 0) {
           const machineName = key.replace('oeeDataList', '');
           chartOptions[key] = this.createOEEChartOptions(machineName, data);
         }
       });
 
+      console.log('Created chart options for machines:', Object.keys(chartOptions));
       return chartOptions;
     } catch (error) {
-      console.error('Error in createChartsFromMachineData:', error);
+      console.error('Error creating charts:', error);
       return {};
     }
+  }
+
+  // เพิ่มเมธอดช่วยจัดเรียงลำดับเครื่องจักร
+  private getOrderedMachineKeys(machineData: MachineOEEData): string[] {
+    return Object.keys(machineData).sort((a, b) => {
+      const machineA = a.replace('oeeDataList', '');
+      const machineB = b.replace('oeeDataList', '');
+      
+      const orderA = MachineOrder[machineA as keyof typeof MachineOrder] || 999;
+      const orderB = MachineOrder[machineB as keyof typeof MachineOrder] || 999;
+      
+      return orderA - orderB;
+    });
   }
 
   createOEEChartOptions(machine: string, data: OEEDataDTO[]): Highcharts.Options {
