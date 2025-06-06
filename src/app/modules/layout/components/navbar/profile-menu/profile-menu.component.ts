@@ -1,3 +1,4 @@
+import { AuthService } from '@core/services/auth/auth.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -5,6 +6,8 @@ import { RouterLink } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
+import { UserPhotoResponse } from '@core/interfaces/user-profile.interface';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile-menu',
@@ -36,6 +39,7 @@ import { ClickOutsideDirective } from '../../../../../shared/directives/click-ou
 })
 export class ProfileMenuComponent implements OnInit {
   public isOpen = false;
+  public userProfile?: UserPhotoResponse;
   public profileMenu = [
     {
       title: 'Your Profile',
@@ -88,9 +92,23 @@ export class ProfileMenuComponent implements OnInit {
   public themeMode = ['light', 'dark'];
   public themeDirection = ['ltr', 'rtl'];
 
-  constructor(public themeService: ThemeService) {}
+  constructor(
+    public themeService: ThemeService,
+    private authService: AuthService,
+    private sanitizer: DomSanitizer
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.authService.getCurrentUserWithPhoto().subscribe(
+      (response) => {
+        if (response.success) {
+          this.userProfile = response;
+          console.log('[ProfileMenu] Photo data type:', typeof response.user.photo);
+          console.log('[ProfileMenu] Photo data length:', response.user.photo?.length || 0);
+        }
+      }
+    );
+  }
 
   public toggleMenu(): void {
     this.isOpen = !this.isOpen;
@@ -113,5 +131,14 @@ export class ProfileMenuComponent implements OnInit {
     this.themeService.theme.update((theme) => {
       return { ...theme, direction: value };
     });
+  }
+
+  public getProfileImage(): SafeUrl {
+    if (this.userProfile?.user?.photo) {
+      // Sanitize and return the base64 image
+      return this.sanitizer.bypassSecurityTrustUrl(this.userProfile.user.photo);
+    }
+    // Return default icon if no photo
+    return './assets/icons/heroicons/outline/user-circle.svg';
   }
 }

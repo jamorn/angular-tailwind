@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, throwError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { UserPhotoResponse } from '@core/interfaces/user-profile.interface';
+import { USER_PHOTO_MOCK } from '@core/mock/user-photo.mock';
 
 // Extract role type from UserInfo interface
 type UserRole = UserInfo['roles'][number];
@@ -164,6 +166,16 @@ export class AuthService {
   hasAnyRole(roles: UserRole[]): boolean {
     const user = this.getUserFromStorage();
     return user?.roles?.some(role => roles.includes(role)) ?? false;
+  }
+
+  // เพิ่ม method ใหม่
+  getCurrentUserWithPhoto(): Observable<UserPhotoResponse> {
+    if (environment.useMockData) {
+      console.log('[AuthService] Using mock data');
+      return of(USER_PHOTO_MOCK);
+    }
+    
+    return this.http.get<UserPhotoResponse>(`${this.apiBase}/GetCurrentUserWithPhoto`);
   }
 
   private checkAuthStatus(): void {

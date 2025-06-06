@@ -1,25 +1,30 @@
 <div class="relative ml-3">
-  <!-- Profile Button -->
-  <button (click)="toggleMenu()" class="bg-card relative flex rounded-full text-sm" type="button">
+  <!-- Profile Button - เพิ่ม z-50 -->
+  <button (click)="toggleMenu()" class="bg-card relative flex rounded-full text-sm z-50" type="button">
     <span class="sr-only">Open user menu</span>
     <img
       clickOutside
       (clickOutside)="isOpen = false"
       class="size-9 shrink-0 rounded-md"
-      src="https://avatars.githubusercontent.com/u/12519008?v=4"
-      alt="" />
+      [src]="getProfileImage()"
+      [alt]="userProfile?.user?.name || ''" />
   </button>
-  <!-- Dropdown -->
+
+  <!-- Dropdown - เปลี่ยน z-20 เป็น z-[60] -->
   <div
     [@openClose]="isOpen ? 'open' : 'closed'"
-    class="bg-background shadow-custom border-muted absolute z-20 mt-2 w-60 origin-top-right transform rounded-md border border-dashed py-4 ring-1 ring-transparent ring-opacity-5 transition focus:outline-hidden ltr:right-0 rtl:left-0">
+    class="bg-background shadow-custom border-muted absolute z-[60] mt-2 w-60 origin-top-right transform rounded-md border border-dashed py-4 ring-1 ring-transparent ring-opacity-5 transition focus:outline-hidden ltr:right-0 rtl:left-0">
     <div class="flext-row flex items-center px-4 pb-4">
       <div class="w-10 shrink-0">
-        <img class="rounded-md" src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="" />
+        <img class="rounded-md"
+             [src]="userProfile?.user?.photo || './assets/icons/heroicons/outline/user-circle.svg'"
+             [alt]="userProfile?.user?.name || ''" />
       </div>
       <div class="text-foreground overflow-hidden px-2 text-sm font-semibold">
-        Luciano Oliveira
-        <p class="text-muted-foreground truncate text-ellipsis text-xs font-semibold">me&#64;lanno.dev</p>
+        {{ userProfile?.user?.name || 'Loading...' }}
+        <p class="text-muted-foreground truncate text-ellipsis text-xs font-semibold">
+          {{ userProfile?.user?.email || '' }}
+        </p>
       </div>
     </div>
 
