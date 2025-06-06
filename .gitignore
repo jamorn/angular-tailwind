@@ -41,6 +41,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Mock Data
+src/app/core/mocks/data/*.json
+
 # System Files
 .DS_Store
 Thumbs.db
