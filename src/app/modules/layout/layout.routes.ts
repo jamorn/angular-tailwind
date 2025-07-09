@@ -45,7 +45,7 @@ export const LAYOUT_ROUTES: Routes = [
         ]
       },
       // Wildcard route สำหรับ 404
-      { path: '**', redirectTo: '../errors/404' }
+      { path: '**', redirectTo: 'errors/404' }
     ]
   }
 ];

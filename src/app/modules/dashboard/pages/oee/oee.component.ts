@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, effect, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ButtonComponent } from '@shared/components/button/button.component';
 /* import { ChartService } from '../../services/chart.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { MachineOEEData, MachineOrder } from '@core/models/oee/oee.model'; */
@@ -11,22 +12,19 @@ import { DashboardService } from '@dashboard-services/dashboard.service';
 import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription, throwError, TimeoutError } from 'rxjs';
 import { finalize, timeout, catchError, tap } from 'rxjs/operators';
-//import { HttpErrorResponse } from '@angular/common/http';
+import { ThemeService } from '@core/services/theme.service';
 
 @Component({
   selector: 'app-oee',
   standalone: true,
   imports: [
     CommonModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    ButtonComponent
   ],
-  providers: [
-    //DashboardService
-  ],  // Remove ChartService from providers since it's provided in root
   templateUrl: './oee.component.html',
-  styleUrls: ['./oee.component.css']
 })
-export class OeeComponent implements OnInit, OnDestroy {
+export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
   // Highcharts properties
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: { [key: string]: Highcharts.Options } = {};
@@ -47,17 +45,32 @@ export class OeeComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardService: DashboardService,
     private chartService: ChartService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private themeService: ThemeService
+  ) {
+    // Update effect to use theme$ Observable
+    effect(() => {
+      this.themeService.theme$.subscribe(theme => {
+        console.log('Theme Changed:', {
+          mode: theme.mode,
+          color: theme.color,
+          direction: theme.direction
+        });
+      });
+    });
+  }
 
   ngOnInit(): void {
     console.log('[OeeComponent] Initializing');
     this.loading = true;
 
+    // Update this line to use getCurrentTheme()
+    console.log('Current Theme:', this.themeService.getCurrentTheme());
+    
     this.subscription = this.chartService.machineData$
       .pipe(
         tap(data => {
-          console.log('[OeeComponent] Received data:', data ? 'Has Data' : 'No Data');
+         // console.log('[OeeComponent] Received data:', data ? 'Has Data' : 'No Data');
           if (data) {
             this.loading = false;  // Set loading to false when data received
             this.cdr.detectChanges();
@@ -67,7 +80,7 @@ export class OeeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           if (data && !this.dataProcessed) {
-            console.log('[OeeComponent] Processing data');
+           // console.log('[OeeComponent] Processing data');
             this.processOEEData(data);
             this.dataProcessed = true;
             this.error = null;
@@ -83,7 +96,7 @@ export class OeeComponent implements OnInit, OnDestroy {
       });
 
     if (!this.dataProcessed) {
-      console.log('[OeeComponent] Triggering initial data load');
+      //console.log('[OeeComponent] Triggering initial data load');
       this.dashboardService.loadOEEDaily();
     }
   }
@@ -151,19 +164,31 @@ export class OeeComponent implements OnInit, OnDestroy {
     };
   }
 
-  processOEEData(data: MachineOEEData): void {
-    console.log('========== START PROCESSING OEE DATA ==========');
+  // Add scroll method
+  scrollToChart(machine: string): void {
+    const element = document.getElementById(machine);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  private processOEEData(data: MachineOEEData): void {
+   // console.log('========== START PROCESSING OEE DATA ==========');
     try {
+      // Create ordered machine list for navigation buttons
       this.orderedMachines = Object.entries(MachineOrder)
         .filter(([key]) => isNaN(Number(key)))
         .sort(([, a], [, b]) => (a as number) - (b as number))
         .map(([name]) => `oeeDataList${name}`);
 
-      console.log('Ordered machine keys:', this.orderedMachines);
+     // console.log('Ordered machine keys:', this.orderedMachines);
       
       this.chartOptions = {};
       this.orderedMachines.forEach(machine => {
-        console.log('Processing machine:', machine.replace('oeeDataList', ''));
+      //  console.log('Processing machine:', machine.replace('oeeDataList', ''));
         const typedMachine = machine as keyof MachineOEEData;
         if (data[typedMachine] && data[typedMachine].length > 0) {
           // แก้จากนี้
@@ -176,7 +201,7 @@ export class OeeComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('Final chartOptions keys:', Object.keys(this.chartOptions));
+      //console.log('Final chartOptions keys:', Object.keys(this.chartOptions));
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error in processOEEData:', error);
@@ -191,6 +216,39 @@ export class OeeComponent implements OnInit, OnDestroy {
     if (chart) {
       this.chartInstances.push(chart);
     }
+  }
+
+  ngAfterViewInit() {
+    console.log('=== OEE Charts Dimensions ===');
+    
+    // Check container first
+    const container = document.querySelector('.container') as HTMLElement;
+    if (container) {
+      console.log('OEE Container:', {
+        containerWidth: container.offsetWidth,
+        computedStyle: {
+          width: window.getComputedStyle(container).width,
+          maxWidth: window.getComputedStyle(container).maxWidth
+        }
+      });
+    }
+
+    // Then check charts
+    const charts = document.querySelectorAll('highcharts-chart');
+    charts.forEach((chart, index) => {
+      const chartElement = chart as HTMLElement;
+      const parentElement = chartElement.parentElement as HTMLElement;
+      
+      console.log(`OEE Chart ${index + 1}:`, {
+        chartWidth: chartElement.offsetWidth,
+        chartHeight: chartElement.offsetHeight,
+        parentWidth: parentElement?.offsetWidth,
+        computedStyle: {
+          width: window.getComputedStyle(chartElement).width,
+          display: window.getComputedStyle(chartElement).display
+        }
+      });
+    });
   }
 }
 

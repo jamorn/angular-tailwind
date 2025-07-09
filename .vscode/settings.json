@@ -1,6 +1,22 @@
 {
+    // กำหนดให้ไฟล์ที่มีนามสกุล .css ใช้ postcss processor
+    // จำเป็นสำหรับการใช้งาน Tailwind CSS
     "files.associations": {
-      "*.css": "postcss"
+      "*.css": "css"
     },
-    "css.validate": false
-  }
+
+    // ปิดการตรวจสอบ CSS แบบดั้งเดิมของ VS Code
+    // เพื่อไม่ให้แสดง error กับ Tailwind CSS classes
+    "css.validate": false,
+
+    // เพิ่มการตั้งค่าแนะนำสำหรับ Tailwind CSS
+    "tailwindCSS.experimental.classRegex": [
+      ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    ],
+
+    // เปิดใช้งาน quick suggestions สำหรับ strings
+    // ช่วยในการแนะนำ Tailwind classes ขณะเขียนโค้ด
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+}

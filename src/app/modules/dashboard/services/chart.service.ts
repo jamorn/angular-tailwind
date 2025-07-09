@@ -11,11 +11,11 @@ export class ChartService {
   machineData$ = this.machineDataSubject.asObservable();
 
   updateMachineData(data: MachineOEEData | null): void {
-    console.log('[ChartService] updateMachineData called');
-    console.log('[ChartService] Data received:', data ? 'Has Data' : 'No Data');
+    //console.log('[ChartService] updateMachineData called');
+   // console.log('[ChartService] Data received:', data ? 'Has Data' : 'No Data');
     
     if (!data) {
-      console.warn('[ChartService] Received null data');
+     // console.warn('[ChartService] Received null data');
       return;
     }
     this.machineDataSubject.next(data);

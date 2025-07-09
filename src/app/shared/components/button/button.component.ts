@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { cx } from '../../utils/ckassnames';
 
 type ButtonProps = {
@@ -13,23 +13,28 @@ type ButtonProps = {
 
 @Component({
   selector: 'app-button',
+  standalone: true,
   imports: [CommonModule],
-  templateUrl: './button.component.html',
-  styleUrl: './button.component.css', // เปลี่ยนจาก scss เป็น css
+  template: `
+    <button
+      [disabled]="disabled"
+      [type]="type"
+      (click)="onButtonClick()"
+      [class]="classes"
+    >
+      <ng-content></ng-content>
+    </button>
+  `
 })
 export class ButtonComponent implements OnInit {
-  impact = input<ButtonProps['impact']>('none');
-  size = input<ButtonProps['size']>('medium');
-  shape = input<ButtonProps['shape']>('rounded');
-  tone = input<ButtonProps['tone']>('primary');
-  shadow = input<ButtonProps['shadow']>('none');
-  type = input<String>('submit');
-  full = input(false, {
-    transform: (value: boolean | string) => (typeof value === 'string' ? value === '' : value),
-  });
-  disabled = input(false, {
-    transform: (value: boolean | string) => (typeof value === 'string' ? value === '' : value),
-  });
+  @Input() impact: ButtonProps['impact'] = 'none';
+  @Input() size: ButtonProps['size'] = 'medium';
+  @Input() shape: ButtonProps['shape'] = 'rounded';
+  @Input() tone: ButtonProps['tone'] = 'primary';
+  @Input() shadow: ButtonProps['shadow'] = 'none';
+  @Input() type: ButtonProps['type'] = 'submit';
+  @Input() full = false;
+  @Input() disabled = false;
 
   @Output() buttonClick = new EventEmitter<void>();
 
@@ -95,11 +100,11 @@ export class ButtonComponent implements OnInit {
   ngOnInit(): void {
     this.classes = cx(
       this.baseClasses,
-      this.impactClasses[this.tone()][this.impact()],
-      this.sizeClasses[this.size()],
-      this.shapeClasses[this.shape()],
-      this.shadowClasses[this.shadow()],
-      this.full() ? 'w-full' : '',
+      this.impactClasses[this.tone][this.impact],
+      this.sizeClasses[this.size],
+      this.shapeClasses[this.shape],
+      this.shadowClasses[this.shadow],
+      this.full ? 'w-full' : '',
     );
   }
 

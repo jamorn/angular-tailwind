@@ -1,24 +1,31 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { ChartService } from '@dashboard-services/chart.service';
 import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
 import { DashboardService } from '@dashboard-services/dashboard.service'; // Add this import
+import { ThemeService } from '@core/services/theme.service';
+
+
+// Add type for button tones
+type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
 
 @Component({
   selector: 'app-giveaway',
   standalone: true,
   imports: [
     CommonModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    ButtonComponent  // เพิ่ม import นี้
   ],
   templateUrl: './giveaway.component.html',
   styleUrls: ['./giveaway.component.css']
 })
-export class GiveawayComponent implements OnInit, OnDestroy {
+export class GiveawayComponent implements OnInit, OnDestroy, AfterViewInit {
   // Highcharts properties
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: { [key: string]: Highcharts.Options } = {};
@@ -30,16 +37,27 @@ export class GiveawayComponent implements OnInit, OnDestroy {
   public orderedMachines: string[] = [];
 
   private subscription?: Subscription;
+  currentTheme: ButtonToneType = this.themeService.getCurrentTheme().color;
+
+  private themeSubscription?: Subscription;
 
   constructor(
     private dashboardService: DashboardService,
     private chartService: ChartService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
     console.log('[GiveawayComponent] Initializing');
     this.loading = true;
+
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.theme$.subscribe(theme => {
+      console.log('Giveaway receiving theme update:', theme);
+      this.currentTheme = theme.color;
+      this.cdr.markForCheck(); // Force change detection
+    });
 
     this.subscription = this.chartService.machineData$
       .pipe(
@@ -109,10 +127,57 @@ export class GiveawayComponent implements OnInit, OnDestroy {
     console.log('========== END PROCESSING GIVEAWAY DATA ==========');
   }
 
+  // Add scroll method after constructor
+  scrollToChart(machine: string): void {
+    const element = document.getElementById(machine);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  ngAfterViewInit() {
+    console.log('=== Giveaway Charts Dimensions ===');
+    
+    // ตรวจสอบ charts
+    const charts = document.querySelectorAll('highcharts-chart');
+    charts.forEach((chart, index) => {
+      const chartElement = chart as HTMLElement;
+      const parentElement = chartElement.parentElement as HTMLElement;
+      
+      console.log(`Giveaway Chart ${index + 1}:`, {
+        chartWidth: chartElement.offsetWidth,
+        chartHeight: chartElement.offsetHeight,
+        parentWidth: parentElement?.offsetWidth,
+        computedStyle: {
+          width: window.getComputedStyle(chartElement).width,
+          display: window.getComputedStyle(chartElement).display
+        }
+      });
+    });
+
+    // ตรวจสอบ container
+    const container = document.querySelector('.container') as HTMLElement;
+    if (container) {
+      console.log('Giveaway Container:', {
+        containerWidth: container.offsetWidth,
+        computedStyle: {
+          width: window.getComputedStyle(container).width,
+          maxWidth: window.getComputedStyle(container).maxWidth
+        }
+      });
+    }
+  }
+
   ngOnDestroy(): void {
     this.dataProcessed = false;
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
     }
   }
 }

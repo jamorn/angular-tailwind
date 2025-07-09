@@ -2,77 +2,31 @@
   width: 100%;
   max-width: 1800px;
   margin: 0 auto;
-  padding: 20px;
-  overflow-x: hidden;
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
-  gap: 20px;
-  width: 100%;
-  padding: 20px;
+::ng-deep highcharts-chart {
+  width: 733px !important;
+  height: 500px !important;
+  display: block !important;
+  margin: 0 auto !important;
 }
 
-.chart-container {
-  position: relative;
-  background: #121212;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s ease;
-  height: 600px;
-  margin-bottom: 2rem;
-  margin-top: 30px;
-  
-  /* เพิ่ม Flexbox เพื่อจัดกึ่งกลาง */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-.chart {
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  font-family: inherit;
-  
-  /* ปรับ margin เพื่อจัดกึ่งกลาง */
-  margin: auto;
-  
-  /* จำกัดขนาดสูงสุดเพื่อให้มีพื้นที่ขอบ */
-  max-width: 95%;
-  max-height: 95%;
-  display: block;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-.loading {
-  text-align: center;
-  padding: 20px;
+::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 5px;
 }
 
-.error-message {
-  color: #ff0000;
-  text-align: center;
-  padding: 20px;
-}
-
-.charts-container {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr); /* แสดง 1 column เต็มความกว้าง */
-  gap: 20px;
-  padding: 20px;
-  width: 100%;
-  max-width: 1600px; /* กำหนดความกว้างสูงสุด */
-  margin: 0 auto; /* จัดกึ่งกลาง */
-}
-
-.chart-wrapper {
-  width: 100%;
-  background: #1E1E1E; /* สีพื้นหลังของ chart */
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
 }
 
 /* Media Queries */
@@ -104,4 +58,17 @@
   .chart-container {
     height: calc(100vh - 100px);
   }
+}
+
+/* Debug styles - ลบออกเมื่อแก้ไขเสร็จ */
+.debug-charts-container {
+  border: 2px solid red;
+}
+
+.debug-chart-wrapper {
+  border: 2px solid blue;
+}
+
+.debug-chart {
+  border: 2px solid green;
 }

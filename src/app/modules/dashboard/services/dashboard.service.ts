@@ -27,11 +27,11 @@ export class DashboardService {
   // Method สำหรับโหลดข้อมูล OEE - จะถูกเรียกครั้งเดียวตอน init
   loadOEEDaily(): void {
     if (this.isLoading) {
-      console.log('[DashboardService] Already loading, skip');
+    //  console.log('[DashboardService] Already loading, skip');
       return;
     }
 
-    console.log('[DashboardService] Start loadOEEDaily');
+  //  console.log('[DashboardService] Start loadOEEDaily');
     this.isLoading = true;
     this.loadingSubject.next(true);
 
@@ -41,7 +41,9 @@ export class DashboardService {
       : this.http.get<MachineOEEData>(`${this.apiUrl}/GetOEEDaily`);
 
     data$.pipe(
-      tap(data => console.log('[DashboardService] Received data:', data)),
+      tap(data => 
+        console.log('[DashboardService] Received data:'
+          , data)),
       finalize(() => {
         this.isLoading = false;
         this.loadingSubject.next(false);
@@ -49,12 +51,12 @@ export class DashboardService {
       })
     ).subscribe({
       next: (data) => {
-        console.log('[DashboardService] Processing data');
+      //  console.log('[DashboardService] Processing data');
         this.oeeDataSubject.next(data);
         this.chartService.updateMachineData(data);
       },
       error: (error) => {
-        console.error('[DashboardService] Error loading data:', error);
+      //  console.error('[DashboardService] Error loading data:', error);
         this.oeeDataSubject.error(error);
       }
     });

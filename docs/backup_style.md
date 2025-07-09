@@ -272,6 +272,16 @@ select {
 }
 
 
+
+/* Dark Mode Variables */
+/* .dark {
+  --background: #0f172a;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+} */
+
+
+
 .input-large {
   background-color: var(--background);
 }

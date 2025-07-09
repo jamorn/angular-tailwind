@@ -172,9 +172,10 @@ export class AuthService {
   getCurrentUserWithPhoto(): Observable<UserPhotoResponse> {
     if (environment.useMockData) {
       console.log('[AuthService] Using mock data');
+      console.log('[AuthService] Mock User :', USER_PHOTO_MOCK);
       return of(USER_PHOTO_MOCK);
     }
-    
+    console.log('[AuthService] Production mode: Fetching real user data from API');
     return this.http.get<UserPhotoResponse>(`${this.apiBase}/GetCurrentUserWithPhoto`);
   }
 

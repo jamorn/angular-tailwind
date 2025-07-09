@@ -1,72 +1,98 @@
-<div class="w-full px-6 mt-8">
-  <!-- แยก scale-125 ออกจาก wrapper div -->
-  <h2 class="text-2xl font-bold mb-4 text-foreground/80 scale-125 transform-gpu">Status Plant</h2>
-  
-  <!-- Content wrapper without scale -->
-  <div class="mb-6">
-    <!-- Updated Tab Navigation with better contrast -->
-    <div class="border-b border-border/40">
-      <nav class="flex space-x-2">
-        <button *ngFor="let tab of getTabs()"
-          type="button"
-          (click)="setActiveTab(tab)"
-          [class.bg-primary]="activeTab() === tab"
-          [class.text-primary-foreground]="activeTab() === tab"
-          [class.text-muted-foreground]="activeTab() !== tab"
-          [class.hover:text-foreground]="activeTab() !== tab"
-          [class.border-b-2]="activeTab() === tab"
-          [class.border-primary]="activeTab() === tab"
-          class="px-4 py-2 text-sm font-medium transition-colors relative group">
-          <span>{{tab}}</span>
-          <!-- Indicator สำหรับ Tab ที่ไม่มีข้อมูล -->
-          <span *ngIf="!hasDataForTab(tab)" 
-                class="absolute -top-1 -right-1 w-2 h-2 bg-destructive/60 rounded-full">
-          </span>
-          <!-- Tooltip แสดงสถานะข้อมูล -->
-          <span class="absolute hidden group-hover:block -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-popover text-xs rounded shadow-lg whitespace-nowrap">
-            {{hasDataForTab(tab) ? 'มีข้อมูล' : 'ไม่มีข้อมูล'}}
-          </span>
-        </button>
-      </nav>
-    </div>
+<div class="w-full">
+  <!-- Header with title -->
+  <h2 class="text-2xl font-bold mb-4 text-foreground/80 ml-6">Status Plant</h2>
 
-    <!-- Table Content Area -->
-    <div class="mt-6">
-      <div class="border-muted/20 bg-background flex min-w-full flex-col rounded-xl border p-2">
-        <div class="scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted grow overflow-x-auto px-5">
-          <table class="text-muted-foreground table w-full table-auto border-collapse border-0 text-left align-middle leading-5">
-            <thead class="border-muted/20 text-muted-foreground border text-xs">
-              <tr>
-                <th class="px-6 py-3">Item</th>
-                <th class="px-6 py-3">Description</th>
-                <th class="px-6 py-3">Action By</th>
-                <th class="px-6 py-3">Issue Date</th>
-                <th class="px-6 py-3">Due Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- No Data Message -->
-              <tr *ngIf="!getCurrentData().length">
-                <td colspan="5" class="px-6 py-8 text-center text-muted-foreground">
-                  <div class="flex flex-col items-center justify-center gap-2">
-                    <span class="text-lg">ไม่พบข้อมูล</span>
-                    <span class="text-sm">
-                      ไม่พบข้อมูลสำหรับ {{activeTab()}} ในระบบ
-                    </span>
-                  </div>
-                </td>
-              </tr>
-              <!-- Data Rows -->
-              <tr *ngFor="let item of getCurrentData()" class="hover:bg-card/50">
-                <td class="px-6 py-4 text-sm">{{item.item}}</td>
-                <td class="px-6 py-4 text-sm">{{item.description}}</td>
-                <td class="px-6 py-4 text-sm">{{item.actionBy}}</td>
-                <td class="px-6 py-4 text-sm">{{item.issueDate | date:'dd/MM/yyyy'}}</td>
-                <td class="px-6 py-4 text-sm">{{item.dueDate | date:'dd/MM/yyyy'}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <!-- Tab Navigation with Badges -->
+  <div class="flex gap-2 px-6 mb-4 overflow-x-auto">
+    <button *ngFor="let tab of getTabs()"
+            (click)="setActiveTab(tab)"
+            [class]="tab === activeTab() ? 
+              'bg-primary text-white shadow-lg' : 
+              'bg-card hover:bg-card/80 text-foreground/70'"
+            class="px-6 py-2.5 rounded-lg font-medium text-sm
+                   transition-all duration-200 transform hover:-translate-y-0.5
+                   border border-border/20 flex items-center gap-2">
+      <!-- Tab Name -->
+      <span>{{ tab }}</span>
+      
+      <!-- Badge with Item Count (Always Show) -->
+      <span [class]="tab === activeTab() ? 
+              'bg-white/20 text-white' : 
+              getDataCountForTab(tab) === 0 ? 
+                'bg-muted/30 text-muted-foreground' : 
+                'bg-primary/10 text-primary'"
+          class="inline-flex items-center justify-center
+                 min-w-[1.5rem] h-5 px-1.5 text-xs font-medium
+                 rounded-full">
+        {{ getDataCountForTab(tab) }}
+      </span>
+    </button>
+  </div>
+
+  <!-- Content Area -->
+  <div class="px-6">
+    <!-- Container with conditional background -->
+    <div class="rounded-lg border border-border/40 overflow-hidden">
+      <div class="relative w-full overflow-auto">
+        <!-- Table with conditional styling -->
+        <table class="w-full caption-bottom text-sm dark:bg-[#1e1e1e] bg-[#fcfdfd]">
+          <!-- Header with conditional background -->
+          <thead class="[&_tr]:border-b border-border/50 dark:bg-[#1e1e1e] bg-[#fcfdfd]">
+            <tr class="transition-colors hover:bg-muted/5">
+              <th class="h-12 px-4 text-left align-middle font-medium dark:text-muted-foreground text-gray-700 [&:has([role=checkbox])]:pr-0">
+                Item
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium dark:text-muted-foreground text-gray-700 [&:has([role=checkbox])]:pr-0">
+                Description
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium dark:text-muted-foreground text-gray-700 [&:has([role=checkbox])]:pr-0">
+                Action By
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium dark:text-muted-foreground text-gray-700 [&:has([role=checkbox])]:pr-0">
+                Issue Date
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium dark:text-muted-foreground text-gray-700 [&:has([role=checkbox])]:pr-0">
+                Due Date
+              </th>
+            </tr>
+          </thead>
+          
+          <tbody class="[&_tr:last-child]:border-0">
+            <!-- No Data Message with conditional styling -->
+            <tr *ngIf="!getCurrentData().length" 
+                class="border-b border-border/50 transition-colors dark:bg-[#1e1e1e] bg-[#fcfdfd]">
+              <td colspan="5" class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                <div class="flex h-[120px] flex-col items-center justify-center gap-2 text-center">
+                  <p class="text-sm dark:text-muted-foreground text-gray-600">
+                    ไม่พบข้อมูลสำหรับ {{activeTab()}}
+                  </p>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- Data Rows with conditional colors -->
+            <tr *ngFor="let item of getCurrentData(); let i = index" 
+                class="border-b border-border/50 transition-colors 
+                       dark:even:bg-muted/5 even:bg-gray-50
+                       dark:hover:bg-muted/10 hover:bg-gray-100">
+              <td class="p-4 align-middle dark:text-foreground text-gray-900 [&:has([role=checkbox])]:pr-0">
+                {{ i + 1 }}
+              </td>
+              <td class="p-4 align-middle dark:text-foreground text-gray-900 [&:has([role=checkbox])]:pr-0">
+                {{item.description}}
+              </td>
+              <td class="p-4 align-middle dark:text-foreground text-gray-900 [&:has([role=checkbox])]:pr-0">
+                {{item.actionBy}}
+              </td>
+              <td class="p-4 align-middle dark:text-foreground text-gray-900 [&:has([role=checkbox])]:pr-0">
+                {{item.issueDate | date:'dd/MM/yyyy'}}
+              </td>
+              <td class="p-4 align-middle dark:text-foreground text-gray-900 [&:has([role=checkbox])]:pr-0">
+                {{item.dueDate | date:'dd/MM/yyyy'}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

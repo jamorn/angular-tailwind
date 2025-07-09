@@ -1,19 +1,44 @@
 import { AuthService } from '@core/services/auth/auth.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';  // Add this import
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
-import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
+import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { UserPhotoResponse } from '@core/interfaces/user-profile.interface';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+// Define ButtonToneType before using it
+type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
+
+// Add color mapping type
+type ColorToThemeMap = {
+  [key: string]: ButtonToneType;
+};
+
+type DirectionType = 'ltr' | 'rtl';
+
+// เพิ่ม type definitions
+type ThemeColorKey = 'violet' | 'blue' | 'green' | 'orange' | 'red';
+type ThemeColorConfig = {
+  [K in ThemeColorKey]: {
+    tone: ButtonToneType;
+    hex: string;
+  }
+};
 
 @Component({
   selector: 'app-profile-menu',
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.css'],
-  imports: [ClickOutsideDirective, NgClass, RouterLink, AngularSvgIconModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    AngularSvgIconModule,
+    ClickOutsideDirective
+  ],
   animations: [
     trigger('openClose', [
       state(
@@ -60,8 +85,8 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeColors = [
     {
-      name: 'base',
-      code: '#e11d48',
+      name: 'violet',    // ย้าย violet ขึ้นมาเป็นค่าเริ่มต้น
+      code: '#6d28d9',
     },
     {
       name: 'yellow',
@@ -82,15 +107,29 @@ export class ProfileMenuComponent implements OnInit {
     {
       name: 'red',
       code: '#cc0022',
-    },
-    {
-      name: 'violet',
-      code: '#6d28d9',
-    },
+    }
   ];
 
   public themeMode = ['light', 'dark'];
-  public themeDirection = ['ltr', 'rtl'];
+  public themeDirection: DirectionType[] = ['ltr', 'rtl'];
+
+  // Define color mapping with hex values
+  public readonly colorToThemeMap: Record<string, ButtonToneType> = {
+    'violet': 'info',      // #6d28d9
+    'blue': 'primary',     // #3b82f6
+    'green': 'success',    // #22c55e
+    'orange': 'warning',   // #f59e0b
+    'red': 'danger'        // #cc0022
+  };
+
+  // แก้ไขการประกาศ themeColorConfig
+  public readonly themeColorConfig: ThemeColorConfig = {
+    violet: { tone: 'info', hex: '#6E56CF' },      // Violet -> info
+    blue: { tone: 'primary', hex: '#3b82f6' },     // Blue -> primary
+    green: { tone: 'success', hex: '#22c55e' },    // Green stays same
+    orange: { tone: 'warning', hex: '#f59e0b' },   // Orange -> warning (yellow)
+    red: { tone: 'danger', hex: '#cc0022' }        // Red stays same
+  };
 
   constructor(
     public themeService: ThemeService,
@@ -99,12 +138,13 @@ export class ProfileMenuComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Fix line 105: Change theme() to getCurrentTheme()
+    console.log('Current theme:', this.themeService.getCurrentTheme());
+    
     this.authService.getCurrentUserWithPhoto().subscribe(
       (response) => {
         if (response.success) {
           this.userProfile = response;
-          console.log('[ProfileMenu] Photo data type:', typeof response.user.photo);
-          console.log('[ProfileMenu] Photo data length:', response.user.photo?.length || 0);
         }
       }
     );
@@ -114,23 +154,30 @@ export class ProfileMenuComponent implements OnInit {
     this.isOpen = !this.isOpen;
   }
 
-  toggleThemeMode() {
-    this.themeService.theme.update((theme) => {
-      const mode = !this.themeService.isDark ? 'dark' : 'light';
-      return { ...theme, mode: mode };
-    });
+  // Fix line 123: Update toggleThemeMode to use setTheme
+  toggleThemeMode(): void {
+    const newMode = this.themeService.isDark ? 'light' : 'dark';
+    this.themeService.setTheme({ mode: newMode });
   }
 
-  toggleThemeColor(color: string) {
-    this.themeService.theme.update((theme) => {
-      return { ...theme, color: color };
-    });
+  // Fix line 131: Update setThemeColor to use setTheme
+  setThemeColor(color: string): void {
+    // เพิ่ม debug logs
+    console.log('Setting color:', color);
+    const themeColor = this.colorToThemeMap[color];
+    
+    if (themeColor) {
+      console.log(`Mapped ${color} to ${themeColor}`);
+      this.themeService.setTheme({ color: themeColor });
+    } else {
+      console.warn(`Invalid color: ${color}, using default`);
+      this.themeService.setTheme({ color: 'info' }); // default to violet
+    }
   }
 
-  setDirection(value: string) {
-    this.themeService.theme.update((theme) => {
-      return { ...theme, direction: value };
-    });
+  // Fix setDirection to use setTheme
+  setDirection(value: DirectionType): void {
+    this.themeService.setTheme({ direction: value });
   }
 
   public getProfileImage(): SafeUrl {
@@ -141,4 +188,20 @@ export class ProfileMenuComponent implements OnInit {
     // Return default icon if no photo
     return './assets/icons/heroicons/outline/user-circle.svg';
   }
+
+  // Helper methods
+  public getThemeTone(color: ThemeColorKey): ButtonToneType {
+    return this.themeColorConfig[color].tone;
+  }
+
+  public getColorHex(color: ThemeColorKey): string {
+    return this.themeColorConfig[color].hex;
+  }
+
+  public isActiveColor(color: ThemeColorKey): boolean {
+    return this.themeService.getCurrentTheme().color === this.getThemeTone(color);
+  }
+
+  // เพิ่ม property สำหรับใช้ใน template
+  public readonly themeColorKeys: ThemeColorKey[] = ['violet', 'blue', 'green', 'orange', 'red'];
 }

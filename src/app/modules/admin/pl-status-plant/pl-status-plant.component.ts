@@ -69,4 +69,7 @@ export class PlStatusPlantComponent implements OnInit {
       item.workTypeDetail?.name === this.activeTab()
     );
   }
+   getDataCountForTab(tabName: TabType): number {
+    return this.plantData().filter(item => item.workTypeDetail.name === tabName).length;
+  }
 }

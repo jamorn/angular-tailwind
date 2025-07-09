@@ -159,85 +159,106 @@
 @layer base {
   :root {
     --background: #FFFFFF;
-    --foreground: #1F2937;
-    --card: #F8FAFC;
-    --card-foreground: #111827;
-    --primary: #6E56CF;      /* Default violet */
+    --foreground: #0C1420;
+    --card: #F1F5F9;
+    --card-foreground: #000000;
+    --primary: #E11D48;
     --primary-foreground: #FFFFFF;
-    --muted: #E2E8F0;
+    --muted: #CFD9E5;
     --muted-foreground: #64748B;
+    --destructive: #CC0033;
+    --destructive-foreground: #FAFAFA;
     --border: #E2E8F0;
-
-    /* Theme colors */
-    --primary: #3b82f6;      /* Blue (was Violet) */
-    --info: #6E56CF;         /* Violet (was Blue) */
-    --success: #22c55e;      /* Green */
-    --warning: #f59e0b;      /* Yellow */
-    --danger: #cc0022;       /* Red */
-
-    /* Button specific colors */
-    --btn-violet: #6E56CF;
-    --btn-blue: #3b82f6;
-    --btn-green: #22c55e;
-    --btn-yellow: #f59e0b;
-    --btn-red: #cc0022;
   }
 
   .dark {
-    --background: #060815;    /* Dark violet theme */
-    --foreground: #F8FAFC;
+    --background: #0A0A0A;
+    --foreground: #F2F2F2;
+    --card: #121212;
+    --card-foreground: #262626;
+    --muted: #262626;
+    --muted-foreground: #A3A3A3;
+    --border: #262626;
+  }
+
+  :root[data-theme='violet'] {
+    --primary: #6E56CF;
+  }
+
+  .dark[data-theme='violet'] {
+    --background: #060815;
+    --foreground: #F6F8FB;
     --card: #0B0F1A;
-    --card-foreground: #F1F5F9;
-    --primary: #6E56CF;      /* Keep violet in dark mode */
-    --primary-foreground: #FFFFFF;
+    --card-foreground: #F6F8FB;
+    --primary-foreground: #F6F8FB;
     --muted: #232B3D;
     --muted-foreground: #A1A8BF;
     --border: #232B3D;
   }
 
-  /* Theme variations */
-  [data-theme='info'] {
-    --primary: #6E56CF;      /* Violet */
+  :root[data-theme='red'] {
+    --primary: #CC0033;
   }
 
-  [data-theme='success'] {
-    --primary: #22c55e;      /* Green */
+  .dark[data-theme='red'] {
+    --primary-foreground: #FFE5E5;
   }
 
-  [data-theme='warning'] {
-    --primary: #f59e0b;      /* Yellow */
+  :root[data-theme='blue'] {
+    --primary: #2490FF;
   }
 
-  [data-theme='danger'] {
-    --primary: #cc0022;      /* Red */
+  .dark[data-theme='blue'] {
+    --background: #02080F;
+    --foreground: #F8FAFC;
+    --card: #0B1117;
+    --card-foreground: #F8FAFC;
+    --primary-foreground: #0F1729;
+    --muted: #1E293B;
+    --muted-foreground: #94A3B8;
+    --border: #1E293B;
   }
 
-  /* Theme variations for buttons */
-  [data-theme='info'] button,
-  [data-theme='info'] .btn {
-    @apply bg-[#3b82f6] hover:bg-[#3b82f6]/90;
+  :root[data-theme='orange'] {
+    --primary: #EA580C;
   }
 
-  [data-theme='success'] button,
-  [data-theme='success'] .btn {
-    @apply bg-[#22c55e] hover:bg-[#22c55e]/90;
+  .dark[data-theme='orange'] {
+    --background: #0C0A09;
+    --foreground: #FAFAF9;
+    --card: #141110;
+    --card-foreground: #FAFAF9;
+    --primary-foreground: #FAFAF9;
+    --muted: #292524;
+    --muted-foreground: #A8A29E;
+    --border: #292524;
   }
 
-  [data-theme='warning'] button,
-  [data-theme='warning'] .btn {
-    @apply bg-[#f59e0b] hover:bg-[#f59e0b]/90;
+  :root[data-theme='yellow'] {
+    --primary: #FACC15;
   }
 
-  [data-theme='danger'] button,
-  [data-theme='danger'] .btn {
-    @apply bg-[#cc0022] hover:bg-[#cc0022]/90;
+  .dark[data-theme='yellow'] {
+    --background: #0C0A09;
+    --foreground: #FAFAF9;
+    --card: #141110;
+    --card-foreground: #FAFAF9;
+    --primary: #FACC15;
+    --primary-foreground: #422006;
+    --muted: #292524;
+    --muted-foreground: #A8A29E;
+    --border: #292524;
   }
 
-  /* Default button style */
-  button,
-  .btn {
-    @apply bg-primary hover:bg-primary/90 transition-colors;
+  :root[data-theme='green'] {
+    --primary: #22C55E;
   }
+
+  .dark[data-theme='green'] {
+    --primary: #22C55E;
+    --primary-foreground: #052E16;
+  }
+
 }
 
 /** Scroll bar **/
@@ -269,9 +290,4 @@ select {
 [type='checkbox'],
 [type='radio'] {
   @apply h-4 w-4 rounded-sm border-border bg-background checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary focus:ring-2 focus:ring-primary;
-}
-
-
-.input-large {
-  background-color: var(--background);
 }

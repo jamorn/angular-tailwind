@@ -1,0 +1,44 @@
+:host {
+  @apply block w-full;
+}
+
+/* Header animation */
+h2 {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Tab button hover effect */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Active tab effect */
+button.active {
+  position: relative;
+}
+
+button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  @apply bg-primary rounded-full;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

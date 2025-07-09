@@ -1,26 +1,45 @@
 .container {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #1e1e1e;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
 }
 
 .chart-container {
-  background-color: #121212;
+  position: relative;
+  background: #121212;
   border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+  height: 600px;
+  margin-bottom: 2rem;
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chart {
-  display: block;
   width: 100%;
-  min-height: 500px;
+  height: 100%;
+}
+
+/* Highcharts styling */
+highcharts-chart {
+  width: 100%;
+  height: 400px;
+  display: block;
 }
 
 .no-data-message {
