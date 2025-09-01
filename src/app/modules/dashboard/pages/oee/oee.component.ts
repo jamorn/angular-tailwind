@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ButtonComponent } from '@shared/components/button/button.component';
+
 /* import { ChartService } from '../../services/chart.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { MachineOEEData, MachineOrder } from '@core/models/oee/oee.model'; */
@@ -13,6 +14,9 @@ import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription, throwError, TimeoutError } from 'rxjs';
 import { finalize, timeout, catchError, tap } from 'rxjs/operators';
 import { ThemeService } from '@core/services/theme.service';
+
+// Add type for button tones
+type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
 
 @Component({
   selector: 'app-oee',
@@ -42,21 +46,17 @@ export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
   private chartInstances: Highcharts.Chart[] = [];
   private subscription?: Subscription;
 
+  currentTheme: ButtonToneType = this.themeService.getCurrentTheme().color; // เพิ่ม property นี้
+
   constructor(
     private dashboardService: DashboardService,
     private chartService: ChartService,
     private cdr: ChangeDetectorRef,
     private themeService: ThemeService
   ) {
-    // Update effect to use theme$ Observable
-    effect(() => {
-      this.themeService.theme$.subscribe(theme => {
-        console.log('Theme Changed:', {
-          mode: theme.mode,
-          color: theme.color,
-          direction: theme.direction
-        });
-      });
+    // Subscribe theme$ เพื่ออัปเดต currentTheme
+    this.themeService.theme$.subscribe(theme => {
+      this.currentTheme = theme.color;
     });
   }
 

@@ -36,9 +36,13 @@ export class DashboardService {
     this.loadingSubject.next(true);
 
     // เลือกใช้ mock data หรือ real API ตาม environment
+    const apiUrl = `${this.apiUrl}/GetOEEDaily`;
+    if (!environment.useMockData) {
+      console.log('[DashboardService] Calling API:', apiUrl);
+    }
     const data$ = environment.useMockData
       ? of(mockData as MachineOEEData).pipe(delay(300))
-      : this.http.get<MachineOEEData>(`${this.apiUrl}/GetOEEDaily`);
+      : this.http.get<MachineOEEData>(apiUrl, { withCredentials: true });
 
     data$.pipe(
       tap(data => 
@@ -69,7 +73,7 @@ export class DashboardService {
       return of(mockData as MachineOEEData);
     }
     // ถ้าเป็น production ใช้ real API
-    return this.http.get<MachineOEEData>(`${this.apiUrl}/GetOEEByMachine/${machineName}`);
+    return this.http.get<MachineOEEData>(`${this.apiUrl}/GetOEEByMachine/${machineName}`, { withCredentials: true });
   }
 
   // เพิ่มเมธอดสำหรับ clear cache

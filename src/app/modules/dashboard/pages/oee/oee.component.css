@@ -2,13 +2,39 @@
   width: 100%;
   max-width: 1800px;
   margin: 0 auto;
+  padding: 20px;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-::ng-deep highcharts-chart {
-  width: 733px !important;
-  height: 500px !important;
-  display: block !important;
-  margin: 0 auto !important;
+/* ปรับ charts-grid ให้เหมือน giveaway */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+  gap: 20px; /* เพิ่มหรือปรับตรงนี้ให้เท่ากับ giveaway */
+  width: 100%;
+  padding: 20px;
+}
+
+/* ปรับ chart-container ให้เหมือน giveaway */
+.chart-container {
+  position: relative;
+  background: #121212;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ปรับ highcharts-chart ให้ responsive */
+highcharts-chart {
+  width: 100%;
+  height: 400px;
+  display: block;
 }
 
 /* Custom Scrollbar */
@@ -72,3 +98,15 @@
 .debug-chart {
   border: 2px solid green;
 }
+
+/* ลบส่วนที่ fix ขนาดกราฟเดิมออก */
+/*
+::ng-deep highcharts-chart {
+  width: 733px !important;
+  height: 500px !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+*/
+
+/* ปรับให้เหมือน giveaway.component.css เพื่อให้กราฟเต็ม grid และ responsive */
