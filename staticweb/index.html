@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard SPA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Heroicons CDN (SVG inline) -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body { background: #18181b; color: #fff; font-family: inherit; }
+    .active-menu { background: #7c3aed; color: #fff; }
+    .menu-icon { color: #a78bfa; }
+  </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+  <nav class="flex items-center bg-gray-900 px-6 py-3 shadow-lg gap-2">
+    <button id="menu-oee" class="flex items-center gap-2 px-4 py-2 text-white hover:bg-violet-600 rounded transition">
+      <svg class="w-6 h-6 menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"/>
+      </svg>
+      OEE Dashboard
+    </button>
+    <button id="menu-giveaway" class="flex items-center gap-2 px-4 py-2 text-white hover:bg-violet-600 rounded transition">
+      <svg class="w-6 h-6 menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+      </svg>
+      Giveaway Dashboard
+    </button>
+    <button id="menu-eii" class="flex items-center gap-2 px-4 py-2 text-white hover:bg-violet-600 rounded transition">
+      <svg class="w-6 h-6 menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h8M12 8v8"/>
+      </svg>
+      Monthly EII
+    </button>
+  </nav>
+  <main id="spa-content" class="container mx-auto px-4 py-8"></main>
+  <script>
+    console.log('SPA loader started');
+    // SPA logic: load content from html files
+    const menuMap = {
+      'menu-oee': 'oee.html',
+      'menu-giveaway': 'giveaway.html',
+      'menu-eii': 'monthlyeii.html'
+    };
+    function setActiveMenu(menuId) {
+      Object.keys(menuMap).forEach(id => {
+        document.getElementById(id).classList.remove('active-menu');
+      });
+      document.getElementById(menuId).classList.add('active-menu');
+    }
+    async function loadPage(menuId) {
+      setActiveMenu(menuId);
+      const file = menuMap[menuId];
+      const main = document.getElementById('spa-content');
+      main.innerHTML = '<div class="text-center text-lg text-gray-400 py-12">Loading...</div>';
+      console.log('Loading page:', file);
+      try {
+        const res = await fetch(file);
+        console.log('Fetch response for', file, res);
+        if (!res.ok) throw new Error('ไม่พบไฟล์ ' + file);
+        let html = await res.text();
+        console.log('Fetched HTML for', file, html.slice(0, 200));
+        // Extract only the content inside <body> (for safety)
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+        main.innerHTML = bodyMatch ? bodyMatch[1] : html;
+        console.log('Rendered content for', file);
+      } catch (err) {
+        main.innerHTML = `<div class='text-center text-red-400 py-12'>${err.message}</div>`;
+        console.error('Error loading', file, err);
+      }
+    }
+    // Initial load
+    console.log('Initial load: OEE');
+    loadPage('menu-oee');
+    // Menu event listeners
+    Object.keys(menuMap).forEach(id => {
+      document.getElementById(id).addEventListener('click', () => {
+        console.log('Menu clicked:', id);
+        loadPage(id);
+      });
+    });
+  </script>
+</body>
+</html>

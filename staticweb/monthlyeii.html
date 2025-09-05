@@ -1,0 +1,251 @@
+
+<!--
+/**
+ * EII Monthly Dashboard Documentation
+ * ================================
+ * 
+ * 1. Overview:
+ * - แสดงกราฟ EII (Energy Intensity Index) แบบ Monthly
+ * - ใช้ Dark Theme
+ * - แสดงผลแบบ 2 Charts Grid Layout
+ * 
+ * 2. Charts:
+ * Chart 1 - EII Weekly Report:
+ * - Column chart แสดงค่า EII รายสัปดาห์
+ * - Target Line
+ * - Color coding ตามเป้าหมาย
+ * 
+ * Chart 2 - EII Monitoring Report:
+ * - Multi-column chart แยกตามหน่วยงาน (HDPE, PP12, PP3)
+ * - Target Line แบบ Dashed
+ * - Interactive Tooltips
+ * 
+ * 3. Data Structure:
+ * Chart 1:
+ * - category: เดือน (เช่น JAN25)
+ * - EII: ค่า EII รวม
+ * - Target: ค่าเป้าหมาย
+ * 
+ * Chart 2:
+ * - category: เดือน
+ * - HD, PP12, PP3: ค่า EII แต่ละหน่วยงาน
+ * - Target: ค่าเป้าหมาย
+ * 
+ * 4. Features:
+ * - Responsive Grid Layout
+ * - Dark Theme Charts
+ * - Interactive Tooltips
+ * - Data Labels
+ * - Color Coding
+ * 
+ * 5. Chart Configuration:
+ * - Custom Colors
+ * - Formatted Labels
+ * - Grid Lines
+ * - Crosshairs
+ * - Custom Tooltips
+ * 
+ * 6. Dependencies:
+ * - Tailwind CSS
+ * - Highcharts
+ */
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard EII Static Web</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Highcharts CDN -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">EII Dashboard (Static)</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+        <div id="chartDiv1"></div>
+      </div>
+      <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+        <div id="chartDiv2"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Data for chart 1
+    const dataProvider1 = [
+      { category: "AUG24", EII: "65.34", color: "#059918", Target: "69.46" },
+      { category: "SEP24", EII: "68.28", color: "#059918", Target: "69.46" },
+      { category: "OCT24", EII: "68.58", color: "#059918", Target: "69.46" },
+      { category: "NOV24", EII: "68.29", color: "#059918", Target: "69.46" },
+      { category: "DEC24", EII: "67.88", color: "#059918", Target: "69.46" },
+      { category: "JAN25", EII: "68.94", color: "#059918", Target: "69.46" },
+      { category: "FEB25", EII: "67.93", color: "#059918", Target: "69.46" },
+      { category: "MAR25", EII: "68.82", color: "#059918", Target: "69.46" },
+      { category: "APR25", EII: "67.85", color: "#059918", Target: "69.46" }
+    ];
+    // Chart 1 options
+    const chartOptions1 = {
+      chart: {
+        type: 'column',
+        backgroundColor: '#121212',
+        style: { fontFamily: 'inherit' },
+        height: 500
+      },
+      title: {
+        text: 'EII Weekly Report',
+        style: { color: '#FFFFFF', fontSize: '20px', fontWeight: 'bold' }
+      },
+      xAxis: {
+        categories: dataProvider1.map(item => item.category),
+        crosshair: true,
+        labels: { style: { color: '#FFFFFF', fontSize: '12px' } },
+        gridLineColor: 'rgba(255,255,255,0.1)',
+        lineColor: 'rgba(255,255,255,0.2)'
+      },
+      yAxis: {
+        title: { text: '%', style: { color: '#FFFFFF' } },
+        labels: { style: { color: '#FFFFFF', fontSize: '12px' } },
+        gridLineColor: 'rgba(255,255,255,0.1)'
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        style: { color: '#FFFFFF' },
+        borderWidth: 0,
+        shadow: false,
+        useHTML: true,
+        shared: true
+      },
+      plotOptions: {
+        column: { pointPadding: 0.2, borderWidth: 0 },
+        series: { dataLabels: { enabled: true, format: '{point.y:.2f}' } }
+      },
+      series: [
+        {
+          name: 'EII',
+          type: 'column',
+          data: dataProvider1.map(item => ({ y: parseFloat(item.EII), color: item.color })),
+        },
+        {
+          name: 'Target',
+          type: 'line',
+          data: dataProvider1.map(item => parseFloat(item.Target)),
+          marker: { symbol: 'circle' },
+          color: '#FF0000'
+        }
+      ]
+    };
+    Highcharts.chart('chartDiv1', chartOptions1);
+
+    // Data for chart 2
+    const dataProvider2 = [
+      { category: "JAN24", HD: "88.86", PP12: "56.23", PP3: "68.71", Target: "69.46" },
+      { category: "FEB24", HD: "84.41", PP12: "57.56", PP3: "67.08", Target: "69.46" },
+      { category: "MAR24", HD: "89.80", PP12: "64.02", PP3: "61.59", Target: "69.46" },
+      { category: "APR24", HD: "81.08", PP12: "57.59", PP3: "63.69", Target: "69.46" },
+      { category: "MAY24", HD: "81.50", PP12: "56.53", PP3: "66.29", Target: "69.46" },
+      { category: "JUN24", HD: "81.51", PP12: "56.19", PP3: "61.87", Target: "69.46" },
+      { category: "JUL24", HD: "80.48", PP12: "50.96", PP3: "74.95", Target: "69.46" },
+      { category: "AUG24", HD: "86.46", PP12: "53.35", PP3: "62.65", Target: "69.46" },
+      { category: "SEP24", HD: "86.28", PP12: "51.72", PP3: "71.44", Target: "69.46" },
+      { category: "OCT24", HD: "83.70", PP12: "51.36", PP3: "71.22", Target: "69.46" },
+      { category: "NOV24", HD: "73.96", PP12: "51.43", PP3: "78.66", Target: "69.46" },
+      { category: "DEC24", HD: "75.78", PP12: "52.18", PP3: "73.18", Target: "69.46" },
+      { category: "JAN25", HD: "79.52", PP12: "58.22", PP3: "67.62", Target: "69.46" },
+      { category: "FEB25", HD: "80.39", PP12: "62.51", PP3: "62.10", Target: "69.46" },
+      { category: "MAR25", HD: "78.09", PP12: "73.84", PP3: "57.70", Target: "69.46" },
+      { category: "APR25", HD: "78.35", PP12: "58.54", PP3: "64.18", Target: "69.46" }
+    ];
+    // Chart 2 options
+    const chartOptions2 = {
+      chart: {
+        type: 'column',
+        backgroundColor: '#121212',
+        style: { fontFamily: 'inherit' },
+        height: 500
+      },
+      title: {
+        text: 'EII Monitoring Report',
+        style: { color: '#FFFFFF', fontSize: '20px', fontWeight: 'bold' }
+      },
+      xAxis: {
+        categories: dataProvider2.map(item => item.category),
+        crosshair: true,
+        labels: { style: { color: '#FFFFFF', fontSize: '12px' } },
+        gridLineColor: 'rgba(255,255,255,0.1)',
+        lineColor: 'rgba(255,255,255,0.2)'
+      },
+      yAxis: {
+        title: { text: '%', style: { color: '#FFFFFF' } },
+        labels: { style: { color: '#FFFFFF', fontSize: '12px' } },
+        gridLineColor: 'rgba(255,255,255,0.1)'
+      },
+      tooltip: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        style: { color: '#121212' },
+        borderWidth: 0,
+        borderRadius: 8,
+        shadow: true,
+        animation: true,
+        useHTML: true,
+        shared: true,
+        formatter: function() {
+          if (!this.points) return '';
+          const category = this.points[0].key || '';
+          let html = `<div style="min-width:150px;padding:8px;line-height:1.5;font-size:12px;">
+            <div style="font-weight:bold;margin-bottom:8px;color:#121212;">${category}</div>
+            <div style="color:#666666;margin-bottom:8px;">EII แยกตามหน่วยงาน</div>`;
+          this.points.forEach(point => {
+            const value = point.y ?? 0;
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0;">
+              <span style="display:flex;align-items:center;">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${point.color};margin-right:6px;"></span>
+                <span style="color:#444444">${point.series.name}:</span>
+              </span>
+              <span style="font-weight:bold;color:#121212;">${value.toFixed(2)}%</span>
+            </div>`;
+          });
+          html += '</div>';
+          return html;
+        }
+      },
+      plotOptions: {
+        column: { pointPadding: 0.2, borderWidth: 0 },
+        series: { dataLabels: { enabled: true, format: '{point.y:.2f}' } }
+      },
+      series: [
+        {
+          name: 'HDPE',
+          type: 'column',
+          data: dataProvider2.map(item => parseFloat(item.HD)),
+          color: '#2E86C1'
+        },
+        {
+          name: 'PP12',
+          type: 'column',
+          data: dataProvider2.map(item => parseFloat(item.PP12)),
+          color: '#27AE60'
+        },
+        {
+          name: 'PP3',
+          type: 'column',
+          data: dataProvider2.map(item => parseFloat(item.PP3)),
+          color: '#8E44AD'
+        },
+        {
+          name: 'Target',
+          type: 'line',
+          data: dataProvider2.map(item => parseFloat(item.Target)),
+          marker: { symbol: 'circle', radius: 4 },
+          color: '#E74C3C',
+          dashStyle: 'ShortDash',
+          lineWidth: 2
+        }
+      ]
+    };
+    Highcharts.chart('chartDiv2', chartOptions2);
+  </script>
+</body>
+</html>

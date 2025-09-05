@@ -47,7 +47,7 @@
     "@types/flatpickr": "^3.0.2",
     "angular-svg-icon": "^19.1.1",
     "flatpickr": "^4.6.13",
-    "highcharts": "^12.2.0",
+    "highcharts": "^12.3.0",
     "highcharts-angular": "^4.0.1",
     "ng-apexcharts": "^1.7.1",
     "ngx-sonner": "^2.0.1",

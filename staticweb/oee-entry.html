@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="#"><!-- fix favicon.ico -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OEE Entry Static Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: #18181b;
+      color: #fff;
+      font-family: inherit;
+    }
+    .dashboard-header {
+      background: #23263a;
+      border-radius: 16px 16px 0 0;
+      padding: 32px 0 16px 0;
+      margin-bottom: 0;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(36,36,60,0.12);
+    }
+    .machine-menu {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid #60a5fa;
+      border-radius: 0 0 16px 16px;
+      padding: 18px 0;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.08);
+      position: sticky;
+      top: 16px;
+      z-index: 30;
+    }
+    .machine-btn {
+      background: #7c3aed;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 12px 32px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+      transition: background 0.2s;
+    }
+    .machine-btn:hover, .machine-btn.active {
+      background: #a78bfa;
+      color: #23263a;
+    }
+    .form-container {
+      background: rgba(255,255,255,0.05);
+      padding: 32px 24px;
+      margin-top: 24px;
+    }
+    #gotoTopBtn {
+      position: fixed;
+      right: 2rem;
+      bottom: 2rem;
+      z-index: 100;
+      background-color: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.2s, background-color 0.2s;
+    }
+    #gotoTopBtn:hover {
+      background-color: #a78bfa;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mx-auto">
+    <div class="dashboard-header">
+      <h1 class="text-4xl font-bold">OEE ALL MACHINES</h1>
+    </div>
+    <div class="machine-menu" id="machineMenu">
+      <!-- Machine buttons will be injected here -->
+    </div>
+    <div class="form-container">
+      <form id="oeeForm" autocomplete="off" novalidate>
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Left Card: Main Info -->
+          <div class="flex-1 bg-gray-800 text-white rounded-lg shadow p-6 space-y-4">
+          <div>
+            <label for="machineId" class="block font-medium mb-1">Machine:</label>
+            <div class="flex gap-2 items-center">
+              <select id="machineId" name="machineId" required class="flex-1 border rounded px-3 py-2 bg-gray-700 text-white"></select>
+              <button type="button" id="loadDataBtn" class="px-4 py-2 bg-violet-600 text-white rounded font-semibold hover:bg-violet-500">Load Data</button>
+            </div>
+            <div id="machineIdError" class="text-red-500 text-sm mt-1 hidden"></div>
+          </div>
+          <div>
+            <label for="recordDate" class="block font-medium mb-1">วันที่บันทึก:</label>
+            <input type="date" id="recordDate" name="recordDate" required class="w-full border rounded px-3 py-2">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="availability" class="block font-medium mb-1">Availability (%):</label>
+              <input type="number" id="availability" name="availability" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="availabilityError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="performance" class="block font-medium mb-1">Performance (%):</label>
+              <input type="number" id="performance" name="performance" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="performanceError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="quality" class="block font-medium mb-1">Quality (%):</label>
+              <input type="number" id="quality" name="quality" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="qualityError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="oee" class="block font-medium mb-1">OEE (%):</label>
+              <input type="number" id="oee" name="oee" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="oeeError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+          </div>
+          <div>
+            <label for="giveaway" class="block font-medium mb-1">Giveaway เม็ดแถมให้ลูกค้า: (25.100-25.115)</label>
+            <input type="number" id="giveaway" name="giveaway" step="0.001" required class="w-full border rounded px-3 py-2" autocomplete="off">
+            <div id="giveawayError" class="text-red-500 text-sm mt-1 hidden"></div>
+          </div>
+          <div>
+            <label for="responsiblePerson" class="block font-medium mb-1">Responsible Person:</label>
+            <input type="text" id="responsiblePerson" name="responsiblePerson" value="default auto-generate" required class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label for="status" class="block font-medium mb-1">Status:</label>
+            <select id="status" name="status" class="w-full border rounded px-3 py-2">
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+          <button type="submit" id="submitBtn" class="w-full py-2 bg-green-600 text-white rounded font-bold">Submit</button>
+        </div>
+        <!-- Right Card: Remarks -->
+        <div class="w-full md:w-80 bg-white rounded-lg shadow p-6 flex flex-col">
+          <button type="button" onclick="addRemark()" class="mb-3 px-3 py-1 bg-green-500 text-white rounded self-start">Add Remark</button>
+          <div id="remarksContainer" class="flex-1"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="max-w-5xl mx-auto mt-10">
+    <table id="oeeTable" class="min-w-full bg-gray-800 text-white rounded shadow overflow-hidden">
+    </table>
+  </div>
+
+  <!-- Floating Go to Top Button -->
+  <button id="gotoTopBtn" title="Go to Top" class="hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  </button>
+
+  <script src="oee-entry.static.js"></script>
+  <script>
+    // --- Flatpickr setup ---
+    flatpickr("#recordDateString", {
+      dateFormat: "d-m-Y",
+      defaultDate: new Date(Date.now() - 86400000), // yesterday
+      allowInput: false,
+      onReady: function (selectedDates, dateStr, instance) {
+        instance.input.value = instance.formatDate(selectedDates[0], "d-m-Y");
+      }
+    });
+
+    // --- Machine dropdown ---
+    const machines = [
+      { MachineId: 1, MachineName: "PP12/A" },
+      { MachineId: 2, MachineName: "PP12/C" },
+      { MachineId: 3, MachineName: "PP3/A" },
+      { MachineId: 4, MachineName: "PP3/B" },
+      { MachineId: 5, MachineName: "PPE/C" },
+      { MachineId: 6, MachineName: "PPE/D" },
+      { MachineId: 7, MachineName: "PPC/A" },
+      { MachineId: 8, MachineName: "PPC/B" },
+      { MachineId: 9, MachineName: "HDPE/A" }
+    ];
+    const machineSelect = document.getElementById('machineId');
+    machines.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.MachineId;
+      opt.textContent = m.MachineName;
+      machineSelect.appendChild(opt);
+    });
+
+    // --- Enable/disable Load Data button ---
+    const loadDataBtn = document.getElementById('loadDataBtn');
+    function updateLoadDataBtnState() {
+      if (!machineSelect.value) {
+        loadDataBtn.disabled = true;
+        loadDataBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        loadDataBtn.disabled = false;
+        loadDataBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+    machineSelect.addEventListener('change', updateLoadDataBtnState);
+    updateLoadDataBtnState();
+
+    // --- OEE records (sample data) ---
+    const oeeRecords = [
+      { Id: 2228, MachineId: 1, RecordDate: "2025-08-26", Availability: 100.00, Performance: 90.99, Quality: 100.00, OEE: 90.99, Giveaway: 25.113, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2229, MachineId: 2, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.68, Quality: 100.00, OEE: 94.68, Giveaway: 25.113, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2230, MachineId: 3, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.35, Quality: 100.00, OEE: 94.35, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2231, MachineId: 4, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.67, Quality: 100.00, OEE: 94.67, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2232, MachineId: 5, RecordDate: "2025-08-26", Availability: 100.00, Performance: 92.51, Quality: 100.00, OEE: 92.51, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2233, MachineId: 6, RecordDate: "2025-08-26", Availability: 100.00, Performance: 91.04, Quality: 100.00, OEE: 91.04, Giveaway: 25.108, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2213, MachineId: 7, RecordDate: "2025-08-22", Availability: 100.00, Performance: 94.02, Quality: 100.00, OEE: 94.02, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2206, MachineId: 8, RecordDate: "2025-08-21", Availability: 100.00, Performance: 93.52, Quality: 100.00, OEE: 93.52, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2178, MachineId: 9, RecordDate: "2025-08-17", Availability: 100.00, Performance: 92.88, Quality: 99.99, OEE: 92.87, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 }
+    ];
+
+    // --- Load Data button logic ---
+    document.getElementById('loadDataBtn').addEventListener('click', function () {
+      const machineId = document.getElementById('machineId').value;
+      if (!machineId) {
+        // Replace alert with SweetAlert
+        Swal.fire({
+          icon: 'warning',
+          title: 'กรุณาเลือก Machine ก่อน',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+      const latestRecord = oeeRecords.filter(r => r.MachineId == machineId)
+        .sort((a, b) => new Date(b.RecordDate) - new Date(a.RecordDate))[0];
+      if (!latestRecord) {
+        // Replace alert with SweetAlert
+        Swal.fire({
+          icon: 'error',
+          title: 'ไม่พบข้อมูล OEE สำหรับ Machine นี้',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+      document.getElementById('availability').value = latestRecord.Availability;
+      document.getElementById('performance').value = latestRecord.Performance;
+      document.getElementById('quality').value = latestRecord.Quality;
+      document.getElementById('oee').value = latestRecord.OEE;
+      document.getElementById('giveaway').value = latestRecord.Giveaway;
+    });
+
+    // --- Validation logic ---
+    function validatePercentInput(id) {
+      const el = document.getElementById(id);
+      const errorDiv = document.getElementById(id + 'Error');
+      const val = el.value.trim();
+      let customError = '';
+      const numValue = parseFloat(val);
+      
+      if (id === 'giveaway') {
+        if (val === '') {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'ห้ามใส่ค่าว่าง';
+        } else if (isNaN(numValue)) {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'กรุณากรอกตัวเลข';
+        } else if (numValue < 25.100 || numValue > 25.115) {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'ค่าต้องอยู่ระหว่าง 25.100 ถึง 25.115';
+        } else {
+          el.classList.remove('border-red-500', 'bg-red-100');
+        }
+      } else {
+        if (val === '') {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'ห้ามใส่ค่าว่าง';
+        } else if (isNaN(numValue)) {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'กรุณากรอกตัวเลข';
+        } else if (numValue > 100 || numValue < 0) {
+          el.classList.add('border-red-500', 'bg-red-100');
+          customError = 'ค่าต้องอยู่ระหว่าง 0 ถึง 100';
+        } else {
+          el.classList.remove('border-red-500', 'bg-red-100');
+        }
+      }
+      el.setCustomValidity('');
+      if (customError) {
+        errorDiv.textContent = customError;
+        errorDiv.classList.remove('hidden');
+      } else {
+        errorDiv.textContent = '';
+        errorDiv.classList.add('hidden');
+      }
+    }
+    ['availability', 'performance', 'quality', 'oee', 'giveaway'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => validatePercentInput(id));
+      document.getElementById(id).addEventListener('change', () => validatePercentInput(id));
+    });
+
+    // --- Remarks logic ---
+    // let remarks = []; // ลบการ redeclare remarks ถ้า oee-entry.static.js มีอยู่แล้ว
+    function renderRemarks() {
+      const list = document.getElementById('remarksList');
+      list.innerHTML = '';
+      remarks.forEach((remark, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex gap-2 mb-2';
+        row.innerHTML = `<input type="text" value="${remark}" class="bg-gray-800 text-white rounded px-2 py-1 border border-gray-700 flex-1" onchange="updateRemark(${idx}, this.value)" />
+          <button type="button" class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg" onclick="removeRemark(${idx})">-</button>`;
+        list.appendChild(row);
+      });
+    }
+    function addRemark() {
+      if (remarks.length > 0 && remarks[remarks.length - 1] === "") {
+        return; // Prevent adding duplicate empty rows
+      }
+      remarks.push("");
+      renderRemarks();
+    }
+    function removeRemark(idx) {
+      remarks.splice(idx, 1);
+      renderRemarks();
+    }
+    function updateRemark(idx, value) {
+      remarks[idx] = value;
+    }
+    document.getElementById('addRemarkBtn').addEventListener('click', addRemark);
+    renderRemarks();
+
+    // --- Form submit ---
+    document.getElementById('oeeForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      
+      // แปลงวันที่เป็น ISO format
+      const dateStr = document.getElementById('recordDateString').value;
+      const [dd, mm, yyyy] = dateStr.split('-');
+      const isoDate = `${yyyy}-${mm}-${dd}`;
+      
+      let hasError = false;
+      
+      // Get all values first
+      const formValues = {
+        machineId: document.getElementById('machineId').value,
+        availability: document.getElementById('availability').value,
+        performance: document.getElementById('performance').value,
+        quality: document.getElementById('quality').value,
+        oee: document.getElementById('oee').value,
+        giveaway: document.getElementById('giveaway').value
+      };
+
+      // Validate only if values are empty or invalid
+      const machineIdSelect = document.getElementById('machineId');
+      const machineIdErrorDiv = document.getElementById('machineIdError');
+      if (!formValues.machineId) {
+        machineIdSelect.classList.add('border-red-500', 'bg-red-100');
+        machineIdErrorDiv.textContent = 'กรุณาเลือก Machine';
+        machineIdErrorDiv.classList.remove('hidden');
+        hasError = true;
+      } else {
+        machineIdSelect.classList.remove('border-red-500', 'bg-red-100');
+        machineIdErrorDiv.textContent = '';
+        machineIdErrorDiv.classList.add('hidden');
+      }
+
+      // Validate input fields
+      ['availability', 'performance', 'quality', 'oee', 'giveaway'].forEach(id => {
+        validatePercentInput(id);
+        const el = document.getElementById(id);
+        if (el.classList.contains('border-red-500')) {
+          hasError = true;
+        }
+      });
+
+      // Validate remarks
+      const emptyRemarks = remarks.map(r => r.trim()).filter(r => r === '');
+      if (emptyRemarks.length > 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Remark ไม่สามารถเว้นว่างได้',
+          text: 'กรุณาลบ Remark ที่ว่างออกก่อนจึงจะสามารถบันทึกข้อมูลได้',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+
+      if (hasError) {
+        console.log('Form validation errors:');
+        ['machineId', 'availability', 'performance', 'quality', 'oee', 'giveaway'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el.classList.contains('border-red-500')) {
+            console.log(`Field ${id} has error: ${document.getElementById(id + 'Error')?.textContent}`);
+          }
+        });
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'ข้อมูลไม่ถูกต้อง',
+          text: 'กรุณากรอกข้อมูลให้ถูกต้อง',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+      
+      // Build final data object
+      const submitData = {
+        machineId: parseInt(document.getElementById('machineId').value),
+        machineName: machines.find(m => m.MachineId === parseInt(document.getElementById('machineId').value))?.MachineName || '',
+        recordDateString: isoDate,
+        availability: parseFloat(document.getElementById('availability').value),
+        performance: parseFloat(document.getElementById('performance').value),
+        quality: parseFloat(document.getElementById('quality').value),
+        oee: parseFloat(document.getElementById('oee').value),
+        giveaway: parseFloat(document.getElementById('giveaway').value),
+        remarks: remarks.filter(r => r.trim() !== ""),
+        responsiblePerson: "Static User",
+        status: 1,
+        lastUpdated: new Date().toISOString()
+      };
+
+      // Log the final data
+      console.group('Form Data Preview:');
+      console.log('Submit from form, user input:', submitData);
+      console.log('Machine:', submitData.machineName);
+      console.log('Date:', submitData.recordDateString);
+      console.table({
+        Availability: submitData.availability + '%',
+        Performance: submitData.performance + '%',
+        Quality: submitData.quality + '%',
+        Giveaway: submitData.giveaway,
+        OEE: submitData.oee + '%'
+      });
+      console.log('Remarks:', submitData.remarks);
+      console.log('JSON Data:', JSON.stringify(submitData, null, 2));
+      console.groupEnd();
+
+      // Close the form if needed
+      if (document.getElementById('formModalBg')) {
+        document.getElementById('formModalBg').classList.add('hidden');
+        document.getElementById('formModalBg').style.display = 'none';
+      }
+    });
+
+    // Go to Top button functionality
+    const gotoTopBtn = document.getElementById('gotoTopBtn');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        gotoTopBtn.classList.remove('hidden');
+        gotoTopBtn.classList.add('flex');
+      } else {
+        gotoTopBtn.classList.add('hidden');
+        gotoTopBtn.classList.remove('flex');
+      }
+    });
+
+    gotoTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+
+</html>

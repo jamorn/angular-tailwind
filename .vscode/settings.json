@@ -18,5 +18,6 @@
     // ช่วยในการแนะนำ Tailwind classes ขณะเขียนโค้ด
     "editor.quickSuggestions": {
       "strings": true
-    }
+    },
+    "liveServer.settings.port": 5501
 }

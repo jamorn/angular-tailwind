@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test JSON Load</title>
+  <style>
+    body { background: #222; color: #fff; font-family: monospace; padding: 2rem; }
+    pre { background: #333; color: #0f0; padding: 1rem; border-radius: 8px; }
+    .error { color: #f00; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Test JSON Load: response_GetOEEDaily.json</h2>
+  <div id="result"></div>
+  <script>
+    document.getElementById('result').innerHTML = '<span>Loading...</span>';
+    fetch('response_GetOEEDaily.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('ไม่พบไฟล์ response_GetOEEDaily.json หรือไฟล์เสีย');
+        }
+        return response.json();
+      })
+      .then(jsonData => {
+        // jsonData เป็น array ของ array (แต่ละเครื่องจักร)
+        const allData = jsonData.flat();
+        let preview = allData.slice(0, 2);
+        document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(preview, null, 2) + '</pre>';
+        console.log('Preview:', preview);
+      })
+      .catch(err => {
+        document.getElementById('result').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
+        console.error('Error loading JSON:', err);
+      });
+  </script>
+</body>
+</html>

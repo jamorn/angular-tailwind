@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EII Monthly Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #18181b;
+            color: #fff;
+            font-family: inherit;
+        }
+        .dashboard-header {
+            background: #23263a;
+            border-radius: 16px;
+            padding: 32px 0 16px 0;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(36,36,60,0.12);
+        }
+        .table-container {
+            background: #121212;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid #374151;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #374151;
+        }
+        th {
+            background-color: #1f2937;
+            color: #ffffff;
+        }
+        tr:hover {
+            background-color: #1f2937;
+        }
+        input[type="date"], input[type="number"], select {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            width: 100%;
+        }
+        /* 
+         * Original button colors (Green):
+         * background-color: #22c55e (normal state)
+         * background-color: #16a34a (hover state)
+         * border-color: #86efac (focus state)
+         * box-shadow: rgba(34, 197, 94, 0.25) (normal state)
+         */
+        button.submit-btn {
+            background-color: #8b5cf6;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.25);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: fit-content;
+        }
+        button.submit-btn:hover {
+            background-color: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(139, 92, 246, 0.3);
+        }
+        button.submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+        }
+        button.submit-btn:focus {
+            outline: none;
+            border-color: #c4b5fd;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="dashboard-header">
+            <h1 class="text-4xl">EII Monthly Admin</h1>
+        </div>
+
+        <!-- Input Form -->
+        <div class="table-container mb-8">
+            <h2 class="text-xl font-bold mb-4">Add/Edit EII Data</h2>
+            <form id="eiiForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block mb-2">Unit</label>
+                    <select id="unitId" required>
+                        <option value="1">HD</option>
+                        <option value="2">PP12</option>
+                        <option value="3">PP3</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2">Record Date</label>
+                    <input type="date" id="recordDate" required>
+                </div>
+                <div>
+                    <label class="block mb-2">EII Value</label>
+                    <input type="text" id="eiiValue" 
+                           required 
+                           pattern="^([0-9]{1,2}\.[0-9]{2}|100\.00|[0-9]{1,3})$"
+                           title="Please enter a number in format xx.xx or xxx (e.g., 85.50 or 100)"
+                           oninput="validateEIIValue(this)"
+                           class="bg-gray-800 border border-gray-700 text-white p-2 rounded w-full">
+                    <small class="text-gray-400 mt-1 block">Format: xx.xx or xxx (e.g., 85.50 or 100)</small>
+                </div>
+                <div>
+                    <label class="block mb-2">Responsible Person</label>
+                    <input type="text" id="responsiblePerson" class="bg-gray-800 border border-gray-700 text-white p-2 rounded w-full" required>
+                </div>
+                <div>
+                    <button type="submit" class="submit-btn mt-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Submit Data
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Data Table -->
+        <div class="table-container">
+            <h2 class="text-xl font-bold mb-4">Summary Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>EII</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                        <th>Record Status</th>
+                    </tr>
+                </thead>
+                <tbody id="summaryTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detail Data Table -->
+        <div class="table-container">
+            <h2 class="text-xl font-bold mb-4">Detail Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>HD</th>
+                        <th>PP12</th>
+                        <th>PP3</th>
+                        <th>Target</th>
+                    </tr>
+                </thead>
+                <tbody id="detailTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        /*
+         * EII Monthly Admin Page Documentation
+         * ===================================
+         * 
+         * 1. การทำงานของหน้าเว็บ
+         * - เป็นหน้าสำหรับบันทึกข้อมูล EII (Energy Intensity Index) ของแต่ละ Unit
+         * - มีการแสดงผลเป็น 2 ตาราง: Summary Data และ Detail Data
+         * - ข้อมูลใหม่จะถูกเพิ่มไว้บนสุดของตารางทั้งสอง (unshift)
+         * - มีการ reset form หลังจากบันทึกข้อมูล
+         * 
+         * 2. การ Validate ข้อมูล
+         * - EII Value: รับค่าตัวเลขทศนิยม 2 ตำแหน่ง (xx.xx) หรือจำนวนเต็ม
+         * - ค่าต้องอยู่ระหว่าง 0-100
+         * - Required fields: Unit, Record Date, EII Value, Responsible Person
+         * - Date Format: เปลี่ยนเป็นรูปแบบ "MMM25" (เช่น JAN25, FEB25)
+         * 
+         * 3. Features และ Options
+         * - Dark mode theme ทั้งหน้า
+         * - Responsive design (grid-cols-1 -> md:grid-cols-2 -> lg:grid-cols-4)
+         * - Real-time validation สำหรับ EII Value
+         * - แสดง New Record tag สำหรับข้อมูลที่เพิ่มใหม่
+         * - ปุ่ม Submit พร้อม loading animation
+         * 
+         * 4. การแสดงผลในตาราง
+         * Summary Table:
+         * - แสดงค่า EII รวม, เป้าหมาย, และสถานะ
+         * - สถานะ Over/Under Target แสดงด้วยสีแดง/เขียว
+         * - New Record tag แสดงด้วยสีฟ้า
+         * 
+         * Detail Table:
+         * - แสดงค่า EII แยกตาม Unit (HD, PP12, PP3)
+         * - ค่าที่เกิน target จะแสดงเป็นสีแดงและตัวหนา
+         * - ทุกค่าแสดงทศนิยม 2 ตำแหน่ง (.toFixed(2))
+         * 
+         * 5. ตัวอย่างข้อมูลที่ส่งไป Backend
+         * {
+         *     unitId: 1, // 1=HD, 2=PP12, 3=PP3
+         *     recordDate: "2025-09-03T00:00:00.000Z", // ISO format
+         *     eiiValue: 75.50, // Number with 2 decimal places
+         *     responsiblePerson: "John Doe" // String
+         * }
+         */
+
+        // Set default date to today
+        document.getElementById('recordDate').valueAsDate = new Date();
+
+        const TARGET_VALUE = 69.46; // Default target value
+
+        // Mock data (same as in eiimomthlypl.html)
+        const data = {
+            "summaryData": [
+                { "category": "JAN25", "eii": "74.62", "target": "69.46" },
+                { "category": "FEB25", "eii": "73.23", "target": "69.46" },
+                { "category": "MAR25", "eii": "68.82", "target": "69.46" },
+                { "category": "APR25", "eii": "67.85", "target": "69.46" },
+                { "category": "MAY25", "eii": "68.71", "target": "69.46" },
+                { "category": "JUN25", "eii": "68.67", "target": "69.46" },
+                { "category": "JUL25", "eii": "68.12", "target": "69.46" },
+                { "category": "AUG25", "eii": "72.50", "target": "69.46" }
+            ],
+            "detailData": [
+                { "category": "JAN25", "hd": "78.70", "pp12": "79.98", "pp3": "65.18", "target": "69.46" },
+                { "category": "FEB25", "hd": "73.70", "pp12": "69.74", "pp3": "76.25", "target": "69.46" },
+                { "category": "MAR25", "hd": "78.09", "pp12": "73.84", "pp3": "57.70", "target": "69.46" },
+                { "category": "APR25", "hd": "78.35", "pp12": "58.54", "pp3": "64.18", "target": "69.46" },
+                { "category": "MAY25", "hd": "79.90", "pp12": "56.18", "pp3": "68.01", "target": "69.46" },
+                { "category": "JUN25", "hd": "80.22", "pp12": "56.10", "pp3": "65.44", "target": "69.46" },
+                { "category": "JUL25", "hd": "79.30", "pp12": "56.11", "pp3": "65.67", "target": "69.46" },
+                { "category": "AUG25", "hd": "79.04", "pp12": "54.46", "pp3": "69.77", "target": "69.46" }
+            ]
+        };
+
+        // Populate tables with mock data
+        function populateTables() {
+            // Summary Table
+            const summaryBody = document.getElementById('summaryTableBody');
+            summaryBody.innerHTML = data.summaryData.map(item => `
+                <tr>
+                    <td>${item.category}</td>
+                    <td>${parseFloat(item.eii).toFixed(2)}</td>
+                    <td>${parseFloat(item.target).toFixed(2)}</td>
+                    <td>
+                        <span class="px-2 py-1 rounded text-sm ${parseFloat(item.eii) > parseFloat(item.target) ? 'bg-red-600' : 'bg-green-600'}">
+                            ${parseFloat(item.eii) > parseFloat(item.target) ? 'Over Target' : 'Under Target'}
+                        </span>
+                    </td>
+                    <td>
+                        ${item.isNewRecord ? 
+                            '<span class="px-2 py-1 rounded text-sm bg-blue-600">New Record</span>' : 
+                            ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Detail Table
+            const detailBody = document.getElementById('detailTableBody');
+            detailBody.innerHTML = data.detailData.map(item => {
+                const target = parseFloat(item.target);
+                const hdValue = parseFloat(item.hd);
+                const pp12Value = parseFloat(item.pp12);
+                const pp3Value = parseFloat(item.pp3);
+                
+                return `
+                <tr>
+                    <td>${item.category}</td>
+                    <td class="${hdValue > target ? 'text-red-500 font-bold' : ''}">${hdValue.toFixed(2)}</td>
+                    <td class="${pp12Value > target ? 'text-red-500 font-bold' : ''}">${pp12Value.toFixed(2)}</td>
+                    <td class="${pp3Value > target ? 'text-red-500 font-bold' : ''}">${pp3Value.toFixed(2)}</td>
+                    <td>${target.toFixed(2)}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Validate EII Value
+        function validateEIIValue(input) {
+            const value = input.value;
+            // Allow empty value during typing
+            if (!value) return;
+
+            // Remove non-numeric characters except decimal point
+            let cleaned = value.replace(/[^\d.]/g, '');
+
+            // Ensure only one decimal point
+            const parts = cleaned.split('.');
+            if (parts.length > 2) {
+                cleaned = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Handle decimal places
+            if (cleaned.includes('.')) {
+                const [whole, decimal] = cleaned.split('.');
+                // Limit whole number to 3 digits max
+                const limitedWhole = whole.slice(0, 3);
+                // Keep original decimal digits (up to 2)
+                cleaned = `${limitedWhole}.${decimal.slice(0, 2)}`;
+            }
+
+            // Convert to number and validate range
+            const num = parseFloat(cleaned);
+            if (num > 100) {
+                cleaned = '100.00';
+            }
+
+            // Update input value
+            input.value = cleaned;
+        }
+
+        // Handle form submission
+        document.getElementById('eiiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                unitId: parseInt(document.getElementById('unitId').value),
+                recordDate: document.getElementById('recordDate').value + "T00:00:00.000Z",
+                eiiValue: parseFloat(document.getElementById('eiiValue').value),
+                responsiblePerson: document.getElementById('responsiblePerson').value
+            };
+
+            // Create date format like "SEP25"
+            const date = new Date(formData.recordDate);
+            const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+            const year = date.getFullYear().toString().slice(-2);
+            const category = `${month}${year}`;
+
+            // Add to summary data
+            data.summaryData.unshift({
+                category: category,
+                eii: formData.eiiValue.toFixed(2),
+                target: TARGET_VALUE.toFixed(2),
+                isNewRecord: true
+            });
+
+            // Add to detail data
+            const detailEntry = {
+                category: category,
+                hd: "0.00",
+                pp12: "0.00",
+                pp3: "0.00",
+                target: TARGET_VALUE.toFixed(2)
+            };
+
+            // Update the correct unit's value
+            switch(formData.unitId) {
+                case 1:
+                    detailEntry.hd = formData.eiiValue.toFixed(2);
+                    break;
+                case 2:
+                    detailEntry.pp12 = formData.eiiValue.toFixed(2);
+                    break;
+                case 3:
+                    detailEntry.pp3 = formData.eiiValue.toFixed(2);
+                    break;
+            }
+
+            data.detailData.unshift(detailEntry);
+
+            // Refresh tables
+            populateTables();
+
+            // Reset form
+            e.target.reset();
+            // Set default date to today again after reset
+            document.getElementById('recordDate').valueAsDate = new Date();
+            
+            // Log the data that would be sent to backend
+            console.log('Data to be sent to backend:', formData);
+        });
+
+        // Initialize tables
+        populateTables();
+    </script>
+</body>
+</html>

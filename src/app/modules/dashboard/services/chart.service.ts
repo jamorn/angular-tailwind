@@ -164,11 +164,11 @@ export class ChartService {
             html += `
               <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E0E0E0;">
                 <div style="font-weight: 600; color: #121212; margin-bottom: 8px;">Remarks:</div>
-                <div style="padding-left: 8px;">
+                <div style="padding-left: 2px;">
                   ${remarks.map((remark: string) => `
-                    <div style="display: flex; align-items: center; color: #666666; margin-bottom: 6px; font-size: 11px; line-height: 1.4;">
-                      <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px;">•</span>
-                      <span style="flex: 1; word-wrap: break-word;">${remark}</span>
+                    <div style="text-gray-500 mb-1 text-xs leading-5 flex items-start">
+                      <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px; margin-top: 2px;">•</span>
+                      <span style="flex: 1; word-break: normal; white-space: normal;">${remark}</span>
                     </div>
                   `).join('')}
                 </div>
@@ -222,10 +222,33 @@ export class ChartService {
         borderWidth: 0,
         borderRadius: 8,
         shadow: true
-      }
+      },
+      accessibility: { enabled: false }
     };
   }
+   /* 
+   การรองรับการใช้งานสำหรับผู้พิการ (Accessibility) ในกราฟ Highcharts
+คือการเพิ่มฟีเจอร์ที่ช่วยให้ผู้ใช้ที่มีข้อจำกัดทางร่างกาย เช่น ผู้พิการทางสายตา สามารถเข้าถึงข้อมูลในกราฟได้ง่ายขึ้น
 
+ตัวอย่างฟีเจอร์ Accessibility ใน Highcharts:
+
+รองรับการใช้งานกับ screen reader (โปรแกรมอ่านหน้าจอสำหรับผู้พิการทางสายตา)
+เพิ่มคำอธิบาย (description) ให้กับกราฟและข้อมูลแต่ละจุด
+รองรับการใช้งานผ่าน keyboard (ไม่ต้องใช้ mouse)
+เพิ่ม navigation สำหรับผู้ใช้ที่ไม่สามารถใช้ mouse ได้
+การเปิด accessibility ใน Highcharts:
+
+โดยปกติ Highcharts จะมีโมดูล accessibility.js ให้ใช้งาน
+ถ้าเปิดใช้งาน จะมีฟีเจอร์ช่วยเหลือผู้พิการโดยอัตโนมัติ
+ถ้าไม่ต้องการฟีเจอร์นี้:
+
+สามารถปิดได้ด้วยการตั้งค่า accessibility: { enabled: false } ใน chart options
+สรุป:
+
+Accessibility ทำให้กราฟใช้งานได้สำหรับทุกคน รวมถึงผู้พิการ
+ถ้าต้องการให้กราฟรองรับผู้พิการ ให้เปิด accessibility module
+ถ้าไม่ต้องการ สามารถปิดได้ตามที่คุณตั้งค่าในโปรเจค
+   */
   private createTooltipHeader(dateString: string): string {
     return `
       <div style="

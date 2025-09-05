@@ -1,0 +1,463 @@
+<!--
+/**
+ * OEE Dashboard Documentation
+ * ==========================
+ * 
+ * 1. Overview:
+ * - แสดงกราฟ OEE ของทุกเครื่องจักรในรูปแบบ Dashboard
+ * - ใช้ Dark Theme
+ * - แสดงข้อมูลแบบ Interactive Charts
+ * 
+ * 2. Data Source:
+ * - ดึงข้อมูลจาก response_GetOEEDaily.json
+ * - เรียงลำดับเครื่องจักรตาม MachineOrder
+ * - แสดงข้อมูล OEE, Availability, Performance, Quality
+ * 
+ * 3. Features:
+ * - Interactive Charts ด้วย Highcharts
+ * - Sticky Machine Menu
+ * - Smooth Scrolling
+ * - Responsive Design
+ * - Go to Top Button
+ * 
+ * 4. Chart Features:
+ * - Column chart สำหรับ OEE
+ * - Line charts สำหรับ Components (A,P,Q)
+ * - Target Line
+ * - Interactive Tooltips พร้อม Remarks
+ * - Custom Colors และ Styling
+ * 
+ * 5. Machine Menu:
+ * - Sticky Navigation
+ * - Highlight Active Machine
+ * - Smooth Scroll to Chart
+ * 
+ * 6. Error Handling:
+ * - แสดง No Data Message
+ * - Log ข้อมูลที่พบ
+ * - แสดง Error Messages
+ * 
+ * 7. Dependencies:
+ * - Tailwind CSS
+ * - Highcharts
+ * 
+ * 8. Chart Configuration:
+ * - Dark Theme
+ * - Custom Tooltip Format
+ * - Responsive Layout
+ * - Custom Markers และ Colors
+ * - Interactive Legend
+ */
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="#">
+  <title>OEE Static Web</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Highcharts CDN -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body {
+      background: #18181b;
+      color: #fff;
+      font-family: inherit;
+    }
+    .container {
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+    .dashboard-header {
+      background: #23263a;
+      border-radius: 16px 16px 0 0;
+      padding: 32px 0 16px 0;
+      margin-bottom: 0;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(36,36,60,0.12);
+    }
+    .machine-menu {
+      background: rgba(35, 38, 58, 0.95);
+      border: 1px solid #1e293b;
+      border-radius: 0 0 16px 16px;
+      padding: 18px 0 18px 0;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 16px;
+      z-index: 30;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+    .machine-btn {
+      background: #1e293b;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 12px 32px;
+      border: 1px solid #334155;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+    }
+    .machine-btn:hover, .machine-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+    .charts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      box-sizing: border-box;
+    }
+    .chart-container {
+      position: relative;
+      background: #121212;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 2rem 2rem 1.5rem 2rem;
+      transition: transform 0.2s ease;
+      height: 600px;
+      margin-bottom: 2rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fff;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .chart {
+      width: 100%;
+      height: 100%;
+    }
+    .no-data-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+      color: #a3a3a3;
+      font-size: 2.25rem;
+      font-weight: bold;
+      background: transparent;
+    }
+    /* Floating Go to Top Button */
+    #gotoTopBtn {
+      position: fixed;
+      right: 32px;
+      bottom: 32px;
+      z-index: 100;
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.2s, background 0.2s;
+    }
+    #gotoTopBtn:hover {
+      background: #a78bfa;
+      color: #23263a;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="text-4xl font-bold text-center py-4">OEE ALL MACHINES</h1>
+    </div>
+    <div class="machine-menu"></div>
+    <div class="charts-grid" id="chartsGrid"></div>
+  </div>
+  <!-- Floating Go to Top Button -->
+  <button id="gotoTopBtn" title="Go to Top" class="hidden fixed right-8 bottom-8 z-100 bg-violet-600 text-white border-none rounded-full w-14 h-14 shadow-lg flex items-center justify-center text-2xl opacity-85 transition-opacity transition-colors duration-200 hover:bg-violet-300 hover:text-gray-900 hover:opacity-100">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  </button>
+  <script>
+function showLogOnPage(msg, color = '#fbbf24') {
+  const logDiv = document.createElement('div');
+  logDiv.className = `my-2 px-4 py-2 rounded font-bold text-sm ${color === '#fbbf24' ? 'bg-yellow-400 text-gray-900' : 'bg-red-400 text-gray-900'}`;
+  logDiv.innerText = msg;
+  document.body.appendChild(logDiv);
+}
+function parseMachineName(key) {
+  const machineKey = key.replace('oeeDataList', '');
+  const machine = machines.find(m => m.key === machineKey);
+  return machine?.name || key;
+}
+
+const machines = [
+  { id: 1, key: "PP12A", name: "PP12 LINE A" },
+  { id: 2, key: "PP12C", name: "PP12 LINE C" },
+  { id: 3, key: "PP3A", name: "PP3 LINE A" },
+  { id: 4, key: "PP3B", name: "PP3 LINE B" },
+  { id: 5, key: "PPEC", name: "PPE LINE C" },
+  { id: 6, key: "PPED", name: "PPE LINE D" },
+  { id: 7, key: "PPCA", name: "PPC LINE A" },
+  { id: 8, key: "PPCB", name: "PPC LINE B" },
+  { id: 9, key: "HDPEA", name: "HDPE LINE A" }
+];
+
+function getOrderedMachineKeys(jsonData) {
+  const machineKeys = Object.keys(jsonData).filter(k => k.startsWith('oeeDataList'));
+  return machineKeys.sort((a, b) => {
+    const keyA = a.replace('oeeDataList', '');
+    const keyB = b.replace('oeeDataList', '');
+    const machineA = machines.find(m => m.key === keyA);
+    const machineB = machines.find(m => m.key === keyB);
+    return (machineA?.id || 999) - (machineB?.id || 999);
+  });
+}
+
+fetch('response_GetOEEDaily.json')
+  .then(response => {
+    if (!response.ok) throw new Error('ไม่พบไฟล์ response_GetOEEDaily.json หรือไฟล์เสีย');
+    return response.json();
+  })
+  .then(jsonData => {
+    const orderedKeys = getOrderedMachineKeys(jsonData);
+    const machineNames = orderedKeys.map(parseMachineName);
+    // สร้างเมนูปุ่ม
+    const menuDiv = document.querySelector('.machine-menu');
+    if (menuDiv) {
+      menuDiv.innerHTML = machineNames.map((name, idx) =>
+        `<button class="machine-btn${idx === 0 ? ' active' : ''}" data-key="${orderedKeys[idx]}" data-name="${name}">${name}</button>`
+      ).join('');
+    }
+
+    // Render all charts for all machines in correct order
+    const chartsGrid = document.getElementById('chartsGrid');
+    if (chartsGrid) {
+      chartsGrid.innerHTML = '';
+      orderedKeys.forEach((key, idx) => {
+        const name = machineNames[idx];
+        const machineData = (jsonData[key] || []).filter(d => d.dateString && typeof d.oee === 'number' && typeof d.availability === 'number' && typeof d.performance === 'number' && typeof d.quality === 'number');
+        const countRows = machineData.length;
+        showLogOnPage(`พบข้อมูล machineName=${name} จำนวน ${countRows} แถว`, '#fbbf24');
+        machineData.sort((a, b) => a.dateString.localeCompare(b.dateString));
+        const chartDivId = `oeeChart_${key}`;
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-container';
+        chartContainer.innerHTML = `<div id="${chartDivId}" class="chart"></div>`;
+        chartsGrid.appendChild(chartContainer);
+        const chartDiv = document.getElementById(chartDivId);
+        if (!machineData || machineData.length === 0) {
+          if (chartDiv) chartDiv.innerHTML = `<div class="no-data-message">ไม่พบข้อมูล OEE ${name}</div>`;
+          showLogOnPage('No data for machine: ' + name, '#f87171');
+          return;
+        }
+        Highcharts.chart(chartDivId, {
+          chart: {
+            type: 'column',
+            backgroundColor: '#121212',
+            style: { fontFamily: 'inherit' },
+            height: 500,
+            spacing: [20, 20, 20, 20],
+            reflow: true
+          },
+          title: {
+            text: machineData[0]?.titleOEE || `OEE Machine ${name}`,
+            style: { color: '#FFFFFF', fontWeight: 'bold', fontSize: '16px', fontFamily: 'inherit' }
+          },
+          xAxis: {
+            type: 'datetime',
+            labels: {
+              style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' },
+              rotation: -45,
+              align: 'right'
+            },
+            gridLineColor: 'rgba(255,255,255,0.1)',
+            lineColor: 'rgba(255,255,255,0.2)'
+          },
+          yAxis: {
+            min: 0,
+            max: 125,
+            title: { text: '%', style: { color: '#FFFFFF', fontFamily: 'inherit' } },
+            labels: { style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' } },
+            gridLineColor: 'rgba(255,255,255,0.1)'
+          },
+          series: [
+            {
+              name: 'OEE',
+              type: 'column',
+              color: machineData[0]?.color || '#22c55e',
+              borderRadius: 3,
+              data: machineData.map(d => ({
+                x: new Date(d.dateString).getTime(),
+                y: d.oee,
+                color: d.color || '#22c55e',
+                remarks: d.remarks,
+                dateString: d.dateString
+              }))
+            },
+            {
+              name: 'Availability',
+              type: 'line',
+              color: '#4572A7',
+              lineWidth: 2,
+              marker: { symbol: 'circle', radius: 4 },
+              data: machineData.map(d => ({
+                x: new Date(d.dateString).getTime(),
+                y: d.availability
+              }))
+            },
+            {
+              name: 'Performance',
+              type: 'line',
+              color: '#AA4643',
+              lineWidth: 2,
+              marker: { symbol: 'diamond', radius: 4 },
+              data: machineData.map(d => ({
+                x: new Date(d.dateString).getTime(),
+                y: d.performance
+              }))
+            },
+            {
+              name: 'Quality',
+              type: 'line',
+              color: '#89A54E',
+              lineWidth: 2,
+              marker: { symbol: 'triangle', radius: 4 },
+              data: machineData.map(d => ({
+                x: new Date(d.dateString).getTime(),
+                y: d.quality
+              }))
+            },
+            {
+              name: 'Target',
+              type: 'line',
+              color: '#FF0000',
+              dashStyle: 'Solid',
+              lineWidth: 2,
+              marker: { enabled: false },
+              data: machineData.map(d => ({
+                x: new Date(d.dateString).getTime(),
+                y: d.oeeTarget || 85
+              }))
+            }
+          ],
+          tooltip: {
+            shared: true,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            style: { color: '#121212' },
+            borderWidth: 0,
+            borderRadius: 8,
+            shadow: true,
+            useHTML: true,
+            formatter: function() {
+              if (!this.points) return '';
+              const point = this.points[0];
+              const dateString = point.point.dateString || '';
+              const remarks = point.point.remarks || [];
+              // Use Tailwind classes for tooltip
+              let html = `<div class='min-w-[350px] max-w-[450px] p-3 leading-6 text-xs'>`;
+              html += `<div class='text-center mb-3'>`;
+              html += `<div class='text-base font-semibold text-gray-900 mb-1'>${dateString}</div>`;
+              html += `<div class='text-sm font-medium text-gray-500'>OEE Performance</div>`;
+              html += `</div><div class='h-px bg-gray-300 my-2'></div>`;
+              [
+                { name: 'OEE', color: point.color || '#22c55e', value: point.y },
+                { name: 'Availability', color: '#4572A7', value: this.points[1]?.y },
+                { name: 'Performance', color: '#AA4643', value: this.points[2]?.y },
+                { name: 'Quality', color: '#89A54E', value: this.points[3]?.y },
+                { name: 'Target', color: '#FF0000', value: this.points[4]?.y }
+              ].forEach(item => {
+                html += `<div class='flex items-center my-1 gap-2'>`;
+                html += `<span class='flex items-center min-w-[120px]'>`;
+                html += `<span class='inline-block w-2 h-2 rounded-full mr-1.5' style='background-color:${item.color}'></span>`;
+                html += `<span class='text-gray-700'>${item.name}:</span></span>`;
+                html += `<span class='font-semibold text-gray-900'>${item.value?.toFixed(2)}%</span></div>`;
+              });
+              if (remarks && remarks.length > 0) {
+                html += `<div class='mt-3 pt-3 border-t border-gray-300'>`;
+                html += `<div class='font-semibold text-gray-900 mb-2'>Remarks:</div>`;
+                html += `<div class='pl-2 max-w-[400px]'>`;
+                remarks.forEach(remark => {
+                  html += `<div class='text-gray-500 mb-1 text-xs leading-5 flex items-start'>
+                    <span class='inline-block min-w-[16px] text-gray-700 text-base mt-0.5'>•</span>
+                    <span class='flex-1 break-words whitespace-pre-wrap overflow-hidden'>${remark}</span>
+                  </div>`;
+                });
+                html += '</div></div>';
+              }
+              html += '</div>';
+              return html;
+            }
+          },
+          accessibility: { enabled: false },
+          credits: { enabled: false }
+        });
+      });
+    }
+
+    // Add click event to menu buttons for scroll
+    if (menuDiv) {
+      menuDiv.querySelectorAll('.machine-btn').forEach((btn, idx) => {
+        btn.addEventListener('click', function() {
+          menuDiv.querySelectorAll('.machine-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const key = btn.getAttribute('data-key');
+          const chartDiv = document.getElementById(`oeeChart_${key}`);
+          if (chartDiv) {
+            chartDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+
+    // Go to Top Button logic
+    const gotoTopBtn = document.getElementById('gotoTopBtn');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        gotoTopBtn.style.display = 'flex';
+      } else {
+        gotoTopBtn.style.display = 'none';
+      }
+    });
+    gotoTopBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })
+  .catch(error => {
+    document.body.innerHTML += `<div class="no-data-message">${error.message}</div>`;
+  });
+  </script>
+</body>
+</html>

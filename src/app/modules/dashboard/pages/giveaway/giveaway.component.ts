@@ -62,6 +62,7 @@ export class GiveawayComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription = this.chartService.machineData$
       .pipe(
         tap(data => {
+          console.log('Raw API data:', data);
           console.log('[GiveawayComponent] Received data:', data ? 'Has Data' : 'No Data');
           if (data) {
             this.loading = false;
@@ -107,6 +108,7 @@ export class GiveawayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.orderedMachines.forEach(machine => {
         console.log('Processing machine:', machine.replace('oeeDataList', ''));
         const typedMachine = machine as keyof MachineOEEData;
+        console.log('Key:', machine, 'Data:', data[typedMachine]);
         if (data[typedMachine] && data[typedMachine].length > 0) {
           this.chartOptions[machine] = this.chartService.createGiveawayChartOptions(
             machine.replace('oeeDataList', ''),

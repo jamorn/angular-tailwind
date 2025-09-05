@@ -1,0 +1,450 @@
+<!--
+/**
+ * Giveaway Dashboard Documentation
+ * ==============================
+ * 
+ * 1. Overview:
+ * - แสดงกราฟ Giveaway ของทุกเครื่องจักร
+ * - ใช้ Dark Theme
+ * - แสดงผลแบบ Interactive Charts
+ * 
+ * 2. Data Source:
+ * - ดึงข้อมูลจาก response_GetOEEDaily.json
+ * - แสดงค่า Giveaway, Min, Max
+ * - จัดเรียงข้อมูลตามวันที่
+ * 
+ * 3. Features:
+ * - Interactive Charts ด้วย Highcharts
+ * - Sticky Machine Menu
+ * - Responsive Design
+ * - Debug Logging System
+ * - Go to Top Button
+ * 
+ * 4. Chart Features:
+ * - Spline chart สำหรับค่า Giveaway
+ * - Dashed lines สำหรับค่า Min/Max
+ * - Interactive Tooltips
+ * - Dark Theme Charts
+ * - Custom Styling
+ * 
+ * 5. Data Validation:
+ * - ตรวจสอบความถูกต้องของข้อมูล
+ * - กรองข้อมูลที่ไม่สมบูรณ์
+ * - แสดงจำนวนข้อมูลที่พบ
+ * 
+ * 6. Error Handling:
+ * - แสดง No Data Message
+ * - Debug Logs
+ * - Error Messages
+ * 
+ * 7. Dependencies:
+ * - Tailwind CSS
+ * - Highcharts
+ * 
+ * 8. Tooltip Features:
+ * - แสดงข้อมูลแบบ Interactive
+ * - รองรับการแสดง Remarks
+ * - Customized Styling
+ */
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="#"><!-- fix favicon.ico -->
+  <title>Giveaway Static Web</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Highcharts CDN -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body {
+      background: #18181b;
+      color: #fff;
+      font-family: inherit;
+    }
+    .container {
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+    .dashboard-header {
+      background: #23263a;
+      border-radius: 16px 16px 0 0;
+      padding: 32px 0 16px 0;
+      margin-bottom: 0;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(36,36,60,0.12);
+    }
+    .machine-menu {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid #60a5fa;
+      border-radius: 0 0 16px 16px;
+      padding: 18px 0 18px 0;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.08);
+      position: sticky;
+      top: 16px;
+      z-index: 30;
+    }
+    .machine-btn {
+      background: #7c3aed;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 12px 32px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+      transition: background 0.2s;
+    }
+    .machine-btn:hover, .machine-btn.active {
+      background: #a78bfa;
+      color: #23263a;
+    }
+    .charts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      box-sizing: border-box;
+    }
+    .chart-container {
+      position: relative;
+      background: #121212;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 2rem 2rem 1.5rem 2rem;
+      transition: transform 0.2s ease;
+      height: 600px;
+      margin-bottom: 2rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fff;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .chart {
+      width: 100%;
+      height: 100%;
+    }
+    #giveawayChart {
+      width: 100%;
+      height: 500px;
+      display: block;
+    }
+    .no-data-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+      color: #a3a3a3;
+      font-size: 2.25rem;
+      font-weight: bold;
+      background: transparent;
+    }
+    /* Floating Go to Top Button */
+    #gotoTopBtn {
+      position: fixed;
+      right: 2rem;
+      bottom: 2rem;
+      z-index: 100;
+      background-color: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.2s, background-color 0.2s;
+    }
+    #gotoTopBtn:hover {
+      background-color: #a78bfa;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="text-4xl font-bold text-center py-4">GIVEAWAY ALL MACHINES</h1>
+    </div>
+    <div class="machine-menu"></div>
+  <div class="charts-grid" id="chartsGrid"></div>
+  </div>
+  <!-- Floating Go to Top Button -->
+  <button id="gotoTopBtn" title="Go to Top" class="hidden fixed right-8 bottom-8 z-100 bg-violet-600 text-white border-none rounded-full w-14 h-14 shadow-lg flex items-center justify-center text-2xl opacity-85 transition-opacity transition-colors duration-200 hover:bg-violet-300 hover:text-gray-900 hover:opacity-100">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  </button>
+  <script>
+
+
+function showLogOnPage(msg, color = '#fbbf24') {
+  const logDiv = document.createElement('div');
+  logDiv.style.background = color;
+  logDiv.style.color = '#18181b';
+  logDiv.style.padding = '8px 16px';
+  logDiv.style.margin = '8px 0';
+  logDiv.style.fontSize = '14px';
+  logDiv.style.borderRadius = '6px';
+  logDiv.style.fontWeight = 'bold';
+  logDiv.innerText = msg;
+  document.body.appendChild(logDiv);
+}
+
+console.log('Script tag started');
+showLogOnPage('Script tag started', '#fbbf24');
+setTimeout(() => {
+  console.log('Script running after DOMContentLoaded');
+  showLogOnPage('Script running after DOMContentLoaded', '#fbbf24');
+}, 0);
+
+fetch('response_GetOEEDaily.json')
+  .then(response => {
+    console.log('Fetch response:', response);
+    if (!response.ok) {
+      console.error('Fetch error: response_GetOEEDaily.json not found or invalid response', response);
+      throw new Error('ไม่พบไฟล์ response_GetOEEDaily.json หรือไฟล์เสีย');
+    }
+    return response.json();
+  })
+  .then(jsonData => {
+    console.log('JSON loaded');
+    // jsonData เป็น object ที่ key คือ oeeDataListXXX
+    const machineKeys = Object.keys(jsonData).filter(k => k.startsWith('oeeDataList'));
+    const machineNames = machineKeys.map(k => {
+      // pattern ใหม่: oeeDataListPPCA → PPC LINE  A
+      const parts = k.split('oeeDataList');
+      if (parts.length === 2 && parts[1].length > 1) {
+        const part1 = parts[1]; // PPCA
+        const line = part1.slice(-1); // A
+        const base = part1.slice(0, -1); // PPC
+        return `${base} LINE  ${line}`;
+      }
+      return k;
+    });
+    let currentMachineKey = machineKeys[0];
+    let currentMachineName = machineNames[0];
+    console.log('Machine keys:', machineKeys);
+    console.log('Machine names:', machineNames);
+
+    // สร้างเมนูปุ่มใหม่
+    const menuDiv = document.querySelector('.machine-menu');
+    if (menuDiv) {
+      menuDiv.innerHTML = machineNames.map((name, idx) =>
+        `<button class="machine-btn${idx === 0 ? ' active' : ''}" data-key="${machineKeys[idx]}" data-name="${name}">${name}</button>`
+      ).join('');
+      console.log('Menu buttons created:', machineNames.length);
+      showLogOnPage('Menu buttons created: ' + machineNames.length, '#bbf7d0');
+
+      // เพิ่ม event listener สำหรับปุ่มในเมนู
+      const buttons = menuDiv.querySelectorAll('.machine-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // ลบ active class จากปุ่มทั้งหมด
+          buttons.forEach(b => b.classList.remove('active'));
+          // เพิ่ม active class ให้ปุ่มที่ถูกคลิก
+          btn.classList.add('active');
+          
+          // เลื่อนไปยัง chart ที่เกี่ยวข้อง
+          const key = btn.getAttribute('data-key');
+          const chartElement = document.getElementById(`giveawayChart_${key}`);
+          if (chartElement) {
+            chartElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      });
+    } else {
+      document.body.innerHTML += '<div class="no-data-message">ไม่พบเมนูเครื่องจักร กรุณาตรวจสอบโครงสร้าง HTML</div>';
+      console.error('Menu div not found');
+      return;
+    }
+
+    function renderAllGiveawayCharts() {
+      const chartsGrid = document.getElementById('chartsGrid');
+      if (!chartsGrid) {
+        console.error('chartsGrid element not found');
+        return;
+      }
+      chartsGrid.innerHTML = '';
+      machineKeys.forEach((key, idx) => {
+  let name = machineNames[idx];
+  // แทน '/' ด้วย ' LINE '
+  //name = name.replace('/', ' LINE ');
+if (name.includes('/')) {
+  // เช่น PPE/D → PPE LINE D, PP12/A → PP12 LINE A
+  name = name.replace('/', ' LINE ');
+} else if (/^[A-Z]+(\d+)?[A-Z]$/.test(name)) {
+  // เช่น PPCA, PPEC, PPED, HDPEA (ไม่มี /)
+  // ถ้าอยากเติม LINE เฉพาะชื่อที่มีตัวอักษรท้าย (เช่น PPED → PPED LINE D)
+  // หรือถ้าไม่ต้องการเติม LINE ให้คงเดิม
+  // name = name + ' LINE'; // ถ้าอยากเติม LINE ทุกตัว
+  // name = name; // ถ้าไม่อยากเติม LINE
+} else if (/^[A-Z]+(\d+)?$/.test(name)) {
+  // เช่น PP12, PP3 (ไม่มี / และไม่มีตัวอักษรท้าย)
+  // name = name; // ไม่เติม LINE
+}
+  console.log('Machine name after replacement:', name);
+        const machineData = (jsonData[key] || []).filter(d => d.dateString && typeof d.giveaway === 'number' && typeof d.giveAwayMin === 'number' && typeof d.giveAwayMax === 'number');
+        const countRows = machineData.length;
+        showLogOnPage(`พบข้อมูล machineName=${name} จำนวน ${countRows} แถว`, '#fbbf24');
+        // sort ตามวันที่
+        machineData.sort((a, b) => a.dateString.localeCompare(b.dateString));
+        const chartDivId = `giveawayChart_${key}`;
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-container';
+        chartContainer.innerHTML = `<div id="${chartDivId}" class="chart"></div>`;
+        chartsGrid.appendChild(chartContainer);
+        const chartDiv = document.getElementById(chartDivId);
+        if (!machineData || machineData.length === 0) {
+          if (chartDiv) chartDiv.innerHTML = `<div class="no-data-message">ไม่พบข้อมูลสำหรับเครื่องจักร ${name}</div>`;
+          showLogOnPage('No data for machine: ' + name, '#f87171');
+          return;
+        }
+        if (chartDiv) {
+          Highcharts.chart(chartDivId, {
+            chart: {
+              backgroundColor: '#121212',
+              style: { fontFamily: 'inherit' },
+              height: 500,
+              width: null
+            },
+            title: {
+              text: machineData[0]?.titleGiveAway || `Giveaway Machine ${name}`,
+              style: { color: '#FFFFFF', fontWeight: 'bold', fontSize: '16px' }
+            },
+            xAxis: {
+              type: 'datetime',
+              labels: { style: { color: '#FFFFFF' }, rotation: -45 }
+            },
+            yAxis: [{
+              title: { text: 'Giveaway', style: { color: '#FFFFFF' } },
+              labels: { style: { color: '#FFFFFF' } }
+            }],
+            series: [
+              {
+                name: 'Giveaway',
+                type: 'spline',
+                data: machineData.map(d => ({
+                  x: new Date(d.dateString).getTime(),
+                  y: d.giveaway
+                }))
+              },
+              {
+                name: 'Min',
+                type: 'line',
+                dashStyle: 'Dash',
+                data: machineData.map(d => ({
+                  x: new Date(d.dateString).getTime(),
+                  y: d.giveAwayMin
+                }))
+              },
+              {
+                name: 'Max',
+                type: 'line',
+                dashStyle: 'Dash',
+                data: machineData.map(d => ({
+                  x: new Date(d.dateString).getTime(),
+                  y: d.giveAwayMax
+                }))
+              }
+            ],
+            tooltip: {
+              shared: true,
+              backgroundColor: 'rgba(255,255,255,0.9)',
+              style: { color: '#121212' },
+              borderWidth: 0,
+              borderRadius: 8,
+              shadow: true,
+              useHTML: true,
+              formatter: function() {
+                const idx = this.points[0].point.index;
+                const d = machineData[idx];
+                let html = `<div style='min-width:350px;max-width:450px;padding:12px;line-height:1.5;font-size:12px;'>`;
+                html += `<div style='text-align:center;margin-bottom:12px;'>`;
+                html += `<div style='font-size:14px;font-weight:600;color:#121212;margin-bottom:4px;'>${d.dateString}</div>`;
+                html += `<div style='font-size:13px;font-weight:500;color:#666;'>Giveaway Performance</div>`;
+                html += `</div><div style='height:1px;background:#E0E0E0;margin:8px 0;'></div>`;
+                this.points.forEach(point => {
+                  html += `<div style='display:flex;justify-content:flex-start;align-items:center;margin:4px 0;gap:8px;'>`;
+                  html += `<span style='display:flex;align-items:center;min-width:120px;'>`;
+                  html += `<span style='display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${point.color};margin-right:6px;'></span>`;
+                  html += `<span style='color:#444'>${point.series.name}:</span></span>`;
+                  html += `<span style='font-weight:600;color:#121212'>${point.y}</span></div>`;
+                });
+                if (d.remarks && d.remarks.length > 0) {
+                  html += `<div style='margin-top:12px;padding-top:12px;border-top:1px solid #E0E0E0;'>`;
+                  html += `<div style='font-weight:600;color:#121212;margin-bottom:8px;'>Remarks:</div>`;
+                  html += `<div style='padding-left:8px;'>`;
+                  d.remarks.forEach(remark => {
+                    html += `<div style='color:#666;margin-bottom:6px;font-size:11px;line-height:1.4;'>• ${remark}</div>`;
+                  });
+                  html += '</div></div>';
+                }
+                html += '</div>';
+                return html;
+              }
+            },
+            accessibility: { enabled: false },
+            credits: { enabled: false }
+          });
+          showLogOnPage('Chart rendered for machine: ' + name, '#bbf7d0');
+        }
+      });
+    }
+    renderAllGiveawayCharts();
+  })
+  .catch(error => {
+    console.error('Error loading or parsing response_GetOEEDaily.json:', error);
+    document.getElementById('giveawayChart').innerHTML = '<div class="no-data-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+  });
+
+  // Go to Top button functionality
+  const gotoTopBtn = document.getElementById('gotoTopBtn');
+  gotoTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Go to Top Button logic
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+      gotoTopBtn.classList.remove('hidden');
+      gotoTopBtn.classList.add('flex');
+    } else {
+      gotoTopBtn.classList.add('hidden');
+      gotoTopBtn.classList.remove('flex');
+    }
+  });
+  </script>
+</body>
+</html>

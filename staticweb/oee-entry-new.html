@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="#"><!-- fix favicon.ico -->
+  <title>OEE Entry Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: #f3f4f6;
+      color: #111827;
+      font-family: inherit;
+    }
+
+    /* Custom calendar input styling */
+    input[type="date"] {
+      position: relative;
+      background: white;
+    }
+
+    /* Remove default calendar icon */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      background: transparent;
+      bottom: 0;
+      color: transparent;
+      cursor: pointer;
+      height: auto;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: auto;
+    }
+
+    /* Add custom calendar icon */
+    input[type="date"]::after {
+      content: "📅";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    /* Firefox specific styles */
+    @-moz-document url-prefix() {
+      input[type="date"] {
+        position: relative;
+      }
+      input[type="date"]::-moz-calendar-picker-indicator {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      input[type="date"]::after {
+        content: "📅";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+    }
+
+    /* Microsoft Edge specific styles */
+    @supports (-ms-ime-align: auto) {
+      input[type="date"]::-ms-clear {
+        display: none;
+      }
+      input[type="date"]::-ms-reveal {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto mt-8">
+    <form id="oeeForm" autocomplete="off" novalidate>
+      <div class="flex flex-col md:flex-row gap-6">
+        <!-- Left Card: Main Info -->
+        <div class="flex-1 bg-white rounded-lg shadow p-6 space-y-4">
+          <div>
+            <label for="machineId" class="block font-medium mb-1">Machine:</label>
+            <div class="flex gap-2 items-center">
+              <select id="machineId" name="machineId" required class="flex-1 border rounded px-3 py-2"></select>
+              <button type="button" id="loadDataBtn" class="px-3 py-1 bg-blue-600 text-white rounded font-semibold">Load Data</button>
+            </div>
+            <div id="machineIdError" class="text-red-500 text-sm mt-1 hidden"></div>
+          </div>
+          <div>
+            <label for="recordDate" class="block font-medium mb-1">วันที่บันทึก:</label>
+            <input type="date" id="recordDate" name="recordDate" required class="w-full border rounded px-3 py-2">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="availability" class="block font-medium mb-1">Availability (%):</label>
+              <input type="number" id="availability" name="availability" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="availabilityError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="performance" class="block font-medium mb-1">Performance (%):</label>
+              <input type="number" id="performance" name="performance" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="performanceError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="quality" class="block font-medium mb-1">Quality (%):</label>
+              <input type="number" id="quality" name="quality" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="qualityError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            <div>
+              <label for="oee" class="block font-medium mb-1">OEE (%):</label>
+              <input type="number" id="oee" name="oee" min="0" max="100" step="0.01" required class="w-full border rounded px-3 py-2" autocomplete="off">
+              <div id="oeeError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+          </div>
+          <div>
+            <label for="giveaway" class="block font-medium mb-1">Giveaway เม็ดแถมให้ลูกค้า: (25.100-25.115)</label>
+            <input type="number" id="giveaway" name="giveaway" min="25.100" max="25.115" step="0.001" required class="w-full border rounded px-3 py-2" autocomplete="off">
+            <div id="giveawayError" class="text-red-500 text-sm mt-1 hidden"></div>
+          </div>
+          <div>
+            <label for="responsiblePerson" class="block font-medium mb-1">Responsible Person:</label>
+            <input type="text" id="responsiblePerson" name="responsiblePerson" value="default auto-generate" required class="w-full border rounded px-3 py-2">
+          </div>
+          <div>
+            <label for="status" class="block font-medium mb-1">Status:</label>
+            <select id="status" name="status" class="w-full border rounded px-3 py-2">
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+          <button type="submit" id="submitBtn" class="w-full py-2 bg-green-600 text-white rounded font-bold">Submit</button>
+        </div>
+        <!-- Right Card: Remarks -->
+        <div class="w-full md:w-80 bg-white rounded-lg shadow p-6 flex flex-col">
+          <button type="button" onclick="addRemark()" class="mb-3 px-3 py-1 bg-green-500 text-white rounded self-start">Add Remark</button>
+          <div id="remarksContainer" class="flex-1"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="max-w-5xl mx-auto mt-10">
+    <table id="oeeTable" class="min-w-full bg-white rounded shadow overflow-hidden">
+    </table>
+  </div>
+
+  <script>
+    // Machine list
+    const machines = [
+      { MachineId: 1, MachineName: "PP12/A" },
+      { MachineId: 2, MachineName: "PP12/C" },
+      { MachineId: 3, MachineName: "PP3/A" },
+      { MachineId: 4, MachineName: "PP3/B" },
+      { MachineId: 5, MachineName: "PPE/C" },
+      { MachineId: 6, MachineName: "PPE/D" },
+      { MachineId: 7, MachineName: "PPC/A" },
+      { MachineId: 8, MachineName: "PPC/B" },
+      { MachineId: 9, MachineName: "HDPE/A" }
+    ];
+
+    // Fill machine dropdown
+    const machineSelect = document.getElementById('machineId');
+    machines.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.MachineId;
+      opt.textContent = m.MachineName;
+      machineSelect.appendChild(opt);
+    });
+
+    // Set default date to yesterday
+    const today = new Date();
+    today.setDate(today.getDate() - 1);
+    document.getElementById('recordDate').valueAsDate = today;
+    document.getElementById('machineId').selectedIndex = -1;
+    document.getElementById('responsiblePerson').value = '';
+    document.getElementById('status').selectedIndex = -1;
+
+    // Dynamic remarks
+    let remarks = [];
+    
+    function renderRemarks() {
+      const container = document.getElementById('remarksContainer');
+      container.innerHTML = '';
+      remarks.forEach((remark, idx) => {
+        container.innerHTML += `
+          <div class="remark-row items-center flex gap-2 mb-2">
+            <input type="text" value="${remark}" onchange="updateRemark(${idx}, this.value)" 
+              class="border rounded px-2 py-1 flex-1" />
+            <button type="button" onclick="removeRemark(${idx})" 
+              class="flex items-center justify-center w-8 h-8 bg-red-500 text-white rounded-full text-lg font-bold 
+              transition-all duration-150 hover:bg-red-700 hover:scale-110 hover:shadow-lg">-</button>
+          </div>`;
+      });
+    }
+
+    function addRemark() {
+      remarks.push("");
+      renderRemarks();
+    }
+
+    function removeRemark(idx) {
+      remarks.splice(idx, 1);
+      renderRemarks();
+    }
+
+    function updateRemark(idx, value) {
+      remarks[idx] = value;
+    }
+
+    // OEE records (sample data)
+    const oeeRecords = [
+      { Id: 2178, MachineId: 9, RecordDate: "2025-08-17", Availability: 100.00, Performance: 92.88, Quality: 99.99, OEE: 92.87, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2206, MachineId: 8, RecordDate: "2025-08-21", Availability: 100.00, Performance: 93.52, Quality: 100.00, OEE: 93.52, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2213, MachineId: 7, RecordDate: "2025-08-22", Availability: 100.00, Performance: 94.02, Quality: 100.00, OEE: 94.02, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2233, MachineId: 6, RecordDate: "2025-08-26", Availability: 100.00, Performance: 91.04, Quality: 100.00, OEE: 91.04, Giveaway: 25.108, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2232, MachineId: 5, RecordDate: "2025-08-26", Availability: 100.00, Performance: 92.51, Quality: 100.00, OEE: 92.51, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2231, MachineId: 4, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.67, Quality: 100.00, OEE: 94.67, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2230, MachineId: 3, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.35, Quality: 100.00, OEE: 94.35, Giveaway: 25.115, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2229, MachineId: 2, RecordDate: "2025-08-26", Availability: 100.00, Performance: 94.68, Quality: 100.00, OEE: 94.68, Giveaway: 25.113, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 },
+      { Id: 2228, MachineId: 1, RecordDate: "2025-08-26", Availability: 100.00, Performance: 90.99, Quality: 100.00, OEE: 90.99, Giveaway: 25.113, ResponsiblePerson: "557", CreatedAt: "2025-08-27 17:40:08.807", UpdatedAt: "2025-08-27 17:40:08.807", IsDeleted: 0 }
+    ];
+
+    function renderOeeTable() {
+      const table = document.getElementById('oeeTable');
+      table.innerHTML = `
+        <thead class="bg-green-100 text-green-900">
+          <tr>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Record Date</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Machine</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Availability</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Performance</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Quality</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">OEE</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Giveaway</th>
+            <th class="px-4 py-2 font-semibold border-b border-green-300">Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      
+      oeeRecords.forEach((row, idx) => {
+        const machine = machines.find(m => m.MachineId === row.MachineId);
+        const machineName = machine ? machine.MachineName : row.MachineId;
+        
+        table.innerHTML += `
+          <tr class="border-b hover:bg-gray-50">
+            <td class="px-4 py-2">${row.RecordDate}</td>
+            <td class="px-4 py-2">${machineName}</td>
+            <td class="px-4 py-2">${row.Availability}</td>
+            <td class="px-4 py-2">${row.Performance}</td>
+            <td class="px-4 py-2">${row.Quality}</td>
+            <td class="px-4 py-2">${row.OEE}</td>
+            <td class="px-4 py-2">${row.Giveaway}</td>
+            <td class="px-4 py-2">
+              <button onclick="editOeeRow(${idx})" class="px-3 py-1 bg-yellow-500 text-white rounded">Edit</button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      table.innerHTML += '</tbody>';
+    }
+
+    // Load initial table
+    renderOeeTable();
+    renderRemarks();
+
+    // Edit row logic
+    let editIdx = null;
+
+    function editOeeRow(idx) {
+      editIdx = idx;
+      const row = oeeRecords[idx];
+      
+      document.getElementById('machineId').value = row.MachineId;
+      document.getElementById('recordDate').value = row.RecordDate;
+      document.getElementById('availability').value = row.Availability;
+      document.getElementById('performance').value = row.Performance;
+      document.getElementById('quality').value = row.Quality;
+      document.getElementById('oee').value = row.OEE;
+      document.getElementById('giveaway').value = row.Giveaway;
+      document.getElementById('responsiblePerson').value = row.ResponsiblePerson;
+      document.getElementById('status').value = '1';
+      
+      remarks = [];
+      renderRemarks();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = 'Save Edit';
+      submitBtn.classList.remove('bg-green-600');
+      submitBtn.classList.add('bg-yellow-500');
+    }
+
+    // Load Data button logic
+    document.getElementById('loadDataBtn').addEventListener('click', function() {
+      const machineId = document.getElementById('machineId').value;
+      if (!machineId) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'กรุณาเลือก Machine ก่อน',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+
+      const latestRecord = oeeRecords
+        .filter(r => r.MachineId == machineId)
+        .sort((a, b) => new Date(b.RecordDate) - new Date(a.RecordDate))[0];
+
+      if (!latestRecord) {
+        Swal.fire({
+          icon: 'info',
+          title: 'ไม่พบข้อมูล OEE สำหรับ Machine นี้',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+
+      document.getElementById('availability').value = latestRecord.Availability;
+      document.getElementById('performance').value = latestRecord.Performance;
+      document.getElementById('quality').value = latestRecord.Quality;
+      document.getElementById('oee').value = latestRecord.OEE;
+      document.getElementById('giveaway').value = latestRecord.Giveaway;
+    });
+
+    // Enable/disable Load Data button based on machine selection
+    function updateLoadDataBtnState() {
+      const loadDataBtn = document.getElementById('loadDataBtn');
+      if (!machineSelect.value) {
+        loadDataBtn.disabled = true;
+        loadDataBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        loadDataBtn.disabled = false;
+        loadDataBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+    machineSelect.addEventListener('change', updateLoadDataBtnState);
+    updateLoadDataBtnState();
+
+    // Form validation and submit
+    document.getElementById('oeeForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      let hasError = false;
+      
+      // Validate machineId
+      const machineIdSelect = document.getElementById('machineId');
+      const machineIdErrorDiv = document.getElementById('machineIdError');
+      if (!machineIdSelect.value) {
+        machineIdSelect.classList.add('border-red-500', 'bg-red-100');
+        machineIdErrorDiv.textContent = 'กรุณาเลือก Machine';
+        machineIdErrorDiv.classList.remove('hidden');
+        hasError = true;
+      } else {
+        machineIdSelect.classList.remove('border-red-500', 'bg-red-100');
+        machineIdErrorDiv.classList.add('hidden');
+      }
+
+      // Validate numeric fields
+      ['availability', 'performance', 'quality', 'oee', 'giveaway'].forEach(id => {
+        const el = document.getElementById(id);
+        const errorDiv = document.getElementById(id + 'Error');
+        const val = el.value;
+        
+        if (!val) {
+          el.classList.add('border-red-500', 'bg-red-100');
+          errorDiv.textContent = 'ใส่ข้อมูลผิดรูป โปรดตรวจสอบอีกครั้ง';
+          errorDiv.classList.remove('hidden');
+          hasError = true;
+        } else {
+          const num = parseFloat(val);
+          if (id === 'giveaway') {
+            if (num < 25.100 || num > 25.115) {
+              el.classList.add('border-red-500', 'bg-red-100');
+              errorDiv.textContent = 'ค่าต้องอยู่ระหว่าง 25.100 ถึง 25.115';
+              errorDiv.classList.remove('hidden');
+              hasError = true;
+            } else {
+              el.classList.remove('border-red-500', 'bg-red-100');
+              errorDiv.classList.add('hidden');
+            }
+          } else {
+            if (num < 0 || num > 100) {
+              el.classList.add('border-red-500', 'bg-red-100');
+              errorDiv.textContent = 'ค่าต้องอยู่ระหว่าง 0 ถึง 100';
+              errorDiv.classList.remove('hidden');
+              hasError = true;
+            } else {
+              el.classList.remove('border-red-500', 'bg-red-100');
+              errorDiv.classList.add('hidden');
+            }
+          }
+        }
+      });
+
+      // Validate remarks
+      const emptyRemarks = remarks.filter(r => r.trim() === '');
+      if (emptyRemarks.length > 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Remark ไม่สามารถเว้นว่างได้',
+          html: '<div>ระบบไม่อนุญาตให้ Remark เป็นค่าว่าง<br>กรุณาลบ Remark ที่ว่างออกก่อนจึงจะสามารถบันทึกข้อมูลได้</div>',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+
+      if (hasError) {
+        Swal.fire({
+          icon: 'error',
+          title: 'ข้อมูลไม่ถูกต้อง',
+          text: 'กรุณากรอกข้อมูลให้ถูกต้อง',
+          confirmButtonText: 'ตกลง'
+        });
+        return;
+      }
+
+      // Build submission data
+      const data = {
+        machineId: parseInt(machineSelect.value),
+        recordDate: document.getElementById('recordDate').value,
+        availability: parseFloat(document.getElementById('availability').value),
+        performance: parseFloat(document.getElementById('performance').value),
+        quality: parseFloat(document.getElementById('quality').value),
+        oee: parseFloat(document.getElementById('oee').value),
+        giveaway: parseFloat(document.getElementById('giveaway').value),
+        remarks: remarks.filter(r => r.trim() !== ""),
+        responsiblePerson: document.getElementById('responsiblePerson').value,
+        status: parseInt(document.getElementById('status').value),
+        lastUpdated: new Date().toISOString()
+      };
+
+      if (editIdx !== null) {
+        // Update existing record
+        oeeRecords[editIdx] = {
+          ...oeeRecords[editIdx],
+          MachineId: data.machineId,
+          RecordDate: data.recordDate,
+          Availability: data.availability,
+          Performance: data.performance,
+          Quality: data.quality,
+          OEE: data.oee,
+          Giveaway: data.giveaway,
+          ResponsiblePerson: data.responsiblePerson,
+          UpdatedAt: data.lastUpdated
+        };
+        
+        editIdx = null;
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.textContent = 'Submit';
+        submitBtn.classList.remove('bg-yellow-500');
+        submitBtn.classList.add('bg-green-600');
+      } else {
+        // Add new record
+        oeeRecords.unshift({ // nshift() เป็น method ของ Array ใน JavaScript ที่ใช้สำหรับเพิ่มข้อมูลใหม่เข้าไปที่ตำแหน่งแรกของ array
+            /*นกรณีนี้เลือกใช้ unshift() เพื่อให้ผู้ใช้เห็นข้อมูลที่เพิ่งบันทึกทันทีที่บรรทัดบนสุดของตาราง โดยไม่ต้องเลื่อนลงไปดูที่ด้านล่าง ซึ่งเป็น UX (User Experience) ที่ดีกว่าการใช้ push()*/
+          Id: Date.now(),
+          MachineId: data.machineId,
+          RecordDate: data.recordDate,
+          Availability: data.availability,
+          Performance: data.performance,
+          Quality: data.quality,
+          OEE: data.oee,
+          Giveaway: data.giveaway,
+          ResponsiblePerson: data.responsiblePerson,
+          CreatedAt: data.lastUpdated,
+          UpdatedAt: data.lastUpdated,
+          IsDeleted: 0
+        });
+      }
+
+      // Reset form
+      this.reset();
+      remarks = [];
+      renderRemarks();
+      document.getElementById('recordDate').valueAsDate = today;
+      document.getElementById('machineId').selectedIndex = -1;
+      document.getElementById('responsiblePerson').value = '';
+      document.getElementById('status').selectedIndex = -1;
+      updateLoadDataBtnState();
+
+      // Clear validation states
+      ['machineId', 'availability', 'performance', 'quality', 'oee', 'giveaway'].forEach(id => {
+        const el = document.getElementById(id);
+        const errorDiv = document.getElementById(id + 'Error');
+        el.classList.remove('border-red-500', 'bg-red-100');
+        errorDiv.classList.add('hidden');
+      });
+
+      // Update table
+      renderOeeTable();
+
+      console.log('Submitted data:', data);
+    });
+  </script>
+</body>
+</html>

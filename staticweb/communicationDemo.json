@@ -1,0 +1,41 @@
+[
+  {
+    "Id": 100,
+    "Title": "Goal zero accident",
+    "Description": "1000 วัน ปลอดอุบัติเหตุ",
+    "ImagePath": "REF:CommImgParts:1:1",
+    "IsActive": true,
+    "CreatedAt": "2025-07-21T11:42:03Z",
+    "ModifiedDate": "2025-07-21T13:28:17Z",
+    "CreatedBy": "plbgdashboard@gmail.com",
+    "DisplayOrder": 1,
+    "BaggingCode": "PL",
+    "IsDeleted": false
+  },
+  {
+    "Id": 101,
+    "Title": "OEMS คืออะไร",
+    "Description": "Operational Excellence Management System",
+    "ImagePath": "REF:CommImgParts:2:1",
+    "IsActive": true,
+    "CreatedAt": "2025-07-21T13:35:40Z",
+    "ModifiedDate": "NULL",
+    "CreatedBy": "plbgdashboard@gmail.com",
+    "DisplayOrder": 2,
+    "BaggingCode": "PL",
+    "IsDeleted": false
+  },
+  {
+    "Id": 102,
+    "Title": "OPS คืออะไร",
+    "Description": "การปฎิบัติการที่พนักงาน Production  ใช้ในการปฎิบัติงานเพื่อให้เกิดความปลอดภัย และ ประสิทธิผล ของโรงงาน",
+    "ImagePath": "REF:CommImgParts:3:1",
+    "IsActive": true,
+    "CreatedAt": "2025-07-21T13:45:45Z",
+    "ModifiedDate": "NULL",
+    "CreatedBy": "plbgdashboard@gmail.com",
+    "DisplayOrder": 3,
+    "BaggingCode": "PL",
+    "IsDeleted": false
+  }
+]

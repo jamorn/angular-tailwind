@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="#">
+  <title>EII Monthly PL Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Highcharts CDN -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body {
+      background: #18181b;
+      color: #fff;
+      font-family: inherit;
+    }
+    .container {
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+    .dashboard-header {
+      background: #23263a;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      min-height: 120px; /* กำหนดความสูงขั้นต่ำ */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(36,36,60,0.12);
+      border: 2px dashed white; /* เพิ่มเส้นประสีขาวชั่วคราวเพื่อดู alignment */
+    }
+    .charts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      box-sizing: border-box;
+    }
+    .chart-container {
+      position: relative;
+      background: #121212;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 2rem 2rem 1.5rem 2rem;
+      transition: transform 0.2s ease;
+      height: 600px;
+      margin-bottom: 2rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fff;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .chart {
+      width: 100%;
+      height: 100%;
+    }
+    .no-data-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+      color: #a3a3a3;
+      font-size: 2.25rem;
+      font-weight: bold;
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="text-4xl font-bold text-center py-4">EII MONTHLY PL DASHBOARD</h1>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-container">
+        <div id="summaryChart" class="chart"></div>
+      </div>
+      <div class="chart-container">
+        <div id="detailChart" class="chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLogOnPage(msg, color = '#fbbf24') {
+      const logDiv = document.createElement('div');
+      logDiv.className = `my-2 px-4 py-2 rounded font-bold text-sm ${color === '#fbbf24' ? 'bg-yellow-400 text-gray-900' : 'bg-red-400 text-gray-900'}`;
+      logDiv.innerText = msg;
+      document.body.appendChild(logDiv);
+    }
+
+    // Mock data 
+    /* ถ้า eii > target จะเป็นสีแดง (#ef4444)
+       ถ้า eii <= target จะเป็นสีเขียว (#22c55e)
+    */
+    const data = {
+  "summaryData": [
+    {
+      "category": "MAR25",
+      "eii": "67.15",
+      "target": "69.46",
+      "color": "#FF0000",
+      "remark": ""
+    },
+    {
+      "category": "APR25",
+      "eii": "69.28",
+      "target": "69.46",
+      "color": "#FF0000",
+      "remark": ""
+    },
+    {
+      "category": "MAY25",
+      "eii": "0",
+      "target": "69.46",
+      "color": "#FF0000",
+      "remark": "ไม่มีข้อมูลการผลิตในเดือนนี้"
+    },
+    {
+      "category": "JUN25",
+      "eii": "0",
+      "target": "69.46",
+      "color": "#FF0000",
+      "remark": "ไม่มีข้อมูลการผลิตในเดือนนี้"
+    },
+    {
+      "category": "JUL25",
+      "eii": "0",
+      "target": "69.46",
+      "color": "#FF0000",
+      "remark": "ไม่มีข้อมูลการผลิตในเดือนนี้"
+    },
+    {
+      "category": "AUG25",
+      "eii": "82.52",
+      "target": "69.46",
+      "color": "#059918",
+      "remark": ""
+    }
+  ],
+  "detailData": [
+    {
+      "category": "MAR25",
+      "hd": "69.53",
+      "pp12": "69.11",
+      "pp3": "62.81",
+      "target": "69.46"
+    },
+    {
+      "category": "APR25",
+      "hd": "63.46",
+      "pp12": "78.47",
+      "pp3": "65.91",
+      "target": "69.46"
+    },
+    {
+      "category": "MAY25",
+      "hd": "0",
+      "pp12": "0",
+      "pp3": "0",
+      "target": "69.46"
+    },
+    {
+      "category": "JUN25",
+      "hd": "0",
+      "pp12": "0",
+      "pp3": "0",
+      "target": "69.46"
+    },
+    {
+      "category": "JUL25",
+      "hd": "0",
+      "pp12": "0",
+      "pp3": "0",
+      "target": "69.46"
+    },
+    {
+      "category": "AUG25",
+      "hd": "0",
+      "pp12": "82.52",
+      "pp3": "0",
+      "target": "69.46"
+    }
+  ]
+};
+        // Render Summary Chart
+        Highcharts.chart('summaryChart', {
+          chart: {
+            type: 'column',
+            backgroundColor: '#121212',
+            style: { fontFamily: 'inherit' },
+            height: 500,
+            spacing: [20, 20, 20, 20],
+            reflow: true
+          },
+          title: { //   text: data.evaragestring,  // ใช้ค่า string จาก API โดยตรง
+            text: function() { // ค่าจริงให้แสดงค่าจาก string  จาก API แทนค่านี้
+              const firstMonth = data.summaryData[0].category;
+              const lastMonth = data.summaryData[data.summaryData.length - 1].category;
+              const average = data.summaryData.reduce((sum, item) => sum + parseFloat(item.eii), 0) / data.summaryData.length;
+              return `EII Average ${firstMonth}-${lastMonth} = ${average.toFixed(2)} %`;
+            }(),
+            align: 'center',
+            style: { color: '#FFFFFF', fontWeight: 'bold', fontSize: '16px', fontFamily: 'inherit' }
+          },
+          subtitle: {
+            text: 'Monthly Performance Overview',
+            align: 'center',
+            style: { color: '#CCCCCC', fontSize: '14px', fontFamily: 'inherit' }
+          },
+          xAxis: {
+            categories: data.summaryData.map(item => item.category),
+            labels: {
+              style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' }
+            },
+            gridLineColor: 'rgba(255,255,255,0.1)',
+            lineColor: 'rgba(255,255,255,0.2)',
+            tickmarkPlacement: 'between'
+          },
+          yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+              text: 'Value',
+              style: { color: '#FFFFFF', fontFamily: 'inherit' }
+            },
+            labels: {
+              style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' }
+            },
+            gridLineColor: 'rgba(255,255,255,0.1)'
+          },
+          series: [
+            {
+              name: 'EII',
+              type: 'column',
+              borderRadius: 3,
+              pointPadding: 0.1,
+              groupPadding: 0.2,
+              pointPlacement: 0.15,  // ขยับ barchart ไปทางขวา
+              data: data.summaryData.map(item => ({
+                y: parseFloat(item.eii) || 0,
+                color: parseFloat(item.eii) > parseFloat(item.target) ? '#FF0000' : '#059918'
+              }))
+            },
+            {
+              name: 'Forecast',
+              type: 'column',
+              borderRadius: 3,
+              pointPadding: 0.1,
+              groupPadding: 0.2,
+              pointPlacement: 0.2,  // ขยับไปทางขวา
+              color: '#4a5568',
+              dashStyle: 'Dash',
+              data: data.summaryData.map(item => null)
+            },
+            {
+              name: 'Target',
+              type: 'line',
+              color: '#FF0000',
+              dashStyle: 'Solid',
+              lineWidth: 2,
+              pointPlacement: 'on',
+              marker: { 
+                enabled: true,
+                radius: 8,
+                symbol: 'circle',
+                fillColor: '#FF0000',
+                lineWidth: 2,
+                lineColor: '#FFFFFF'
+              },
+              dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                style: { fontSize: '11px', textOutline: 'none' },
+                formatter: function() {
+                  return this.y.toFixed(2);
+                },
+                y: -20
+              },
+              data: data.summaryData.map(item => parseFloat(item.target))
+            }
+          ],
+          tooltip: {
+            shared: true,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            style: { color: '#121212' },
+            borderWidth: 0,
+            borderRadius: 8,
+            shadow: true,
+            useHTML: true
+          },
+          legend: {
+            itemStyle: { color: '#FFFFFF' },
+            itemHoverStyle: { color: '#60a5fa' }
+          },
+          accessibility: { enabled: false },
+          credits: { enabled: false }
+        });
+
+        // Render Detail Chart
+        Highcharts.chart('detailChart', {
+          chart: {
+            type: 'column',
+            backgroundColor: '#121212',
+            style: { fontFamily: 'inherit' },
+            height: 500,
+            spacing: [20, 20, 20, 20],
+            reflow: true
+          },
+          title: {
+            text: 'EII Monthly Detail by Plant',
+            style: { color: '#FFFFFF', fontWeight: 'bold', fontSize: '16px', fontFamily: 'inherit' }
+          },
+          xAxis: {
+            categories: data.detailData.map(item => item.category),
+            labels: {
+              style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' }
+            },
+            gridLineColor: 'rgba(255,255,255,0.1)',
+            lineColor: 'rgba(255,255,255,0.2)'
+          },
+          yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+              text: 'Value',
+              style: { color: '#FFFFFF', fontFamily: 'inherit' }
+            },
+            labels: {
+              style: { color: '#FFFFFF', fontSize: '12px', fontFamily: 'inherit' }
+            },
+            gridLineColor: 'rgba(255,255,255,0.1)'
+          },
+          series: [
+            {
+              name: 'HD',
+              type: 'column',
+              color: '#4572A7',
+              borderRadius: 3,
+              data: data.detailData.map(item => ({
+                y: parseFloat(item.hd) || 0,
+                dashStyle: parseFloat(item.hd) === 0 ? 'Dash' : 'Solid'
+              }))
+            },
+            {
+              name: 'PP12',
+              type: 'column',
+              color: '#AA4643',
+              borderRadius: 3,
+              data: data.detailData.map(item => ({
+                y: parseFloat(item.pp12) || 0,
+                dashStyle: parseFloat(item.pp12) === 0 ? 'Dash' : 'Solid'
+              }))
+            },
+            {
+              name: 'PP3',
+              type: 'column',
+              color: '#89A54E',
+              borderRadius: 3,
+              data: data.detailData.map(item => ({
+                y: parseFloat(item.pp3) || 0,
+                dashStyle: parseFloat(item.pp3) === 0 ? 'Dash' : 'Solid'
+              }))
+            },
+            {
+              name: 'Target',
+              type: 'line',
+              color: '#FF0000',
+              dashStyle: 'Solid',
+              lineWidth: 2,
+              pointPlacement: 'on',
+              marker: { 
+                enabled: true,
+                radius: 8,
+                symbol: 'circle',
+                fillColor: '#FF0000',
+                lineWidth: 2,
+                lineColor: '#FFFFFF'
+              },
+              dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                style: { fontSize: '11px', textOutline: 'none' },
+                formatter: function() {
+                  return this.y.toFixed(2);
+                },
+                y: -20
+              },
+              data: data.detailData.map(item => parseFloat(item.target))
+            }
+          ],
+          tooltip: {
+            shared: true,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            style: { color: '#121212' },
+            borderWidth: 0,
+            borderRadius: 8,
+            shadow: true,
+            useHTML: true
+          },
+          legend: {
+            itemStyle: { color: '#FFFFFF' },
+            itemHoverStyle: { color: '#60a5fa' }
+          },
+          accessibility: { enabled: false },
+          credits: { enabled: false }
+        });
+      
+  </script>
+</body>
+</html>
