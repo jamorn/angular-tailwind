@@ -162,15 +162,15 @@
     --foreground: #1F2937;
     --card: #F8FAFC;
     --card-foreground: #111827;
-    --primary: #6E56CF;      /* Default violet */
+    --primary: #6E56CF;      /* Keep Violet as primary */
     --primary-foreground: #FFFFFF;
     --muted: #E2E8F0;
     --muted-foreground: #64748B;
     --border: #E2E8F0;
 
     /* Theme colors */
-    --primary: #3b82f6;      /* Blue (was Violet) */
-    --info: #6E56CF;         /* Violet (was Blue) */
+    --blue: #3b82f6;         /* Blue */
+    --info: #6E56CF;         /* Violet */
     --success: #22c55e;      /* Green */
     --warning: #f59e0b;      /* Yellow */
     --danger: #cc0022;       /* Red */

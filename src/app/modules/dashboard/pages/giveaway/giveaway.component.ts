@@ -8,11 +8,8 @@ import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
 import { DashboardService } from '@dashboard-services/dashboard.service'; // Add this import
-import { ThemeService } from '@core/services/theme.service';
-
-
-// Add type for button tones
-type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
+import { ThemeService, type ThemeConfig } from '@core/services/theme.service';
+import type { ButtonToneType } from '@core/services/theme.service';
 
 @Component({
   selector: 'app-giveaway',
@@ -37,7 +34,7 @@ export class GiveawayComponent implements OnInit, OnDestroy, AfterViewInit {
   public orderedMachines: string[] = [];
 
   private subscription?: Subscription;
-  currentTheme: ButtonToneType = this.themeService.getCurrentTheme().color;
+  currentTheme: ButtonToneType;
 
   private themeSubscription?: Subscription;
 
@@ -46,14 +43,16 @@ export class GiveawayComponent implements OnInit, OnDestroy, AfterViewInit {
     private chartService: ChartService,
     private cdr: ChangeDetectorRef,
     private themeService: ThemeService
-  ) {}
+  ) {
+    this.currentTheme = this.themeService.getCurrentTheme().color;
+  }
 
   ngOnInit(): void {
     console.log('[GiveawayComponent] Initializing');
     this.loading = true;
 
     // Subscribe to theme changes
-    this.themeSubscription = this.themeService.theme$.subscribe(theme => {
+    this.themeSubscription = this.themeService.theme$.subscribe((theme: ThemeConfig) => {
       console.log('Giveaway receiving theme update:', theme);
       this.currentTheme = theme.color;
       this.cdr.markForCheck(); // Force change detection

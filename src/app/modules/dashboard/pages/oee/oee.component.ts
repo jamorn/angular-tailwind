@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, effect, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, effect, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import * as Highcharts from 'highcharts';
@@ -13,10 +13,12 @@ import { DashboardService } from '@dashboard-services/dashboard.service';
 import { MachineOEEData, MachineOrder } from '@models/oee/oee.model';
 import { Subscription, throwError, TimeoutError } from 'rxjs';
 import { finalize, timeout, catchError, tap } from 'rxjs/operators';
-import { ThemeService } from '@core/services/theme.service';
+import { ThemeService, ButtonToneType, ThemeConfig } from '@core/services/theme.service';
+import { fromEvent } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 // Add type for button tones
-type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
+//type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
 
 @Component({
   selector: 'app-oee',
@@ -45,8 +47,13 @@ export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private chartInstances: Highcharts.Chart[] = [];
   private subscription?: Subscription;
+  private scrollSubscription?: Subscription; // เพิ่มตัวแปรนี้
+  private themeSubscription?: Subscription;
 
-  currentTheme: ButtonToneType = this.themeService.getCurrentTheme().color; // เพิ่ม property นี้
+  currentTheme: ButtonToneType;
+
+  @ViewChild('gotoTopBtn') gotoTopBtn!: ElementRef;
+  showGoToTop = false;
 
   constructor(
     private dashboardService: DashboardService,
@@ -54,15 +61,18 @@ export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private themeService: ThemeService
   ) {
-    // Subscribe theme$ เพื่ออัปเดต currentTheme
-    this.themeService.theme$.subscribe(theme => {
-      this.currentTheme = theme.color;
-    });
+    this.currentTheme = this.themeService.getCurrentTheme().color;
   }
 
   ngOnInit(): void {
     console.log('[OeeComponent] Initializing');
     this.loading = true;
+
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.theme$.subscribe((theme: ThemeConfig) => {
+      this.currentTheme = theme.color;
+      this.cdr.detectChanges();
+    });
 
     // Update this line to use getCurrentTheme()
     console.log('Current Theme:', this.themeService.getCurrentTheme());
@@ -123,6 +133,15 @@ export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Clear instances array
     this.chartInstances = [];
+
+    // Cleanup scroll listener if using fromEvent
+    if (this.scrollSubscription) {
+      this.scrollSubscription.unsubscribe();
+    }
+    
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
   }
 
   private loadOEEData(): void {
@@ -249,6 +268,40 @@ export class OeeComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     });
+
+    // เพิ่ม log สำหรับ Go To Top Button
+    console.log('=== Go To Top Button Setup ===');
+    console.log('Initial showGoToTop state:', this.showGoToTop);
+    console.log('Go To Top Button Element:', this.gotoTopBtn?.nativeElement);
+
+    // เก็บ subscription ไว้ในตัวแปร
+    this.scrollSubscription = fromEvent(window, 'scroll')
+      .pipe(debounceTime(100))
+      .subscribe(() => {
+        const scrollPosition = window.scrollY;
+        console.log('Current Scroll Position:', scrollPosition);
+        this.showGoToTop = scrollPosition > 300;
+        this.cdr.detectChanges();
+      });
+  }
+
+  @HostListener('window:scroll', ['$event']) // เพิ่ม $event
+  onWindowScroll(event: Event) {
+    console.log('=== Scroll Event Triggered ===');
+    const scrollPosition = window.scrollY;
+    console.log('Current Scroll Position:', scrollPosition);
+    this.showGoToTop = scrollPosition > 300;
+    console.log('Show Go To Top Button:', this.showGoToTop);
+    this.cdr.detectChanges(); // เพิ่ม force update UI
+  }
+
+  scrollToTop() {
+    try {
+      console.log('Scroll to Top clicked');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error('Error scrolling to top:', error);
+    }
   }
 }
 

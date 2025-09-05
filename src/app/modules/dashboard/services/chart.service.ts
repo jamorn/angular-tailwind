@@ -164,11 +164,11 @@ export class ChartService {
             html += `
               <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E0E0E0;">
                 <div style="font-weight: 600; color: #121212; margin-bottom: 8px;">Remarks:</div>
-                <div style="padding-left: 8px;">
+                <div style="padding-left: 2px;">
                   ${remarks.map((remark: string) => `
-                    <div style="display: flex; align-items: center; color: #666666; margin-bottom: 6px; font-size: 11px; line-height: 1.4;">
-                      <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px;">•</span>
-                      <span style="flex: 1; word-wrap: break-word;">${remark}</span>
+                    <div style="text-gray-500 mb-1 text-xs leading-5 flex items-start">
+                      <span style="display: inline-block; min-width: 16px; color: #444444; font-size: 14px; margin-top: 2px;">•</span>
+                      <span style="flex: 1; word-break: normal; white-space: normal;">${remark}</span>
                     </div>
                   `).join('')}
                 </div>

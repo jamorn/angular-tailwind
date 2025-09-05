@@ -1,6 +1,6 @@
 import { AuthService } from '@core/services/auth/auth.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { CommonModule } from '@angular/common';  // Add this import
+import { CommonModule } from '@angular/common'; // Add this import
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -10,7 +10,7 @@ import { UserPhotoResponse } from '@core/interfaces/user-profile.interface';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 // Define ButtonToneType before using it
-type ButtonToneType = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'light';
+type ButtonToneType = 'violet' | 'blue' | 'green' | 'vue' | 'orange' | 'red';
 
 // Add color mapping type
 type ColorToThemeMap = {
@@ -20,12 +20,12 @@ type ColorToThemeMap = {
 type DirectionType = 'ltr' | 'rtl';
 
 // เพิ่ม type definitions
-type ThemeColorKey = 'violet' | 'blue' | 'green' | 'orange' | 'red';
+type ThemeColorKey = 'violet' | 'blue' | 'green' | 'vue' | 'orange' | 'red';
 type ThemeColorConfig = {
   [K in ThemeColorKey]: {
     tone: ButtonToneType;
     hex: string;
-  }
+  };
 };
 
 @Component({
@@ -33,12 +33,7 @@ type ThemeColorConfig = {
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    AngularSvgIconModule,
-    ClickOutsideDirective
-  ],
+  imports: [CommonModule, RouterLink, AngularSvgIconModule, ClickOutsideDirective],
   animations: [
     trigger('openClose', [
       state(
@@ -85,12 +80,12 @@ export class ProfileMenuComponent implements OnInit {
 
   public themeColors = [
     {
-      name: 'violet',    // ย้าย violet ขึ้นมาเป็นค่าเริ่มต้น
+      name: 'violet', // ย้าย violet ขึ้นมาเป็นค่าเริ่มต้น
       code: '#6d28d9',
     },
     {
-      name: 'yellow',
-      code: '#f59e0b',
+      name: 'vue', // เปลี่ยนจาก yellow เป็น vue
+      code: '#42b883', // เปลี่ยน hex code เป็นสี Vue
     },
     {
       name: 'green',
@@ -107,7 +102,7 @@ export class ProfileMenuComponent implements OnInit {
     {
       name: 'red',
       code: '#cc0022',
-    }
+    },
   ];
 
   public themeMode = ['light', 'dark'];
@@ -115,39 +110,35 @@ export class ProfileMenuComponent implements OnInit {
 
   // Define color mapping with hex values
   public readonly colorToThemeMap: Record<string, ButtonToneType> = {
-    'violet': 'info',      // #6d28d9
-    'blue': 'primary',     // #3b82f6
-    'green': 'success',    // #22c55e
-    'orange': 'warning',   // #f59e0b
-    'red': 'danger'        // #cc0022
+    violet: 'violet', // เปลี่ยนจาก 'info'
+    blue: 'blue', // เปลี่ยนจาก 'primary'
+    green: 'green', // เปลี่ยนจาก 'success'
+    vue: 'vue', // เพิ่มใหม่ แทน yellow
+    orange: 'orange', // เปลี่ยนจาก 'warning'
+    red: 'red', // เปลี่ยนจาก 'danger'
   };
 
   // แก้ไขการประกาศ themeColorConfig
   public readonly themeColorConfig: ThemeColorConfig = {
-    violet: { tone: 'info', hex: '#6E56CF' },      // Violet -> info
-    blue: { tone: 'primary', hex: '#3b82f6' },     // Blue -> primary
-    green: { tone: 'success', hex: '#22c55e' },    // Green stays same
-    orange: { tone: 'warning', hex: '#f59e0b' },   // Orange -> warning (yellow)
-    red: { tone: 'danger', hex: '#cc0022' }        // Red stays same
+    violet: { tone: 'violet', hex: '#6E56CF' }, // เปลี่ยนจาก info เป็น violet
+    blue: { tone: 'blue', hex: '#3b82f6' }, // เปลี่ยนจาก primary เป็น blue
+    green: { tone: 'green', hex: '#22c55e' }, // เปลี่ยนจาก success เป็น green
+    vue: { tone: 'vue', hex: '#42b883' }, // เพิ่ม vue แทน orange
+    orange: { tone: 'orange', hex: '#f97316' }, // เปลี่ยนจาก warning เป็น orange
+    red: { tone: 'red', hex: '#cc0022' }, // เปลี่ยนจาก danger เป็น red
   };
 
-  constructor(
-    public themeService: ThemeService,
-    private authService: AuthService,
-    private sanitizer: DomSanitizer
-  ) {}
+  constructor(public themeService: ThemeService, private authService: AuthService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     // Fix line 105: Change theme() to getCurrentTheme()
     console.log('Current theme:', this.themeService.getCurrentTheme());
-    
-    this.authService.getCurrentUserWithPhoto().subscribe(
-      (response) => {
-        if (response.success) {
-          this.userProfile = response;
-        }
+
+    this.authService.getCurrentUserWithPhoto().subscribe(response => {
+      if (response.success) {
+        this.userProfile = response;
       }
-    );
+    });
   }
 
   public toggleMenu(): void {
@@ -165,13 +156,13 @@ export class ProfileMenuComponent implements OnInit {
     // เพิ่ม debug logs
     console.log('Setting color:', color);
     const themeColor = this.colorToThemeMap[color];
-    
+
     if (themeColor) {
       console.log(`Mapped ${color} to ${themeColor}`);
       this.themeService.setTheme({ color: themeColor });
     } else {
       console.warn(`Invalid color: ${color}, using default`);
-      this.themeService.setTheme({ color: 'info' }); // default to violet
+      this.themeService.setTheme({ color: 'violet' }); // default to violet
     }
   }
 
@@ -203,5 +194,5 @@ export class ProfileMenuComponent implements OnInit {
   }
 
   // เพิ่ม property สำหรับใช้ใน template
-  public readonly themeColorKeys: ThemeColorKey[] = ['violet', 'blue', 'green', 'orange', 'red'];
+  public readonly themeColorKeys: ThemeColorKey[] = ['violet', 'blue', 'green', 'vue', 'orange', 'red'];
 }
